@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'java-library'
+}
+
+group = 'me.tofaa'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        url = "https://libraries.minecraft.net/"
+    }
+}
+
+dependencies {
+    compileOnlyApi("com.mojang:brigadier:1.1.8")
+    compileOnlyApi("org.jetbrains:annotations:24.0.0")
+}

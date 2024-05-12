@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+    id 'java-library'
+}
+
+group = 'me.tofaa'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+}
+
+dependencies {
+    api(project(":"))
+    compileOnlyApi("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnlyApi("io.papermc.paper:paper-mojangapi:1.20.4-R0.1-SNAPSHOT")
+}

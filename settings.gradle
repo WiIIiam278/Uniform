@@ -1,0 +1,5 @@
+rootProject.name = 'BrigadierWrapper'
+include 'paper'
+include 'velocity'
+include 'example-plugin'
+
