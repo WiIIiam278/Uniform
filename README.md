@@ -19,20 +19,20 @@ Uniform _currently_ targets the following platforms:
 
 Please note Uniform on Fabric requires [adventure-platform-fabric](https://docs.advntr.dev/platform/fabric.html) and the [Fabric API](https://fabricmc.net/) as dependencies.
 
-| Platform      | Artifact                | Minecraft  | Java  |
-|---------------|-------------------------|:----------:|:-----:|
-| Common        | `uniform-common`        |     -      | >`17` |
-| Paper         | `uniform-paper`         | \>`1.20.4` | >`17` |
-| Velocity      | `uniform-velocity`      | \>`3.3.0`  | >`17` |
-| Fabric 1.20.1 | `uniform-fabric-1_20_1` | =`1.20.1`  | >`17` |
-| Fabric 1.20.6 | `uniform-fabric-1_20_6` | =`1.20.6`  | >`21` |
+| Platform      | Artifact                | Minecraft  |  Java  |
+|---------------|-------------------------|:----------:|:------:|
+| Common        | `uniform-common`        |     -      | \>`17` |
+| Paper         | `uniform-paper`         | \>`1.20.4` | \>`17` |
+| Velocity      | `uniform-velocity`      | \>`3.3.0`  | \>`17` |
+| Fabric 1.20.1 | `uniform-fabric-1_20_1` | =`1.20.1`  | \>`17` |
+| Fabric 1.20.6 | `uniform-fabric-1_20_6` | =`1.20.6`  | \>`21` |
 
 Uniform _plans_ to support the following platforms in the future:
 
-| Platform | Version    | Java  |
-|----------|------------|:-----:|
-| Spigot   | \>`1.17.1` | >`17` |
-| Sponge 8 | =`1.19.4`  | >`17` |
+| Platform | Version    |  Java  |
+|----------|------------|:------:|
+| Spigot   | \>`1.17.1` | \>`17` |
+| Sponge 8 | =`1.19.4`  | \>`17` |
 
 
 ## Setup
