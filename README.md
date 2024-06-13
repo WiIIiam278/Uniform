@@ -15,13 +15,14 @@
 
 **Uniform** is cross-platform wrapper for making Brigadier commands, based on [`BrigadierWrapper` by Tofaa2](https://github.com/Tofaa2/BrigadierWrapper/), which itself was inspired by [EmortalMC's `command-system`](https://github.com/emortalmc/command-system).
 
-Uniform _currently_ targets the following platforms, (in addition to `uniform-common` which you can compile against in multi-platform plugins):
+Uniform _currently_ targets the following platforms:
 
 Please note Uniform on Fabric requires [adventure-platform-fabric](https://docs.advntr.dev/platform/fabric.html) and the [Fabric API](https://fabricmc.net/) as dependencies.
 
 | Platform      | Artifact                | Minecraft  | Java  |
 |---------------|-------------------------|:----------:|:-----:|
-| Paper         | `uniform-paper`         | \>`1.20.4` | >`17` |
+| Common        | `uniform-common`        |     -      | >`17` |
+| Paper         | `uniform-paper`         | \>`1.20.6` | >`21` |
 | Velocity      | `uniform-velocity`      | \>`3.3.0`  | >`17` |
 | Fabric 1.20.1 | `uniform-fabric-1.20.1` | =`1.20.1`  | >`17` |
 | Fabric 1.20.6 | `uniform-fabric-1.20.6` | =`1.20.6`  | >`21` |
