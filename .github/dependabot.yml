@@ -21,3 +21,4 @@ updates:
       - dependency-name: 'org.spigotmc:spigot-api'
       - dependency-name: 'io.papermc.paper:paper-api'
       - dependency-name: 'io.papermc.paper:paper-mojangapi'
+      - dependency-name: 'com.velocitypowered:velocity-api'
