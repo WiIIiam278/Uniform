@@ -19,25 +19,33 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.william278.uniform.element;
+package net.william278.uniform.velocity;
 
-
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.builder.ArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
-import org.jetbrains.annotations.NotNull;
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
+import net.kyori.adventure.audience.Audience;
+import net.william278.uniform.CommandUser;
 import org.jetbrains.annotations.Nullable;
 
-public record ArgumentElement<S, T>(@NotNull String name, @NotNull ArgumentType<T> type,
-                                    @Nullable SuggestionProvider<S> suggestionProvider) implements CommandElement<S> {
+import java.util.UUID;
+
+public record VelocityCommandUser(CommandSource source) implements CommandUser {
 
     @Override
-    @NotNull
-    public ArgumentBuilder<S, ?> toBuilder() {
-        var builder = RequiredArgumentBuilder.<S, T>argument(this.name, this.type);
-        if (this.suggestionProvider != null) builder.suggests(this.suggestionProvider);
-        return builder;
+    public Audience getAudience() {
+        return source;
+    }
+
+    @Override
+    @Nullable
+    public String getName() {
+        return source instanceof Player ? ((Player) source).getUsername() : null;
+    }
+
+    @Override
+    @Nullable
+    public UUID getUniqueId() {
+        return source instanceof Player ? ((Player) source).getUniqueId() : null;
     }
 
 }

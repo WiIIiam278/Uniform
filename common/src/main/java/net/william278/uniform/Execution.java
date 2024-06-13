@@ -35,7 +35,7 @@ record Execution<S>(@NotNull Predicate<S> predicate, @Nullable CommandExecutor<S
     private static final Executor CACHED_EXECUTOR = Executors.newCachedThreadPool();
 
     @NotNull
-    static <S> Execution<S> fromCommand(@NotNull Command<S> command) {
+    static <S> Execution<S> fromCommand(@NotNull BaseCommand<S> command) {
         CommandExecutor<S> defaultExecutor = command.getDefaultExecutor();
         Predicate<S> defaultCondition = command.getCondition();
 

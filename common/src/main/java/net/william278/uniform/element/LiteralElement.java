@@ -32,4 +32,5 @@ public record LiteralElement<S>(@NotNull String name) implements CommandElement<
     public ArgumentBuilder<S, ?> toBuilder() {
         return LiteralArgumentBuilder.literal(this.name);
     }
+
 }

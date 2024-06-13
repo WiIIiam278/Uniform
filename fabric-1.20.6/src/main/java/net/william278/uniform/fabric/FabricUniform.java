@@ -19,14 +19,12 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.william278.uniform.paper;
+package net.william278.uniform.fabric;
 
-import com.destroystokyo.paper.event.brigadier.CommandRegisteredEvent;
+
 import com.google.common.collect.Sets;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.william278.uniform.Command;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -34,40 +32,31 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * A class for registering commands with the Paper server's command manager
+ * A class for registering commands with the Fabric (1.20.6) server
  *
  * @since 1.0
  */
-@SuppressWarnings("UnstableApiUsage")
-public final class PaperUniform implements Listener {
+public final class FabricUniform {
 
-    private static PaperUniform INSTANCE;
+    private static FabricUniform INSTANCE;
 
-    private final Set<PaperCommand> commands = Sets.newHashSet();
+    private final Set<FabricCommand> commands = Sets.newHashSet();
 
-    private PaperUniform(@NotNull JavaPlugin plugin) {
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-    }
-
-    @EventHandler
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private void onCommandRegistered(@NotNull CommandRegisteredEvent event) {
-        for (PaperCommand command : commands) {
-            event.getRoot().addChild(command.build());
-            commands.remove(command);
-        }
+    private FabricUniform() {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registry, environment) ->
+                commands.forEach(command -> dispatcher.register(command.build().createBuilder()))
+        );
     }
 
     /**
-     * Get the PaperUniform instance for registering commands
+     * Get the FabricUniform instance for registering commands
      *
-     * @param plugin The plugin instance
-     * @return The PaperUniform instance
+     * @return The FabricUniform instance
      * @since 1.0
      */
     @NotNull
-    public static PaperUniform getInstance(@NotNull JavaPlugin plugin) {
-        return INSTANCE != null ? INSTANCE : (INSTANCE = new PaperUniform(plugin));
+    public static FabricUniform getInstance() {
+        return INSTANCE != null ? INSTANCE : (INSTANCE = new FabricUniform());
     }
 
     /**
@@ -76,18 +65,18 @@ public final class PaperUniform implements Listener {
      * @param commands The commands to register
      * @since 1.0
      */
-    public void register(@NotNull PaperCommand... commands) {
+    public void register(@NotNull FabricCommand... commands) {
         Collections.addAll(this.commands, commands);
     }
 
     /**
-     * Register command(s) to be added to the server's command manager
+     * Register a command to be added to the server's command manager
      *
      * @param commands The commands to register
      * @since 1.0
      */
     public void register(@NotNull Command... commands) {
-        register(Arrays.stream(commands).map(PaperCommand::new).toArray(PaperCommand[]::new));
+        register(Arrays.stream(commands).map(FabricCommand::new).toArray(FabricCommand[]::new));
     }
 
 }

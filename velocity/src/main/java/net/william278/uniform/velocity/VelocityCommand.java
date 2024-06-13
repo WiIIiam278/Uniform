@@ -28,12 +28,18 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
+import net.william278.uniform.CommandUser;
 import net.william278.uniform.element.ArgumentElement;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public class VelocityCommand extends Command<CommandSource> {
+public class VelocityCommand extends BaseCommand<CommandSource> {
+
+    public VelocityCommand(@NotNull Command command) {
+        super(command);
+    }
 
     public VelocityCommand(@NotNull String name, @NotNull String... aliases) {
         super(name, aliases);
@@ -83,4 +89,9 @@ public class VelocityCommand extends Command<CommandSource> {
         });
     }
 
+    @Override
+    @NotNull
+    protected CommandUser getUser(@NotNull CommandSource user) {
+        return new VelocityCommandUser(user);
+    }
 }

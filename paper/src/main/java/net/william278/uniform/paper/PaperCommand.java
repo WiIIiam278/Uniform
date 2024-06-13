@@ -23,7 +23,9 @@ package net.william278.uniform.paper;
 
 import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
+import net.william278.uniform.CommandUser;
 import net.william278.uniform.element.ArgumentElement;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -34,7 +36,11 @@ import java.util.Collection;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class PaperCommand extends Command<BukkitBrigadierCommandSource> {
+public class PaperCommand extends BaseCommand<BukkitBrigadierCommandSource> {
+
+    public PaperCommand(@NotNull Command command) {
+        super(command);
+    }
 
     public PaperCommand(@NotNull String name, @NotNull String... aliases) {
         super(name, aliases);
@@ -74,6 +80,12 @@ public class PaperCommand extends Command<BukkitBrigadierCommandSource> {
             }
             return builder.buildFuture();
         });
+    }
+
+    @Override
+    @NotNull
+    protected CommandUser getUser(@NotNull BukkitBrigadierCommandSource user) {
+        return new PaperCommandUser(user);
     }
 
 }

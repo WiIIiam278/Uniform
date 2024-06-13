@@ -29,11 +29,11 @@ import org.jetbrains.annotations.NotNull;
 
 record Graph<S>(@NotNull Node<S> root) {
 
-    static <S> @NotNull Graph<S> create(@NotNull Command<S> command) {
+    static <S> @NotNull Graph<S> create(@NotNull BaseCommand<S> command) {
         return new Graph<>(Node.command(command));
     }
 
-    static <S> @NotNull CommandElement<S> commandToElement(@NotNull Command<S> command) {
+    static <S> @NotNull CommandElement<S> commandToElement(@NotNull BaseCommand<S> command) {
         return new LiteralElement<>(command.getName());
     }
 

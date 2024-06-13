@@ -17,19 +17,70 @@
 
 Uniform _currently_ targets the following platforms, (in addition to `uniform-common` which you can compile against in multi-platform plugins):
 
-| Platform       | Artifact           | Version    | Java  |
-|----------------|--------------------|------------|:-----:|
-| Paper          | `uniform-paper`    | \>`1.20.4` | >`17` |
-| Velocity       | `uniform-velocity` | \>`3.3.0`  | >`17` |
+| Platform      | Artifact                | Minecraft  | Java  |
+|---------------|-------------------------|:----------:|:-----:|
+| Paper         | `uniform-paper`         | \>`1.20.4` | >`17` |
+| Velocity      | `uniform-velocity`      | \>`3.3.0`  | >`17` |
+| Fabric 1.20.1 | `uniform-fabric-1.20.1` | =`1.20.1`  | >`17` |
+| Fabric 1.20.6 | `uniform-fabric-1.20.6` | =`1.20.6`  | >`21` |
 
 Uniform _plans_ to support the following platforms:
 
 | Platform       | Version    | Java  |
 |----------------|------------|:-----:|
-| Fabric         | =`1.20.6`  | >`21` |
 | Spigot&dagger; | \>`1.17.1` | >`17` |
 
 &dagger; Brigadier commands are wrapped into non-brigadier Bukkit plugin commands for legacy Spigot support.
+
+## Using
+### Platform-specific commands
+Extend the platform-specific `PlatformCommand` class and implement the `execute` method.
+
+```java
+public class ExampleCommand extends PaperCommand {
+
+    public ExampleCommand() {
+        super("example", "platform-specific");
+        addSyntax((context) -> {
+            context.getSource().getBukkitSender().sendMessage("Woah!!!!");
+            String arg = context.getArgument("message", String.class);
+            context.getSource().getBukkitSender().sendMessage(MiniMessage.miniMessage().deserialize(arg));
+        }, stringArg("message"));
+    }
+
+}
+```
+
+### Cross-platform commands
+Target `uniform-common` and implement the `Command` class.
+
+```java
+public class ExampleCrossPlatCommand implements Command {
+
+    @Override
+    @NotNull
+    public String getNamespace() {
+        return "example";
+    }
+
+    @Override
+    @NotNull
+    public List<String> getAliases() {
+        return List.of("cross-plat");
+    }
+
+    @Override
+    public <S> void provide(@NotNull BaseCommand<S> command) {
+        command.setCondition(source -> true);
+        command.setDefaultExecutor((ctx) -> {
+            // Use command.getUser(ctx.getSource()) to get the user
+            final Audience user = command.getUser(ctx.getSource()).getAudience();
+            user.sendMessage(Component.text("Hello, world!"));
+        });
+    }
+
+}
+```
 
 ## Setup
 Uniform is available [on Maven](https://repo.william278.net/#/releases/net/william278/uniform/). You can browse the Javadocs [here](https://repo.william278.net/javadoc/releases/net/william278/uniform/latest).

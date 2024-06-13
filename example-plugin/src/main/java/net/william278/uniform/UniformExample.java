@@ -29,7 +29,9 @@ public class UniformExample extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        PaperUniform.getInstance(this).register(new ExampleCommand());
+        PaperUniform uniform = PaperUniform.getInstance(this);
+        uniform.register(new ExampleCommand());
+        uniform.register(new ExampleCrossPlatCommand());
     }
 
 }

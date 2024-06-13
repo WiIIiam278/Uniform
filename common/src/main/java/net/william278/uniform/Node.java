@@ -31,7 +31,7 @@ import java.util.List;
 
 record Node<S>(@NotNull CommandElement<S> element, @Nullable Execution<S> execution, @NotNull List<Node<S>> children) {
 
-    static <S> @NotNull Node<S> command(@NotNull Command<S> command) {
+    static <S> @NotNull Node<S> command(@NotNull BaseCommand<S> command) {
         return ConversionNode.fromCommand(command).toNode();
     }
 

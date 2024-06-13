@@ -34,7 +34,7 @@ import static net.william278.uniform.Graph.commandToElement;
 record ConversionNode<S>(@NotNull CommandElement<S> element, @Nullable Execution<S> execution,
                          @NotNull Map<CommandElement<S>, ConversionNode<S>> nextMap) {
 
-    static <S> @NotNull ConversionNode<S> fromCommand(@NotNull Command<S> command) {
+    static <S> @NotNull ConversionNode<S> fromCommand(@NotNull BaseCommand<S> command) {
         ConversionNode<S> root = new ConversionNode<>(commandToElement(command), Execution.fromCommand(command));
 
         for (CommandSyntax<S> syntax : command.getSyntaxes()) {
@@ -49,7 +49,7 @@ record ConversionNode<S>(@NotNull CommandElement<S> element, @Nullable Execution
             }
         }
 
-        for (Command<S> subCommand : command.getSubCommands()) {
+        for (BaseCommand<S> subCommand : command.getSubCommands()) {
             root.nextMap.put(commandToElement(subCommand), fromCommand(subCommand));
         }
 

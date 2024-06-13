@@ -23,6 +23,7 @@ package net.william278.uniform.velocity;
 
 import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.proxy.ProxyServer;
+import net.william278.uniform.Command;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -56,13 +57,23 @@ public final class VelocityUniform {
     }
 
     /**
-     * Register one or more commands with the server's command manager
+     * Register a command with the server's command manager
      *
      * @param commands The commands to register
      * @since 1.0
      */
     public void register(@NotNull VelocityCommand... commands) {
         Arrays.stream(commands).forEach(cmd -> server.getCommandManager().register(new BrigadierCommand(cmd.build())));
+    }
+
+    /**
+     * Register a command with the server's command manager
+     *
+     * @param commands The commands to register
+     * @since 1.0
+     */
+    public void register(@NotNull Command... commands) {
+        register(Arrays.stream(commands).map(VelocityCommand::new).toArray(VelocityCommand[]::new));
     }
 
 }

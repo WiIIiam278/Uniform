@@ -19,25 +19,35 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.william278.uniform.element;
+package net.william278.uniform;
 
-
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.builder.ArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public record ArgumentElement<S, T>(@NotNull String name, @NotNull ArgumentType<T> type,
-                                    @Nullable SuggestionProvider<S> suggestionProvider) implements CommandElement<S> {
+import java.util.List;
+
+public class ExampleCrossPlatCommand implements Command {
 
     @Override
     @NotNull
-    public ArgumentBuilder<S, ?> toBuilder() {
-        var builder = RequiredArgumentBuilder.<S, T>argument(this.name, this.type);
-        if (this.suggestionProvider != null) builder.suggests(this.suggestionProvider);
-        return builder;
+    public String getNamespace() {
+        return "example";
+    }
+
+    @Override
+    @NotNull
+    public List<String> getAliases() {
+        return List.of("cross-plat");
+    }
+
+    @Override
+    public <S> void provide(@NotNull BaseCommand<S> command) {
+        command.setCondition(source -> true);
+        command.setDefaultExecutor((ctx) -> {
+            final Audience user = command.getUser(ctx.getSource()).getAudience();
+            user.sendMessage(Component.text("Hello, world!"));
+        });
     }
 
 }
