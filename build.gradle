@@ -130,7 +130,7 @@ subprojects {
 
         if (['paper'].contains(project.name)) {
             publications {
-                mavenJavaBukkit(MavenPublication) {
+                mavenJavaPaper(MavenPublication) {
                     groupId = 'net.william278.uniform'
                     artifactId = 'uniform-paper'
                     version = "$rootProject.version"
@@ -143,7 +143,7 @@ subprojects {
 
         if (['velocity'].contains(project.name)) {
             publications {
-                mavenJavaBukkit(MavenPublication) {
+                mavenJavaVelocity(MavenPublication) {
                     groupId = 'net.william278.uniform'
                     artifactId = 'uniform-velocity'
                     version = "$rootProject.version"
