@@ -33,7 +33,7 @@ public record FabricCommandUser(@NotNull ServerCommandSource source) implements 
 
     @Override
     public Audience getAudience() {
-        return source.getPlayer();
+        return (Audience) source.getPlayer();
     }
 
     @Override
