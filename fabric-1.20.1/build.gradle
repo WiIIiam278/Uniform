@@ -1,0 +1,19 @@
+plugins {
+    id 'fabric-loom' version '1.6-SNAPSHOT'
+    id 'java-library'
+    id 'maven-publish'
+}
+
+dependencies {
+    api project(path: ':common')
+
+    minecraft 'com.mojang:minecraft:1.20.1'
+    mappings 'net.fabricmc:yarn:1.20.1+build.10:v2'
+
+    modCompileOnly 'net.fabricmc:fabric-loader:0.15.11'
+    modCompileOnly 'net.fabricmc.fabric-api:fabric-api:0.92.2+1.20.1'
+
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+}

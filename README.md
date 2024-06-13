@@ -17,16 +17,17 @@
 
 Uniform _currently_ targets the following platforms, (in addition to `uniform-common` which you can compile against in multi-platform plugins):
 
-| Platform       | Artifact           | Version    | Java  |
-|----------------|--------------------|------------|:-----:|
-| Paper          | `uniform-paper`    | \>`1.20.4` | >`17` |
-| Velocity       | `uniform-velocity` | \>`3.3.0`  | >`17` |
+| Platform      | Artifact                | Minecraft  | Java  |
+|---------------|-------------------------|:----------:|:-----:|
+| Paper         | `uniform-paper`         | \>`1.20.4` | >`17` |
+| Velocity      | `uniform-velocity`      | \>`3.3.0`  | >`17` |
+| Fabric 1.20.1 | `uniform-fabric-1.20.1` | =`1.20.1`  | >`17` |
+| Fabric 1.20.6 | `uniform-fabric-1.20.6` | =`1.20.6`  | >`21` |
 
 Uniform _plans_ to support the following platforms:
 
 | Platform       | Version    | Java  |
 |----------------|------------|:-----:|
-| Fabric         | =`1.20.6`  | >`21` |
 | Spigot&dagger; | \>`1.17.1` | >`17` |
 
 &dagger; Brigadier commands are wrapped into non-brigadier Bukkit plugin commands for legacy Spigot support.

@@ -59,6 +59,7 @@ allprojects {
         mavenCentral()
         maven { url 'https://repo.papermc.io/repository/maven-public/' }
         maven { url 'https://libraries.minecraft.net/' }
+        maven { url 'https://maven.fabricmc.net/' }
     }
 
     dependencies {

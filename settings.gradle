@@ -1,14 +1,24 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
+        maven { url 'https://maven.fabricmc.net/' }
     }
 }
 
 rootProject.name = 'Uniform'
 include(
         'common',
+
+        // Server Plugins
         'paper',
+
+        // Proxy Plugins
         'velocity',
 
+        // Fabric Server-Side Mods
+        'fabric-1.20.1',
+        'fabric-1.20.6',
+
+        // Example plugin
         'example-plugin'
 )

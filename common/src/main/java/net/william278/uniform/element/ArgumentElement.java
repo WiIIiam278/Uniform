@@ -39,4 +39,5 @@ public record ArgumentElement<S, T>(@NotNull String name, @NotNull ArgumentType<
         if (this.suggestionProvider != null) builder.suggests(this.suggestionProvider);
         return builder;
     }
+
 }
