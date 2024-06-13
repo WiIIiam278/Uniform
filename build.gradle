@@ -154,6 +154,30 @@ subprojects {
                 }
             }
         }
+        if (['fabric-1.20.1'].contains(project.name)) {
+            publications {
+                mavenJavaFabric1_20_1(MavenPublication) {
+                    groupId = 'net.william278.uniform'
+                    artifactId = 'uniform-fabric-1_20_1'
+                    version = "$rootProject.version"
+                    artifact shadowJar
+                    artifact sourcesJar
+                    artifact javadocJar
+                }
+            }
+        }
+        if (['fabric-1.20.6'].contains(project.name)) {
+            publications {
+                mavenJavaFabric1_20_6(MavenPublication) {
+                    groupId = 'net.william278.uniform'
+                    artifactId = 'uniform-fabric-1_20_6'
+                    version = "$rootProject.version"
+                    artifact shadowJar
+                    artifact sourcesJar
+                    artifact javadocJar
+                }
+            }
+        }
 
     }
 
