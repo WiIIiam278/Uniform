@@ -17,6 +17,8 @@
 
 Uniform _currently_ targets the following platforms, (in addition to `uniform-common` which you can compile against in multi-platform plugins):
 
+Please note Uniform on Fabric requires [adventure-platform-fabric](https://docs.advntr.dev/platform/fabric.html) and the [Fabric API](https://fabricmc.net/) as dependencies.
+
 | Platform      | Artifact                | Minecraft  | Java  |
 |---------------|-------------------------|:----------:|:-----:|
 | Paper         | `uniform-paper`         | \>`1.20.4` | >`17` |
