@@ -15,12 +15,12 @@
 
 **Uniform** is cross-platform wrapper for making Brigadier commands, based on [`BrigadierWrapper` by Tofaa2](https://github.com/Tofaa2/BrigadierWrapper/), which itself was inspired by [EmortalMC's `command-system`](https://github.com/emortalmc/command-system).
 
-Uniform _currently_ targets the following platforms:
+Uniform _currently_ targets the following platforms, (in addition to `uniform-common` which you can compile against in multi-platform plugins):
 
-| Platform       | Version    | Java  |
-|----------------|------------|:-----:|
-| Paper          | \>`1.20.4` | >`17` |
-| Velocity       | \>`3.3.0`  | >`17` |
+| Platform       | Artifact           | Version    | Java  |
+|----------------|--------------------|------------|:-----:|
+| Paper          | `uniform-paper`    | \>`1.20.4` | >`17` |
+| Velocity       | `uniform-velocity` | \>`3.3.0`  | >`17` |
 
 Uniform _plans_ to support the following platforms:
 
@@ -29,7 +29,7 @@ Uniform _plans_ to support the following platforms:
 | Fabric         | =`1.20.6`  | >`21` |
 | Spigot&dagger; | \>`1.17.1` | >`17` |
 
-&dagger; Brigadier commands are wrapped into Bukkit commands for Spigot.
+&dagger; Brigadier commands are wrapped into non-brigadier Bukkit plugin commands for legacy Spigot support.
 
 ## Setup
 Uniform is available [on Maven](https://repo.william278.net/#/releases/net/william278/uniform/). You can browse the Javadocs [here](https://repo.william278.net/javadoc/releases/net/william278/uniform/latest).
@@ -44,7 +44,7 @@ repositories {
 }
 ```
 
-Then, add the dependency itself. Replace `VERSION` with the latest release version. (e.g., `1.0`) and `PLATFORM` with the platform you are targeting (e.g., `bukkit`). If you want to target pre-release "snapshot" versions (not recommended), you should use the `/snapshots` repository instead.
+Then, add the dependency itself. Replace `VERSION` with the latest release version. (e.g., `1.0`) and `PLATFORM` with the platform you are targeting (e.g., `paper`). If you want to target pre-release "snapshot" versions (not recommended), you should use the `/snapshots` repository instead.
 
 ```groovy
 dependencies {
