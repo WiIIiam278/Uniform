@@ -26,17 +26,43 @@ Please note Uniform on Fabric requires [adventure-platform-fabric](https://docs.
 | Fabric 1.20.1 | `uniform-fabric-1.20.1` | =`1.20.1`  | >`17` |
 | Fabric 1.20.6 | `uniform-fabric-1.20.6` | =`1.20.6`  | >`21` |
 
-Uniform _plans_ to support the following platforms:
+Uniform _plans_ to support the following platforms in the future:
 
-| Platform       | Version    | Java  |
-|----------------|------------|:-----:|
-| Spigot&dagger; | \>`1.17.1` | >`17` |
+| Platform | Version    | Java  |
+|----------|------------|:-----:|
+| Spigot   | \>`1.17.1` | >`17` |
+| Sponge 8 | =`1.19.4`  | >`17` |
 
-&dagger; Brigadier commands are wrapped into non-brigadier Bukkit plugin commands for legacy Spigot support.
 
-## Using
+## Setup
+Uniform is available [on Maven](https://repo.william278.net/#/releases/net/william278/uniform/). You can browse the Javadocs [here](https://repo.william278.net/javadoc/releases/net/william278/uniform/latest).
+
+<details>
+<summary>Gradle setup instructions</summary> 
+
+First, add the Maven repository to your `build.gradle` file:
+```groovy
+repositories {
+    maven { url "https://repo.william278.net/releases" }
+}
+```
+
+Then, add the dependency itself. Replace `VERSION` with the latest release version. (e.g., `1.0`) and `PLATFORM` with the platform you are targeting (e.g., `paper`). If you want to target pre-release "snapshot" versions (not recommended), you should use the `/snapshots` repository instead.
+
+```groovy
+dependencies {
+    implementation "net.william278.uniform:uniform-PLATFORM:VERSION"
+}
+```
+</details>
+
+Using Maven/something else? There's instructions on how to include Uniform on [the repo browser](https://repo.william278.net/#/releases/net/william278/uniform).
+
+## Basic use
+Uniform lets you create commands either natively per-platform, or cross-platform (by compiling against `uniform-common` in a common module, then implementing `uniform-PLATFORM` in each platform, getting the platform specific Uniform manager instance and registering your commands).
+
 ### Platform-specific commands
-Extend the platform-specific `PlatformCommand` class and implement the `execute` method.
+Extend the platform-specific `PlatformCommand` class and add your Brigadier syntax.
 
 ```java
 public class ExampleCommand extends PaperCommand {
@@ -86,30 +112,6 @@ public class ExampleCrossPlatCommand implements Command {
 
 ### Registering
 Then, register the command with the platform-specific Uniform instance (e.g. `FabricUniform.getInstance()`, `PaperUniform.getInstance()`, etc...)
-
-## Setup
-Uniform is available [on Maven](https://repo.william278.net/#/releases/net/william278/uniform/). You can browse the Javadocs [here](https://repo.william278.net/javadoc/releases/net/william278/uniform/latest).
-
-<details>
-<summary>Gradle setup instructions</summary> 
-
-First, add the Maven repository to your `build.gradle` file:
-```groovy
-repositories {
-    maven { url "https://repo.william278.net/releases" }
-}
-```
-
-Then, add the dependency itself. Replace `VERSION` with the latest release version. (e.g., `1.0`) and `PLATFORM` with the platform you are targeting (e.g., `paper`). If you want to target pre-release "snapshot" versions (not recommended), you should use the `/snapshots` repository instead.
-
-```groovy
-dependencies {
-    implementation "net.william278.uniform:uniform-PLATFORM:VERSION"
-}
-```
-</details>
-
-Using Maven/something else? There's instructions on how to include Uniform on [the repo browser](https://repo.william278.net/#/releases/net/william278/uniform).
 
 ## Building
 To build Uniform, run `clean build` in the root directory. The output JARs will be in `target/`.
