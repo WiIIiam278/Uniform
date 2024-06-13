@@ -1,19 +1,178 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
+    id 'org.cadixdev.licenser' version '0.6.1' apply false
+    id 'io.github.goooler.shadow' version '8.1.7'
+    id 'org.ajoberstar.grgit' version '5.2.2'
+    id 'maven-publish'
     id 'java'
-    id 'java-library'
 }
 
-group = 'me.tofaa'
-version = '1.0-SNAPSHOT'
+group 'net.william278'
+version "$ext.library_version${versionMetadata()}"
+description "$ext.library_description"
+defaultTasks 'licenseFormat', 'build'
 
-repositories {
-    mavenCentral()
-    maven {
-        url = "https://libraries.minecraft.net/"
+publishing {
+    repositories {
+        if (System.getenv("RELEASES_MAVEN_USERNAME") != null) {
+            maven {
+                name = "william278-releases"
+                url = "https://repo.william278.net/releases"
+                credentials {
+                    username = System.getenv("RELEASES_MAVEN_USERNAME")
+                    password = System.getenv("RELEASES_MAVEN_PASSWORD")
+                }
+                authentication {
+                    basic(BasicAuthentication)
+                }
+            }
+        }
+        if (System.getenv("SNAPSHOTS_MAVEN_USERNAME") != null) {
+            maven {
+                name = "william278-snapshots"
+                url = "https://repo.william278.net/snapshots"
+                credentials {
+                    username = System.getenv("SNAPSHOTS_MAVEN_USERNAME")
+                    password = System.getenv("SNAPSHOTS_MAVEN_PASSWORD")
+                }
+                authentication {
+                    basic(BasicAuthentication)
+                }
+            }
+        }
     }
 }
 
-dependencies {
-    compileOnlyApi("com.mojang:brigadier:1.1.8")
-    compileOnlyApi("org.jetbrains:annotations:24.0.0")
+allprojects {
+    apply plugin: 'io.github.goooler.shadow'
+    apply plugin: 'org.cadixdev.licenser'
+    apply plugin: 'java'
+
+    compileJava.options.encoding = 'UTF-8'
+    compileJava.options.release.set 17
+    javadoc.options.encoding = 'UTF-8'
+    javadoc.options.addStringOption('Xdoclint:none', '-quiet')
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url 'https://repo.papermc.io/repository/maven-public/' }
+        maven { url 'https://libraries.minecraft.net/' }
+    }
+
+    dependencies {
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+        testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.2'
+        testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    license {
+        header = rootProject.file('HEADER')
+        include '**/*.java'
+        newLine = true
+    }
+
+    processResources {
+        filesMatching(['**/*.json', '**/*.yml']) {
+            filter ReplaceTokens as Class, beginToken: '${', endToken: '}',
+                    tokens: rootProject.ext.properties
+        }
+    }
+}
+
+subprojects {
+    version rootProject.version
+    archivesBaseName = "${rootProject.name}-${project.name.capitalize()}"
+
+    jar {
+        from '../LICENSE'
+    }
+
+    shadowJar {
+        destinationDirectory.set(file("$rootDir/target"))
+        archiveClassifier.set('')
+    }
+
+    // Don't include example plugin in publishing
+    if (['example-plugin'].contains(project.name)) return;
+
+    // API publishing
+    java {
+        withSourcesJar()
+        withJavadocJar()
+    }
+    sourcesJar {
+        destinationDirectory.set(file("$rootDir/target"))
+    }
+    javadocJar {
+        destinationDirectory.set(file("$rootDir/target"))
+    }
+    shadowJar.dependsOn(sourcesJar, javadocJar)
+
+    publishing {
+        if (['common'].contains(project.name)) {
+            publications {
+                mavenJavaCommon(MavenPublication) {
+                    groupId = 'net.william278.uniform'
+                    artifactId = 'uniform-common'
+                    version = "$rootProject.version"
+                    artifact shadowJar
+                    artifact sourcesJar
+                    artifact javadocJar
+                }
+            }
+        }
+
+        if (['paper'].contains(project.name)) {
+            publications {
+                mavenJavaBukkit(MavenPublication) {
+                    groupId = 'net.william278.uniform'
+                    artifactId = 'uniform-paper'
+                    version = "$rootProject.version"
+                    artifact shadowJar
+                    artifact sourcesJar
+                    artifact javadocJar
+                }
+            }
+        }
+
+        if (['velocity'].contains(project.name)) {
+            publications {
+                mavenJavaBukkit(MavenPublication) {
+                    groupId = 'net.william278.uniform'
+                    artifactId = 'uniform-velocity'
+                    version = "$rootProject.version"
+                    artifact shadowJar
+                    artifact sourcesJar
+                    artifact javadocJar
+                }
+            }
+        }
+
+    }
+
+    jar.dependsOn shadowJar
+    clean.delete "$rootDir/target"
+}
+
+logger.lifecycle("Building Uniform ${version} by William278")
+
+@SuppressWarnings('GrMethodMayBeStatic')
+def versionMetadata() {
+    // Get if there is a tag for this commit
+    def tag = grgit.tag.list().find { it.commit.id == grgit.head().id }
+    if (tag != null) {
+        return ''
+    }
+
+    // Otherwise, get the last commit hash and if it's a clean head
+    if (grgit == null) {
+        return '-' + System.getenv("GITHUB_RUN_NUMBER") ? 'build.' + System.getenv("GITHUB_RUN_NUMBER") : 'unknown'
+    }
+    return '-' + grgit.head().abbreviatedId + (grgit.status().clean ? '' : '-indev')
 }

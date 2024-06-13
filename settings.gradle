@@ -1,5 +1,14 @@
-rootProject.name = 'BrigadierWrapper'
-include 'paper'
-include 'velocity'
-include 'example-plugin'
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
 
+rootProject.name = 'Uniform'
+include(
+        'common',
+        'paper',
+        'velocity',
+
+        'example-plugin'
+)
