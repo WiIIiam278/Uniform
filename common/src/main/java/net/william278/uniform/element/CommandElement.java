@@ -26,5 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface CommandElement<S> {
 
-    @NotNull ArgumentBuilder<S, ?> toBuilder();
+    @NotNull
+    ArgumentBuilder<S, ?> toBuilder();
+
 }

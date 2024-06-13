@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 
 record Graph<S>(@NotNull Node<S> root) {
 
-
     static <S> @NotNull Graph<S> create(@NotNull Command<S> command) {
         return new Graph<>(Node.command(command));
     }
@@ -38,11 +37,13 @@ record Graph<S>(@NotNull Node<S> root) {
         return new LiteralElement<>(command.getName());
     }
 
-    @NotNull LiteralCommandNode<S> build() {
+    @NotNull
+    LiteralCommandNode<S> build() {
         CommandNode<S> node = this.root.build();
         if (!(node instanceof LiteralCommandNode<S> literalNode)) {
             throw new IllegalStateException("Root node is somehow not a literal node. This should be impossible.");
         }
         return literalNode;
     }
+
 }

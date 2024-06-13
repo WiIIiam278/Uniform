@@ -71,4 +71,5 @@ record ConversionNode<S>(@NotNull CommandElement<S> element, @Nullable Execution
 
         return new Node<>(this.element, this.execution, List.of(nodes));
     }
+
 }

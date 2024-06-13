@@ -28,7 +28,8 @@ import org.jetbrains.annotations.NotNull;
 public record LiteralElement<S>(@NotNull String name) implements CommandElement<S> {
 
     @Override
-    public @NotNull ArgumentBuilder<S, ?> toBuilder() {
+    @NotNull
+    public ArgumentBuilder<S, ?> toBuilder() {
         return LiteralArgumentBuilder.literal(this.name);
     }
 }

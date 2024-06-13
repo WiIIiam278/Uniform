@@ -46,4 +46,5 @@ record Node<S>(@NotNull CommandElement<S> element, @Nullable Execution<S> execut
 
         return builder.build();
     }
+
 }

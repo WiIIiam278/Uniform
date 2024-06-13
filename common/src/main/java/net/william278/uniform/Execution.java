@@ -21,7 +21,6 @@
 
 package net.william278.uniform;
 
-
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,13 +29,13 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 
-record Execution<S>(@NotNull Predicate<S> predicate, @Nullable CommandExecutor<S> defaultExecutor, @Nullable CommandExecutor<S> executor,
-                    @Nullable Predicate<S> condition) implements Predicate<S> {
+record Execution<S>(@NotNull Predicate<S> predicate, @Nullable CommandExecutor<S> defaultExecutor,
+                    @Nullable CommandExecutor<S> executor, @Nullable Predicate<S> condition) implements Predicate<S> {
 
     private static final Executor CACHED_EXECUTOR = Executors.newCachedThreadPool();
 
-
-    static <S> @NotNull Execution<S> fromCommand(@NotNull Command<S> command) {
+    @NotNull
+    static <S> Execution<S> fromCommand(@NotNull Command<S> command) {
         CommandExecutor<S> defaultExecutor = command.getDefaultExecutor();
         Predicate<S> defaultCondition = command.getCondition();
 
@@ -52,7 +51,8 @@ record Execution<S>(@NotNull Predicate<S> predicate, @Nullable CommandExecutor<S
         return new Execution<>(source -> defaultCondition == null || defaultCondition.test(source), defaultExecutor, executor, condition);
     }
 
-    static <S> @NotNull Execution<S> fromSyntax(@NotNull CommandSyntax<S> syntax) {
+    @NotNull
+    static <S> Execution<S> fromSyntax(@NotNull CommandSyntax<S> syntax) {
         CommandExecutor<S> executor = syntax.executor();
         Predicate<S> condition = syntax.condition();
         return new Execution<>(source -> condition == null || condition.test(source), null, executor, condition);
@@ -72,10 +72,12 @@ record Execution<S>(@NotNull Predicate<S> predicate, @Nullable CommandExecutor<S
         }
     }
 
-    private static <S> com.mojang.brigadier.@NotNull Command<S> convertExecutor(@NotNull CommandExecutor<S> executor) {
+    @NotNull
+    private static <S> com.mojang.brigadier.Command<S> convertExecutor(@NotNull CommandExecutor<S> executor) {
         return context -> {
             CACHED_EXECUTOR.execute(() -> executor.execute(context));
             return 1;
         };
     }
+
 }

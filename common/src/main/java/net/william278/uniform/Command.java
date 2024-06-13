@@ -24,6 +24,9 @@ package net.william278.uniform;
 import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.william278.uniform.element.ArgumentElement;
 import net.william278.uniform.element.CommandElement;
 import net.william278.uniform.element.LiteralElement;
@@ -31,26 +34,28 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
+@RequiredArgsConstructor
 public abstract class Command<S> {
 
+    @Getter
     private final String name;
+    @Getter
     private final String[] aliases;
 
-    private @Nullable Predicate<S> condition;
-    private @Nullable CommandExecutor<S> defaultExecutor;
-
+    @Nullable
+    @Getter(AccessLevel.PACKAGE)
+    private Predicate<S> condition;
+    @Nullable
+    @Getter(AccessLevel.PACKAGE)
+    private CommandExecutor<S> defaultExecutor;
+    @Getter(AccessLevel.PACKAGE)
     private final List<CommandSyntax<S>> syntaxes = new ArrayList<>();
+    @Getter(AccessLevel.PACKAGE)
     private final List<Command<S>> subCommands = new ArrayList<>();
-
-    public Command(@NotNull String name, @NotNull String... aliases) {
-        this.name = name;
-        this.aliases = aliases;
-    }
 
     public Command(@NotNull String name) {
         this(name, new String[0]);
@@ -80,76 +85,64 @@ public abstract class Command<S> {
         this.subCommands.add(command);
     }
 
-    public final @NotNull LiteralCommandNode<S> build() {
+    @NotNull
+    public final LiteralCommandNode<S> build() {
         return Graph.create(this).build();
     }
 
-    public final @NotNull String getName() {
-        return this.name;
-    }
-
-    public final @NotNull String[] getAliases() {
-        return this.aliases;
-    }
-
-    final @Nullable Predicate<S> getCondition() {
-        return this.condition;
-    }
-
-    final @Nullable CommandExecutor<S> getDefaultExecutor() {
-        return this.defaultExecutor;
-    }
-
-    final @NotNull Collection<CommandSyntax<S>> getSyntaxes() {
-        return this.syntaxes;
-    }
-
-    final @NotNull Collection<Command<S>> getSubCommands() {
-        return this.subCommands;
-    }
-
-    protected static <S> @NotNull LiteralElement<S> literalArg(@NotNull String name) {
+    @NotNull
+    protected static <S> LiteralElement<S> literalArg(@NotNull String name) {
         return new LiteralElement<>(name);
     }
 
-    protected static <S> @NotNull ArgumentElement<S, String> stringArg(@NotNull String name) {
+    @NotNull
+    protected static <S> ArgumentElement<S, String> stringArg(@NotNull String name) {
         return argument(name, StringArgumentType.string());
     }
 
-    protected static <S> @NotNull ArgumentElement<S, Integer> integerArg(@NotNull String name) {
+    @NotNull
+    protected static <S> ArgumentElement<S, Integer> integerArg(@NotNull String name) {
         return argument(name, IntegerArgumentType.integer());
     }
 
-    protected static <S> @NotNull ArgumentElement<S, Integer> integerArg(@NotNull String name, int min) {
+    @NotNull
+    protected static <S> ArgumentElement<S, Integer> integerArg(@NotNull String name, int min) {
         return argument(name, IntegerArgumentType.integer(min));
     }
 
-    protected static <S> @NotNull ArgumentElement<S, Integer> integerArg(@NotNull String name, int min, int max) {
+    @NotNull
+    protected static <S> ArgumentElement<S, Integer> integerArg(@NotNull String name, int min, int max) {
         return argument(name, IntegerArgumentType.integer(min, max));
     }
 
-    protected static <S> @NotNull ArgumentElement<S, Float> floatArg(@NotNull String name) {
+    @NotNull
+    protected static <S> ArgumentElement<S, Float> floatArg(@NotNull String name) {
         return argument(name, FloatArgumentType.floatArg());
     }
 
-    protected static <S> @NotNull ArgumentElement<S, Float> floatArg(@NotNull String name, float min) {
+    @NotNull
+    protected static <S> ArgumentElement<S, Float> floatArg(@NotNull String name, float min) {
         return argument(name, FloatArgumentType.floatArg(min));
     }
 
-    protected static <S> @NotNull ArgumentElement<S, Float> floatArg(@NotNull String name, float min, float max) {
+    @NotNull
+    protected static <S> ArgumentElement<S, Float> floatArg(@NotNull String name, float min, float max) {
         return argument(name, FloatArgumentType.floatArg(min, max));
     }
 
-    protected static <S> @NotNull ArgumentElement<S, Boolean> booleanArg(@NotNull String name) {
+    @NotNull
+    protected static <S> ArgumentElement<S, Boolean> booleanArg(@NotNull String name) {
         return argument(name, BoolArgumentType.bool());
     }
 
-    protected static <S, T> @NotNull ArgumentElement<S, T> argument(@NotNull String name, @NotNull ArgumentType<T> type,
-                                                                    @Nullable SuggestionProvider<S> suggestionProvider) {
+    @NotNull
+    protected static <S, T> ArgumentElement<S, T> argument(@NotNull String name, @NotNull ArgumentType<T> type,
+                                                           @Nullable SuggestionProvider<S> suggestionProvider) {
         return new ArgumentElement<>(name, type, suggestionProvider);
     }
 
-    protected static <S, T> @NotNull ArgumentElement<S, T> argument(@NotNull String name, @NotNull ArgumentType<T> type) {
+    @NotNull
+    protected static <S, T> ArgumentElement<S, T> argument(@NotNull String name, @NotNull ArgumentType<T> type) {
         return argument(name, type, null);
     }
 

@@ -27,4 +27,5 @@ import org.jetbrains.annotations.NotNull;
 public interface CommandExecutor<S> {
 
     void execute(@NotNull CommandContext<S> context);
+
 }

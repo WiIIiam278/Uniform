@@ -33,7 +33,8 @@ public record ArgumentElement<S, T>(@NotNull String name, @NotNull ArgumentType<
                                     @Nullable SuggestionProvider<S> suggestionProvider) implements CommandElement<S> {
 
     @Override
-    public @NotNull ArgumentBuilder<S, ?> toBuilder() {
+    @NotNull
+    public ArgumentBuilder<S, ?> toBuilder() {
         var builder = RequiredArgumentBuilder.<S, T>argument(this.name, this.type);
         if (this.suggestionProvider != null) builder.suggests(this.suggestionProvider);
         return builder;
