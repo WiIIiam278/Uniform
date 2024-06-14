@@ -34,6 +34,8 @@ import net.william278.uniform.CommandUser;
 import net.william278.uniform.element.ArgumentElement;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class VelocityCommand extends BaseCommand<CommandSource> {
 
@@ -41,8 +43,12 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
         super(command);
     }
 
-    public VelocityCommand(@NotNull String name, @NotNull String... aliases) {
+    public VelocityCommand(@NotNull String name, @NotNull List<String> aliases) {
         super(name, aliases);
+    }
+
+    public VelocityCommand(@NotNull String name, @NotNull String description, @NotNull List<String> aliases) {
+        super(name, description, aliases);
     }
 
     protected static ArgumentElement<CommandSource, RegisteredServer> serverArg(ProxyServer server, String name,

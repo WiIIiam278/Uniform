@@ -21,7 +21,7 @@
 
 package net.william278.uniform.paper;
 
-import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.kyori.adventure.audience.Audience;
 import net.william278.uniform.CommandUser;
 import org.jetbrains.annotations.NotNull;
@@ -29,23 +29,25 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public record PaperCommandUser(@NotNull BukkitBrigadierCommandSource source) implements CommandUser {
+@SuppressWarnings("UnstableApiUsage")
+public record PaperCommandUser(@NotNull CommandSourceStack source) implements CommandUser {
 
 
     @Override
-    public @NotNull Audience getAudience() {
-        return source.getBukkitSender();
+    @NotNull
+    public Audience getAudience() {
+        return source.getSender();
     }
 
     @Override
     @Nullable
     public String getName() {
-        return source.getBukkitEntity() != null ? source.getBukkitSender().getName() : null;
+        return source.getExecutor() != null ? source.getExecutor().getName() : null;
     }
 
     @Override
     @Nullable
     public UUID getUuid() {
-        return source.getBukkitEntity() != null ? source.getBukkitEntity().getUniqueId() : null;
+        return source.getExecutor() != null ? source.getExecutor().getUniqueId() : null;
     }
 }

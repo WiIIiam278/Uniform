@@ -21,8 +21,8 @@
 
 package net.william278.uniform.paper;
 
-import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
 import net.william278.uniform.CommandUser;
@@ -35,18 +35,22 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 
-@SuppressWarnings("unused")
-public class PaperCommand extends BaseCommand<BukkitBrigadierCommandSource> {
+@SuppressWarnings({"unused", "UnstableApiUsage"})
+public class PaperCommand extends BaseCommand<CommandSourceStack> {
 
     public PaperCommand(@NotNull Command command) {
         super(command);
     }
 
-    public PaperCommand(@NotNull String name, @NotNull String... aliases) {
+    public PaperCommand(@NotNull String name, @NotNull List<String> aliases) {
         super(name, aliases);
     }
 
-    protected static ArgumentElement<BukkitBrigadierCommandSource, Material> materialArg(String name) {
+    public PaperCommand(@NotNull String name, @NotNull String description, @NotNull List<String> aliases) {
+        super(name, description, aliases);
+    }
+
+    protected static ArgumentElement<CommandSourceStack, Material> materialArg(String name) {
         return new ArgumentElement<>(name, reader -> {
             String materialName = reader.readString();
             Material material = Material.matchMaterial(materialName);
@@ -62,7 +66,7 @@ public class PaperCommand extends BaseCommand<BukkitBrigadierCommandSource> {
         });
     }
 
-    protected static ArgumentElement<BukkitBrigadierCommandSource, Collection<? extends Player>> playerArg(String name) {
+    protected static ArgumentElement<CommandSourceStack, Collection<? extends Player>> playerArg(String name) {
         return new ArgumentElement<>(name, reader -> {
             String playerName = reader.readString();
             if (playerName.equals("@a")) {
@@ -84,7 +88,7 @@ public class PaperCommand extends BaseCommand<BukkitBrigadierCommandSource> {
 
     @Override
     @NotNull
-    protected CommandUser getUser(@NotNull BukkitBrigadierCommandSource user) {
+    protected CommandUser getUser(@NotNull CommandSourceStack user) {
         return new PaperCommandUser(user);
     }
 

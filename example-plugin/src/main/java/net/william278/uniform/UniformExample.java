@@ -28,7 +28,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class UniformExample extends JavaPlugin {
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         PaperUniform uniform = PaperUniform.getInstance(this);
         uniform.register(new ExampleCommand());
         uniform.register(new ExampleCrossPlatCommand());

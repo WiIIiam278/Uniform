@@ -42,17 +42,25 @@ public abstract class BaseCommand<S> {
     @Getter
     private final String name;
     @Getter
-    private final String[] aliases;
+    private final String description;
+    @Getter
+    private final List<String> aliases;
 
     public BaseCommand(@NotNull Command command) {
         this.name = command.getName();
-        this.aliases = command.getAliases().toArray(new String[0]);
+        this.aliases = command.getAliases();
+        this.description = command.getDescription();
         command.provide(this);
     }
 
-    public BaseCommand(@NotNull String name, @NotNull String... aliases) {
+    public BaseCommand(@NotNull String name, @NotNull String description, @NotNull List<String> aliases) {
         this.name = name;
         this.aliases = aliases;
+        this.description = description;
+    }
+
+    public BaseCommand(@NotNull String name, @NotNull List<String> aliases) {
+        this(name, "", aliases);
     }
 
     @Nullable

@@ -21,16 +21,15 @@
 
 package net.william278.uniform.paper;
 
-import com.destroystokyo.paper.event.brigadier.CommandRegisteredEvent;
 import com.google.common.collect.Sets;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.william278.uniform.Command;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -39,23 +38,22 @@ import java.util.Set;
  * @since 1.0
  */
 @SuppressWarnings("UnstableApiUsage")
-public final class PaperUniform implements Listener {
+public final class PaperUniform {
 
     private static PaperUniform INSTANCE;
 
     private final Set<PaperCommand> commands = Sets.newHashSet();
 
     private PaperUniform(@NotNull JavaPlugin plugin) {
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-    }
-
-    @EventHandler
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private void onCommandRegistered(@NotNull CommandRegisteredEvent event) {
-        for (PaperCommand command : commands) {
-            event.getRoot().addChild(command.build());
-        }
-        commands.clear();
+        plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, (event) -> {
+            commands.forEach(command -> event.registrar().register(
+                plugin.getPluginMeta(),
+                command.build(),
+                command.getDescription(),
+                command.getAliases()
+            ));
+            commands.clear();
+        });
     }
 
     /**

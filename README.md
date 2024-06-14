@@ -22,7 +22,7 @@ Please note Uniform on Fabric requires [adventure-platform-fabric](https://docs.
 | Platform      | Artifact                | Minecraft  |  Java  |
 |---------------|-------------------------|:----------:|:------:|
 | Common        | `uniform-common`        |     -      | \>`17` |
-| Paper         | `uniform-paper`         | \>`1.20.4` | \>`17` |
+| Paper         | `uniform-paper`         | \>`1.20.6` | \>`21` |
 | Velocity      | `uniform-velocity`      | \>`3.3.0`  | \>`17` |
 | Fabric 1.20.1 | `uniform-fabric-1_20_1` | =`1.20.1`  | \>`17` |
 | Fabric 1.20.6 | `uniform-fabric-1_20_6` | =`1.20.6`  | \>`21` |

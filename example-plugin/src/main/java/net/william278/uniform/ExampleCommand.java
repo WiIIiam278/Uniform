@@ -24,14 +24,17 @@ package net.william278.uniform;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.william278.uniform.paper.PaperCommand;
 
+import java.util.List;
+
+@SuppressWarnings("UnstableApiUsage")
 public class ExampleCommand extends PaperCommand {
 
     public ExampleCommand() {
-        super("example", "silly-command");
+        super("example", "An example command", List.of("silly-command"));
         addSyntax((context) -> {
-            context.getSource().getBukkitSender().sendMessage("Woah!!!!");
+            context.getSource().getSender().sendMessage("Woah!!!!");
             String arg = context.getArgument("message", String.class);
-            context.getSource().getBukkitSender().sendMessage(MiniMessage.miniMessage().deserialize(arg));
+            context.getSource().getSender().sendMessage(MiniMessage.miniMessage().deserialize(arg));
         }, stringArg("message"));
     }
 

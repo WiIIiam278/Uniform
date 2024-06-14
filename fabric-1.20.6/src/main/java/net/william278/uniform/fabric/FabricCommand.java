@@ -35,15 +35,21 @@ import net.william278.uniform.CommandUser;
 import net.william278.uniform.element.ArgumentElement;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class FabricCommand extends BaseCommand<ServerCommandSource> {
 
-    public FabricCommand(@NotNull String name, @NotNull String... aliases) {
+    public FabricCommand(@NotNull Command command) {
+        super(command);
+    }
+
+    public FabricCommand(@NotNull String name, @NotNull List<String> aliases) {
         super(name, aliases);
     }
 
-    public FabricCommand(@NotNull Command command) {
-        super(command);
+    public FabricCommand(@NotNull String name, @NotNull String description, @NotNull List<String> aliases) {
+        super(name, description, aliases);
     }
 
     protected static ArgumentElement<ServerCommandSource, Item> itemArg(String name) {

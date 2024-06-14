@@ -34,6 +34,12 @@ public class ExampleCrossPlatCommand implements Command {
     }
 
     @Override
+    @NotNull
+    public String getDescription() {
+        return "An example cross-platform command";
+    }
+
+    @Override
     public <S> void provide(@NotNull BaseCommand<S> command) {
         command.setCondition(source -> true);
         command.setDefaultExecutor((ctx) -> {

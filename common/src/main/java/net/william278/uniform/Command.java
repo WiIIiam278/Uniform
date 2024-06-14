@@ -31,6 +31,11 @@ public interface Command {
     String getName();
 
     @NotNull
+    default String getDescription() {
+        return "";
+    }
+
+    @NotNull
     default List<String> getAliases() {
         return List.of();
     }
