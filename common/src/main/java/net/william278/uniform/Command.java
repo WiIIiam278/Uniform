@@ -28,10 +28,12 @@ import java.util.List;
 public interface Command {
 
     @NotNull
-    String getNamespace();
+    String getName();
 
     @NotNull
-    List<String> getAliases();
+    default List<String> getAliases() {
+        return List.of();
+    }
 
     <S> void provide(@NotNull BaseCommand<S> command);
 

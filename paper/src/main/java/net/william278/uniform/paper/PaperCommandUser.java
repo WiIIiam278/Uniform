@@ -33,7 +33,7 @@ public record PaperCommandUser(@NotNull BukkitBrigadierCommandSource source) imp
 
 
     @Override
-    public Audience getAudience() {
+    public @NotNull Audience getAudience() {
         return source.getBukkitSender();
     }
 

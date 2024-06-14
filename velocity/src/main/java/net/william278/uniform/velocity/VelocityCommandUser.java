@@ -25,6 +25,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.audience.Audience;
 import net.william278.uniform.CommandUser;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -32,7 +33,7 @@ import java.util.UUID;
 public record VelocityCommandUser(CommandSource source) implements CommandUser {
 
     @Override
-    public Audience getAudience() {
+    public @NotNull Audience getAudience() {
         return source;
     }
 

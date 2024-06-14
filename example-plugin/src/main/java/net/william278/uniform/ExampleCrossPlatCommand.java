@@ -25,20 +25,12 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 public class ExampleCrossPlatCommand implements Command {
 
     @Override
     @NotNull
-    public String getNamespace() {
-        return "example";
-    }
-
-    @Override
-    @NotNull
-    public List<String> getAliases() {
-        return List.of("cross-plat");
+    public String getName() {
+        return "example-crossplat";
     }
 
     @Override

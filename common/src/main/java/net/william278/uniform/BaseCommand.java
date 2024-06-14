@@ -45,7 +45,7 @@ public abstract class BaseCommand<S> {
     private final String[] aliases;
 
     public BaseCommand(@NotNull Command command) {
-        this.name = command.getNamespace();
+        this.name = command.getName();
         this.aliases = command.getAliases().toArray(new String[0]);
         command.provide(this);
     }

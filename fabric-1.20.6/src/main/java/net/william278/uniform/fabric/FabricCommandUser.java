@@ -32,7 +32,7 @@ import java.util.UUID;
 public record FabricCommandUser(@NotNull ServerCommandSource source) implements CommandUser {
 
     @Override
-    public Audience getAudience() {
+    public @NotNull Audience getAudience() {
         return (Audience) source.getPlayer();
     }
 

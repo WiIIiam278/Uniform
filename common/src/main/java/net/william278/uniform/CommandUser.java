@@ -22,15 +22,20 @@
 package net.william278.uniform;
 
 import net.kyori.adventure.audience.Audience;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 public interface CommandUser {
 
+    @NotNull
     Audience getAudience();
 
+    @Nullable
     String getName();
 
+    @Nullable
     UUID getUniqueId();
 
 }

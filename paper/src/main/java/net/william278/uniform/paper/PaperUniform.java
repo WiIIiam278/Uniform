@@ -54,8 +54,8 @@ public final class PaperUniform implements Listener {
     private void onCommandRegistered(@NotNull CommandRegisteredEvent event) {
         for (PaperCommand command : commands) {
             event.getRoot().addChild(command.build());
-            commands.remove(command);
         }
+        commands.clear();
     }
 
     /**
