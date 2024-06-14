@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public interface CommandUser {
 
     @NotNull
@@ -36,6 +37,10 @@ public interface CommandUser {
     String getName();
 
     @Nullable
-    UUID getUniqueId();
+    UUID getUuid();
+
+    default boolean isConsole() {
+        return getName() == null;
+    }
 
 }

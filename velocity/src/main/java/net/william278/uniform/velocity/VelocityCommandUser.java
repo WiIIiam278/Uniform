@@ -45,7 +45,7 @@ public record VelocityCommandUser(CommandSource source) implements CommandUser {
 
     @Override
     @Nullable
-    public UUID getUniqueId() {
+    public UUID getUuid() {
         return source instanceof Player ? ((Player) source).getUniqueId() : null;
     }
 

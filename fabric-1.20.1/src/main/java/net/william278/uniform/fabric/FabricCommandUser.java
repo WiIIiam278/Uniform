@@ -44,7 +44,7 @@ public record FabricCommandUser(@NotNull ServerCommandSource source) implements 
 
     @Override
     @Nullable
-    public UUID getUniqueId() {
+    public UUID getUuid() {
         return source.getPlayer() != null ? source.getPlayer().getUuid() : null;
     }
 

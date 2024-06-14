@@ -45,7 +45,7 @@ public record PaperCommandUser(@NotNull BukkitBrigadierCommandSource source) imp
 
     @Override
     @Nullable
-    public UUID getUniqueId() {
+    public UUID getUuid() {
         return source.getBukkitEntity() != null ? source.getBukkitEntity().getUniqueId() : null;
     }
 }
