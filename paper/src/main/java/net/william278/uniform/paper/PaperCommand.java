@@ -23,6 +23,7 @@ package net.william278.uniform.paper;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
 import net.william278.uniform.CommandUser;
@@ -30,10 +31,12 @@ import net.william278.uniform.element.ArgumentElement;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings({"unused", "UnstableApiUsage"})
 public class PaperCommand extends BaseCommand<CommandSourceStack> {
@@ -48,6 +51,18 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
 
     public PaperCommand(@NotNull String name, @NotNull String description, @NotNull List<String> aliases) {
         super(name, description, aliases);
+    }
+
+    static void register(@NotNull JavaPlugin plugin, @NotNull Set<PaperCommand> commands) {
+        plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, (event) -> {
+            commands.forEach(command -> event.registrar().register(
+                plugin.getPluginMeta(),
+                command.build(),
+                command.getDescription(),
+                command.getAliases()
+            ));
+            commands.clear();
+        });
     }
 
     public static ArgumentElement<CommandSourceStack, Material> material(String name) {

@@ -19,18 +19,35 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.william278.uniform;
+package net.william278.uniform.paper;
 
-import net.william278.uniform.paper.PaperUniform;
-import org.bukkit.plugin.java.JavaPlugin;
+import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
+import net.kyori.adventure.audience.Audience;
+import net.william278.uniform.CommandUser;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("unused")
-public class UniformExample extends JavaPlugin {
+import java.util.UUID;
+
+@SuppressWarnings("removal")
+public record LegacyPaperCommandUser(@NotNull BukkitBrigadierCommandSource source) implements CommandUser {
 
     @Override
-    public void onEnable() {
-        PaperUniform uniform = PaperUniform.getInstance(this);
-        uniform.register(new ExampleCommand());
+    @NotNull
+    public Audience getAudience() {
+        return source.getBukkitSender();
+    }
+
+    @Override
+    @Nullable
+    public String getName() {
+        return source.getBukkitEntity() != null ? source.getBukkitEntity().getName() : null;
+    }
+
+    @Override
+    @Nullable
+    public UUID getUuid() {
+        return source.getBukkitEntity() != null ? source.getBukkitEntity().getUniqueId() : null;
     }
 
 }

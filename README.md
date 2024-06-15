@@ -22,7 +22,7 @@ Uniform _currently_ targets the following platforms:
 | Platform      | Artifact           | Minecraft  |  Java  |
 |---------------|--------------------|:----------:|:------:|
 | Common        | `uniform-common`   |     -      | \>`17` |
-| Paper         | `uniform-paper`    | \>`1.20.6` | \>`21` |
+| Paper         | `uniform-paper`    | \>`1.17.1` | \>`21` |
 | Velocity      | `uniform-velocity` | \>`3.3.0`  | \>`17` |
 | Fabric 1.20.1 | `uniform-fabric`   | =`1.20.1`  | \>`17` |
 | Fabric 1.20.6 | `uniform-fabric`   | =`1.20.6`  | \>`21` |

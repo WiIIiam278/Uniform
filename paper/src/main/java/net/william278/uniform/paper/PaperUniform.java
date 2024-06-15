@@ -22,10 +22,7 @@
 package net.william278.uniform.paper;
 
 import com.google.common.collect.Sets;
-import io.papermc.paper.command.brigadier.CommandSourceStack;
-import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.william278.uniform.Command;
-import net.william278.uniform.Uniform;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,23 +35,30 @@ import java.util.Set;
  *
  * @since 1.0
  */
-@SuppressWarnings("UnstableApiUsage")
-public final class PaperUniform implements Uniform<CommandSourceStack, PaperCommand> {
+public final class PaperUniform {
 
     private static PaperUniform INSTANCE;
 
+    private final Set<LegacyPaperCommand> legacyCommands = Sets.newHashSet();
     private final Set<PaperCommand> commands = Sets.newHashSet();
 
     private PaperUniform(@NotNull JavaPlugin plugin) {
-        plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, (event) -> {
-            commands.forEach(command -> event.registrar().register(
-                plugin.getPluginMeta(),
-                command.build(),
-                command.getDescription(),
-                command.getAliases()
-            ));
-            commands.clear();
-        });
+        if (isUseModernApi()) {
+            PaperCommand.register(plugin, commands);
+        } else {
+            plugin.getServer().getPluginManager().registerEvents(
+                new LegacyPaperCommand.Registrar(plugin, legacyCommands), plugin
+            );
+        }
+    }
+
+    private static boolean isUseModernApi() {
+        try {
+            Class.forName("io.papermc.paper.command.brigadier.CommandSourceStack");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     /**
@@ -75,9 +79,18 @@ public final class PaperUniform implements Uniform<CommandSourceStack, PaperComm
      * @param commands The commands to register
      * @since 1.0
      */
-    @Override
-    public void register(@NotNull PaperCommand... commands) {
+    public void register(PaperCommand... commands) {
         Collections.addAll(this.commands, commands);
+    }
+
+    /**
+     * Register a command to be added to the server's command manager
+     *
+     * @param commands The commands to register
+     * @since 1.0
+     */
+    public void register(LegacyPaperCommand... commands) {
+        Collections.addAll(this.legacyCommands, commands);
     }
 
     /**
@@ -86,9 +99,12 @@ public final class PaperUniform implements Uniform<CommandSourceStack, PaperComm
      * @param commands The commands to register
      * @since 1.0
      */
-    @Override
     public void register(@NotNull Command... commands) {
-        register(Arrays.stream(commands).map(PaperCommand::new).toArray(PaperCommand[]::new));
+        if (isUseModernApi()) {
+            register(Arrays.stream(commands).map(PaperCommand::new).toArray(PaperCommand[]::new));
+        } else {
+            register(Arrays.stream(commands).map(LegacyPaperCommand::new).toArray(LegacyPaperCommand[]::new));
+        }
     }
 
 }
