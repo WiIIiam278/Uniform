@@ -88,8 +88,13 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
 
     @Override
     @NotNull
-    protected CommandUser getUser(@NotNull CommandSourceStack user) {
-        return new PaperCommandUser(user);
+    protected CommandUser getUser(@NotNull Object user) {
+        return new PaperCommandUser((CommandSourceStack) user);
+    }
+
+    @Override
+    public void addSubCommand(@NotNull Command command) {
+        addSubCommand(new PaperCommand(command));
     }
 
 }

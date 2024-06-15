@@ -75,31 +75,42 @@ public abstract class BaseCommand<S> {
     private final List<BaseCommand<S>> subCommands = new ArrayList<>();
 
     @NotNull
-    protected abstract CommandUser getUser(@NotNull S user);
+    protected abstract CommandUser getUser(@NotNull Object user);
 
-    protected final void setCondition(@NotNull Predicate<S> condition) {
+    public final void setCondition(@NotNull Predicate<S> condition) {
         this.condition = condition;
     }
 
-    protected final void setDefaultExecutor(@NotNull CommandExecutor<S> executor) {
+    public final void setDefaultExecutor(@NotNull CommandExecutor<S> executor) {
         this.defaultExecutor = executor;
     }
 
     @SafeVarargs
-    protected final void addConditionalSyntax(@Nullable Predicate<S> condition, @NotNull CommandExecutor<S> executor,
-                                              @NotNull CommandElement<S>... elements) {
+    public final void addConditionalSyntax(@Nullable Predicate<S> condition, @NotNull CommandExecutor<S> executor,
+                                           @NotNull CommandElement<S>... elements) {
         var syntax = new CommandSyntax<>(condition, executor, List.of(elements));
         this.syntaxes.add(syntax);
     }
 
     @SafeVarargs
-    protected final void addSyntax(@NotNull CommandExecutor<S> executor, @NotNull CommandElement<S>... elements) {
+    public final void addSyntax(@NotNull CommandExecutor<S> executor, @NotNull CommandElement<S>... elements) {
         this.addConditionalSyntax(null, executor, elements);
     }
 
-    protected final void addSubCommand(@NotNull BaseCommand<S> command) {
+    public final void addSubCommand(@NotNull BaseCommand<S> command) {
         this.subCommands.add(command);
     }
+
+    public final void addSubCommand(@NotNull String name, @NotNull CommandProvider provider) {
+        this.addSubCommand(new Command.SubCommand(name, provider).command());
+    }
+
+    public final void addSubCommand(@NotNull String name, @NotNull List<String> aliases,
+                                    @NotNull CommandProvider provider) {
+        this.addSubCommand(new Command.SubCommand(name, provider, aliases).command());
+    }
+
+    public abstract void addSubCommand(@NotNull Command command);
 
     @NotNull
     public final LiteralCommandNode<S> build() {
@@ -107,59 +118,69 @@ public abstract class BaseCommand<S> {
     }
 
     @NotNull
-    protected static <S> LiteralElement<S> literalArg(@NotNull String name) {
+    public static <S> LiteralElement<S> literal(@NotNull String name) {
         return new LiteralElement<>(name);
     }
 
     @NotNull
-    protected static <S> ArgumentElement<S, String> stringArg(@NotNull String name) {
-        return argument(name, StringArgumentType.string());
+    public static <S> ArgumentElement<S, String> greedyString(@NotNull String name) {
+        return arg(name, StringArgumentType.greedyString());
     }
 
     @NotNull
-    protected static <S> ArgumentElement<S, Integer> integerArg(@NotNull String name) {
-        return argument(name, IntegerArgumentType.integer());
+    public static <S> ArgumentElement<S, String> string(@NotNull String name) {
+        return arg(name, StringArgumentType.string());
     }
 
     @NotNull
-    protected static <S> ArgumentElement<S, Integer> integerArg(@NotNull String name, int min) {
-        return argument(name, IntegerArgumentType.integer(min));
+    public static <S> ArgumentElement<S, String> word(@NotNull String name) {
+        return arg(name, StringArgumentType.word());
     }
 
     @NotNull
-    protected static <S> ArgumentElement<S, Integer> integerArg(@NotNull String name, int min, int max) {
-        return argument(name, IntegerArgumentType.integer(min, max));
+    public static <S> ArgumentElement<S, Integer> intNum(@NotNull String name) {
+        return arg(name, IntegerArgumentType.integer());
     }
 
     @NotNull
-    protected static <S> ArgumentElement<S, Float> floatArg(@NotNull String name) {
-        return argument(name, FloatArgumentType.floatArg());
+    public static <S> ArgumentElement<S, Integer> intNum(@NotNull String name, int min) {
+        return arg(name, IntegerArgumentType.integer(min));
     }
 
     @NotNull
-    protected static <S> ArgumentElement<S, Float> floatArg(@NotNull String name, float min) {
-        return argument(name, FloatArgumentType.floatArg(min));
+    public static <S> ArgumentElement<S, Integer> intNum(@NotNull String name, int min, int max) {
+        return arg(name, IntegerArgumentType.integer(min, max));
     }
 
     @NotNull
-    protected static <S> ArgumentElement<S, Float> floatArg(@NotNull String name, float min, float max) {
-        return argument(name, FloatArgumentType.floatArg(min, max));
+    public static <S> ArgumentElement<S, Float> floatNum(@NotNull String name) {
+        return arg(name, FloatArgumentType.floatArg());
     }
 
     @NotNull
-    protected static <S> ArgumentElement<S, Boolean> booleanArg(@NotNull String name) {
-        return argument(name, BoolArgumentType.bool());
+    public static <S> ArgumentElement<S, Float> floatNum(@NotNull String name, float min) {
+        return arg(name, FloatArgumentType.floatArg(min));
     }
 
     @NotNull
-    protected static <S, T> ArgumentElement<S, T> argument(@NotNull String name, @NotNull ArgumentType<T> type,
-                                                           @Nullable SuggestionProvider<S> suggestionProvider) {
+    public static <S> ArgumentElement<S, Float> floatNum(@NotNull String name, float min, float max) {
+        return arg(name, FloatArgumentType.floatArg(min, max));
+    }
+
+    @NotNull
+    public static <S> ArgumentElement<S, Boolean> bool(@NotNull String name) {
+        return arg(name, BoolArgumentType.bool());
+    }
+
+    @NotNull
+    public static <S, T> ArgumentElement<S, T> arg(@NotNull String name, @NotNull ArgumentType<T> type,
+                                                   @Nullable SuggestionProvider<S> suggestionProvider) {
         return new ArgumentElement<>(name, type, suggestionProvider);
     }
 
     @NotNull
-    protected static <S, T> ArgumentElement<S, T> argument(@NotNull String name, @NotNull ArgumentType<T> type) {
-        return argument(name, type, null);
+    public static <S, T> ArgumentElement<S, T> arg(@NotNull String name, @NotNull ArgumentType<T> type) {
+        return arg(name, type, null);
     }
 
 }

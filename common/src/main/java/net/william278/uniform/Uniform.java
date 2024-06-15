@@ -21,31 +21,11 @@
 
 package net.william278.uniform;
 
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.NotNull;
+public interface Uniform<S, T extends BaseCommand<S>> {
 
-public class ExampleCrossPlatCommand implements Command {
+    void register(Command... commands);
 
-    @Override
-    @NotNull
-    public String getName() {
-        return "example-crossplat";
-    }
-
-    @Override
-    @NotNull
-    public String getDescription() {
-        return "An example cross-platform command";
-    }
-
-    @Override
-    public <S> void provide(@NotNull BaseCommand<S> command) {
-        command.setCondition(source -> true);
-        command.setDefaultExecutor((ctx) -> {
-            final Audience user = command.getUser(ctx.getSource()).getAudience();
-            user.sendMessage(Component.text("Hello, world!"));
-        });
-    }
+    @SuppressWarnings("unchecked")
+    void register(T... commands);
 
 }

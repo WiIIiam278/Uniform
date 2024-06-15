@@ -81,8 +81,12 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
 
     @Override
     @NotNull
-    protected CommandUser getUser(@NotNull ServerCommandSource user) {
-        return new FabricCommandUser(user);
+    protected CommandUser getUser(@NotNull Object user) {
+        return new FabricCommandUser((ServerCommandSource) user);
     }
 
+    @Override
+    public void addSubCommand(@NotNull Command command) {
+        addSubCommand(new FabricCommand(command));
+    }
 }

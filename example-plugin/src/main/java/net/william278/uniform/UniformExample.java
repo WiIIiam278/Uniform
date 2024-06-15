@@ -31,7 +31,6 @@ public class UniformExample extends JavaPlugin {
     public void onLoad() {
         PaperUniform uniform = PaperUniform.getInstance(this);
         uniform.register(new ExampleCommand());
-        uniform.register(new ExampleCrossPlatCommand());
     }
 
 }

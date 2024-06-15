@@ -21,25 +21,38 @@
 
 package net.william278.uniform;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface Command {
+@Getter
+@Setter
+@RequiredArgsConstructor
+@AllArgsConstructor
+public abstract class Command implements CommandProvider {
 
-    @NotNull
-    String getName();
+    private final String name;
+    private String description = "";
+    private List<String> aliases = List.of();
 
-    @NotNull
-    default String getDescription() {
-        return "";
+    record SubCommand(@NotNull String name, @NotNull CommandProvider provider, @NotNull List<String> aliases) {
+        SubCommand(@NotNull String name, @NotNull CommandProvider provider) {
+            this(name, provider, List.of());
+        }
+
+        @NotNull
+        Command command() {
+            return new Command(name, "", aliases) {
+                @Override
+                public void provide(@NotNull BaseCommand<?> command) {
+                    provider.provide(command);
+                }
+            };
+        }
     }
-
-    @NotNull
-    default List<String> getAliases() {
-        return List.of();
-    }
-
-    <S> void provide(@NotNull BaseCommand<S> command);
 
 }

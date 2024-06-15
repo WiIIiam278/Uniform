@@ -22,14 +22,15 @@
 package net.william278.uniform.paper;
 
 import com.google.common.collect.Sets;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.william278.uniform.Command;
+import net.william278.uniform.Uniform;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -38,7 +39,7 @@ import java.util.Set;
  * @since 1.0
  */
 @SuppressWarnings("UnstableApiUsage")
-public final class PaperUniform {
+public final class PaperUniform implements Uniform<CommandSourceStack, PaperCommand> {
 
     private static PaperUniform INSTANCE;
 
@@ -74,6 +75,7 @@ public final class PaperUniform {
      * @param commands The commands to register
      * @since 1.0
      */
+    @Override
     public void register(@NotNull PaperCommand... commands) {
         Collections.addAll(this.commands, commands);
     }
@@ -84,6 +86,7 @@ public final class PaperUniform {
      * @param commands The commands to register
      * @since 1.0
      */
+    @Override
     public void register(@NotNull Command... commands) {
         register(Arrays.stream(commands).map(PaperCommand::new).toArray(PaperCommand[]::new));
     }

@@ -17,23 +17,17 @@
 
 Uniform _currently_ targets the following platforms:
 
-Please note Uniform on Fabric requires [adventure-platform-fabric](https://docs.advntr.dev/platform/fabric.html) and the [Fabric API](https://fabricmc.net/) as dependencies.
+| Platform      | Artifact           | Minecraft  |  Java  |
+|---------------|--------------------|:----------:|:------:|
+| Common        | `uniform-common`   |     -      | \>`17` |
+| Paper         | `uniform-paper`    | \>`1.20.6` | \>`21` |
+| Velocity      | `uniform-velocity` | \>`3.3.0`  | \>`17` |
+| Fabric 1.20.1 | `uniform-fabric`   | =`1.20.1`  | \>`17` |
+| Fabric 1.20.6 | `uniform-fabric`   | =`1.20.6`  | \>`21` |
+| Bukkit        | `uniform-bukkit`   | \>`1.17.1` | \>`17` |
 
-| Platform      | Artifact                | Minecraft  |  Java  |
-|---------------|-------------------------|:----------:|:------:|
-| Common        | `uniform-common`        |     -      | \>`17` |
-| Paper         | `uniform-paper`         | \>`1.20.6` | \>`21` |
-| Velocity      | `uniform-velocity`      | \>`3.3.0`  | \>`17` |
-| Fabric 1.20.1 | `uniform-fabric-1_20_1` | =`1.20.1`  | \>`17` |
-| Fabric 1.20.6 | `uniform-fabric-1_20_6` | =`1.20.6`  | \>`21` |
-
-Uniform _plans_ to support the following platforms in the future:
-
-| Platform | Version    |  Java  |
-|----------|------------|:------:|
-| Spigot   | \>`1.17.1` | \>`17` |
-| Sponge 8 | =`1.19.4`  | \>`17` |
-
+* **Fabric:** Please note Uniform on Fabric requires [adventure-platform-fabric](https://docs.advntr.dev/platform/fabric.html) and the [Fabric API](https://fabricmc.net/) as dependencies. To target Fabric, use `uniform-fabric` as the artifact and `<uniform_version>+<minecraft_version>` as the version (e.g. `net.william278.uniform:uniform-fabric:1.0+1.20.1`).
+* **Sponge**: Support for Sponge 8 is also planned in a future version.
 
 ## Setup
 Uniform is available [on Maven](https://repo.william278.net/#/releases/net/william278/uniform/). You can browse the Javadocs [here](https://repo.william278.net/javadoc/releases/net/william278/uniform/latest).

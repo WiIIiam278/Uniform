@@ -60,6 +60,7 @@ allprojects {
         maven { url 'https://repo.papermc.io/repository/maven-public/' }
         maven { url 'https://libraries.minecraft.net/' }
         maven { url 'https://maven.fabricmc.net/' }
+        maven { url 'https://mvn-repo.arim.space/lesser-gpl3/' }
     }
 
     dependencies {
@@ -146,6 +147,19 @@ subprojects {
             }
         }
 
+        if (['bukkit'].contains(project.name)) {
+            publications {
+                mavenJavaBukkit(MavenPublication) {
+                    groupId = 'net.william278.uniform'
+                    artifactId = 'uniform-bukkit'
+                    version = "$rootProject.version"
+                    artifact shadowJar
+                    artifact sourcesJar
+                    artifact javadocJar
+                }
+            }
+        }
+
         if (['velocity'].contains(project.name)) {
             publications {
                 mavenJavaVelocity(MavenPublication) {
@@ -158,24 +172,26 @@ subprojects {
                 }
             }
         }
+
         if (['fabric-1.20.1'].contains(project.name)) {
             publications {
                 mavenJavaFabric1_20_1(MavenPublication) {
                     groupId = 'net.william278.uniform'
-                    artifactId = 'uniform-fabric-1_20_1'
-                    version = "$rootProject.version"
+                    artifactId = 'uniform-fabric'
+                    version = "${rootProject.version}+1.20.1"
                     artifact shadowJar
                     artifact sourcesJar
                     artifact javadocJar
                 }
             }
         }
+
         if (['fabric-1.20.6'].contains(project.name)) {
             publications {
                 mavenJavaFabric1_20_6(MavenPublication) {
                     groupId = 'net.william278.uniform'
-                    artifactId = 'uniform-fabric-1_20_6'
-                    version = "$rootProject.version"
+                    artifactId = 'uniform-fabric'
+                    version = "${rootProject.version}+1.20.6"
                     artifact shadowJar
                     artifact sourcesJar
                     artifact javadocJar

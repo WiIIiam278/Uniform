@@ -97,7 +97,13 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
 
     @Override
     @NotNull
-    protected CommandUser getUser(@NotNull CommandSource user) {
-        return new VelocityCommandUser(user);
+    protected CommandUser getUser(@NotNull Object user) {
+        return new VelocityCommandUser((CommandSource) user);
     }
+
+    @Override
+    public void addSubCommand(@NotNull Command command) {
+        addSubCommand(new VelocityCommand(command));
+    }
+
 }

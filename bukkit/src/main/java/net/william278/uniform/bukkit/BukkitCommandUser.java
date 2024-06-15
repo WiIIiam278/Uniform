@@ -19,30 +19,35 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.william278.uniform;
+package net.william278.uniform.bukkit;
 
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.william278.uniform.CommandUser;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import static net.william278.uniform.BaseCommand.greedyString;
+import java.util.UUID;
 
-public class ExampleCommand extends Command {
+public record BukkitCommandUser(@NotNull CommandSender sender, @NotNull BukkitAudiences adv) implements CommandUser {
 
-    public ExampleCommand() {
-        super("example");
-        setDescription("An example command for Uniform");
+    @Override
+    @NotNull
+    public Audience getAudience() {
+        return adv.sender(sender);
     }
 
     @Override
-    public void provide(@NotNull BaseCommand<?> command) {
-        command.setDefaultExecutor((ctx) -> {
-            final CommandUser user = command.getUser(ctx.getSource());
-            user.getAudience().sendMessage(Component.text("Hello, World!"));
-        });
-        command.addSubCommand("message", (sub) -> sub.addSyntax((ctx) -> {
-            final CommandUser user = sub.getUser(ctx.getSource());
-            user.getAudience().sendMessage(Component.text(ctx.getArgument("message", String.class)));
-        }, greedyString("message")));
+    public String getName() {
+        return sender.getName();
+    }
+
+    @Override
+    @Nullable
+    public UUID getUuid() {
+        return sender instanceof Player player ? player.getUniqueId() : null;
     }
 
 }
