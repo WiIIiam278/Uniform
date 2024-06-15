@@ -23,6 +23,7 @@ package net.william278.uniform.paper;
 
 import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
 import com.destroystokyo.paper.event.brigadier.CommandRegisteredEvent;
+import com.google.common.collect.Sets;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 @SuppressWarnings({"removal", "deprecation", "UnstableApiUsage"})
@@ -73,10 +75,20 @@ public class LegacyPaperCommand extends BaseCommand<BukkitBrigadierCommandSource
         @EventHandler
         public void commandRegisterEvent(CommandRegisteredEvent<BukkitBrigadierCommandSource> event) {
             commands.forEach(command -> {
+                // Register root command
                 final LiteralCommandNode<BukkitBrigadierCommandSource> built = command.build();
                 event.getRoot().addChild(built);
-                command.getAliases().forEach(alias -> event.getRoot().addChild(
-                    LiteralArgumentBuilder.<BukkitBrigadierCommandSource>literal(alias).redirect(built).build()
+
+                // Register aliases
+                final Set<String> aliases = Sets.newHashSet(command.getAliases());
+                aliases.add("%s:%s".formatted(
+                    plugin.getName().toLowerCase(Locale.ENGLISH).replaceAll("[^a-z0-9_]", ""),
+                    command.getName())
+                );
+                aliases.forEach(alias -> event.getRoot().addChild(
+                    LiteralArgumentBuilder.<BukkitBrigadierCommandSource>literal(alias)
+                        .requires(built.getRequirement()).executes(built.getCommand()).redirect(built)
+                        .build()
                 ));
             });
             commands.clear();

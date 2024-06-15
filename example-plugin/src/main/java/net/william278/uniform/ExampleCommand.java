@@ -24,6 +24,8 @@ package net.william278.uniform;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 import static net.william278.uniform.BaseCommand.greedyString;
 
 public class ExampleCommand extends Command {
@@ -31,6 +33,7 @@ public class ExampleCommand extends Command {
     public ExampleCommand() {
         super("example");
         setDescription("An example command for Uniform");
+        setAliases(List.of("helloworld"));
     }
 
     @Override
