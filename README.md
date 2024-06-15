@@ -17,6 +17,8 @@
 
 Uniform _currently_ targets the following platforms:
 
+<p align="center">
+
 | Platform      | Artifact           | Minecraft  |  Java  |
 |---------------|--------------------|:----------:|:------:|
 | Common        | `uniform-common`   |     -      | \>`17` |
@@ -25,6 +27,8 @@ Uniform _currently_ targets the following platforms:
 | Fabric 1.20.1 | `uniform-fabric`   | =`1.20.1`  | \>`17` |
 | Fabric 1.20.6 | `uniform-fabric`   | =`1.20.6`  | \>`21` |
 | Bukkit        | `uniform-bukkit`   | \>`1.17.1` | \>`17` |
+
+</p>
 
 * **Fabric:** Please note Uniform on Fabric requires [adventure-platform-fabric](https://docs.advntr.dev/platform/fabric.html) and the [Fabric API](https://fabricmc.net/) as dependencies. To target Fabric, use `uniform-fabric` as the artifact and `<uniform_version>+<minecraft_version>` as the version (e.g. `net.william278.uniform:uniform-fabric:1.0+1.20.1`).
 * **Sponge**: Support for Sponge 8 is also planned in a future version.
