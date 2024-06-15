@@ -24,7 +24,6 @@ package net.william278.uniform.bukkit;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestion;
-import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -34,32 +33,25 @@ import net.william278.uniform.Command;
 import net.william278.uniform.CommandUser;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("unused")
 public class BukkitCommand extends BaseCommand<CommandSender> {
 
-    private final JavaPlugin plugin;
     private BukkitAudiences audiences;
 
-    public BukkitCommand(@NotNull Command command, @NotNull JavaPlugin plugin) {
+    public BukkitCommand(@NotNull Command command) {
         super(command);
-        this.plugin = plugin;
     }
 
-    public BukkitCommand(@NotNull JavaPlugin plugin, @NotNull String name, @NotNull String description,
-                         @NotNull List<String> aliases) {
+    public BukkitCommand(@NotNull String name, @NotNull String description, @NotNull List<String> aliases) {
         super(name, description, aliases);
-        this.plugin = plugin;
     }
 
-    public BukkitCommand(@NotNull JavaPlugin plugin, @NotNull String name, @NotNull List<String> aliases) {
+    public BukkitCommand(@NotNull String name, @NotNull List<String> aliases) {
         super(name, aliases);
-        this.plugin = plugin;
     }
 
     @NotNull
@@ -71,19 +63,11 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
 
         private static final int COMMAND_SUCCESS = com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
-        private final LiteralCommandNode<CommandSender> commandNode;
-        private final CommandDispatcher<CommandSender> dispatcher;
-        private final JavaPlugin plugin;
-        private BukkitAudiences audiences;
+        private final CommandDispatcher<CommandSender> dispatcher = new CommandDispatcher<>();
 
         public Impl(@NotNull BukkitCommand command) {
             super(command.getName());
-            this.audiences = command.audiences;
-            this.plugin = command.plugin;
-
-            // Register command, setup description and aliases
-            this.dispatcher = new CommandDispatcher<>();
-            this.commandNode = this.dispatcher.register(command.build().createBuilder());
+            this.dispatcher.register(command.createBuilder());
             this.setDescription(command.getDescription());
             this.setAliases(command.getAliases());
         }
@@ -91,9 +75,7 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
         @Override
         public boolean execute(@NotNull CommandSender commandSender, @NotNull String alias, @NotNull String[] args) {
             try {
-                final String string = getInput(alias, args);
-                System.out.println("Usage: \"" + Arrays.toString(dispatcher.getAllUsage(commandNode, commandSender, false)) + "\"");
-                return dispatcher.execute(string, commandSender) == COMMAND_SUCCESS;
+                return dispatcher.execute(getInput(args), commandSender) == COMMAND_SUCCESS;
             } catch (CommandSyntaxException e) {
                 getAudience(commandSender).sendMessage(Component
                     .translatable("command.context.parse_error", NamedTextColor.RED)
@@ -105,7 +87,7 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
                 return false;
             } catch (CommandException e) {
                 getAudience(commandSender).sendMessage(Component.text(e.getMessage(), NamedTextColor.RED));
-                return true;
+                return false;
             }
         }
 
@@ -113,7 +95,7 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
         @Override
         public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args)
             throws IllegalArgumentException {
-            final String passed = getInput(alias, args);
+            final String passed = getInput(args);
             return dispatcher.getCompletionSuggestions(
                     dispatcher.parse(passed, sender),
                     passed.length() // Spigot API limitation - we can only TAB complete the full text length :(
@@ -124,30 +106,25 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
 
         @NotNull
         private Audience getAudience(@NotNull CommandSender sender) {
-            if (audiences == null) {
-                audiences = BukkitAudiences.create(plugin);
-            }
-            return audiences.sender(sender);
+            return BukkitUniform.getAudiences().sender(sender);
         }
 
         @NotNull
-        private String getInput(@NotNull String alias, @NotNull String[] args) {
-            return args.length == 0 ? alias : "%s %s".formatted(alias, String.join(" ", args));
+        private String getInput(@NotNull String[] args) {
+            return args.length == 0 ? getName()
+                : "%s %s".formatted(getName(), String.join(" ", args));
         }
     }
 
     @Override
     @NotNull
     protected CommandUser getUser(@NotNull Object user) {
-        if (audiences == null) {
-            audiences = BukkitAudiences.create(plugin);
-        }
-        return new BukkitCommandUser((CommandSender) user, audiences);
+        return new BukkitCommandUser((CommandSender) user);
     }
 
     @Override
     public void addSubCommand(@NotNull Command command) {
-        addSubCommand(new BukkitCommand(command, plugin));
+        addSubCommand(new BukkitCommand(command));
     }
 
 }

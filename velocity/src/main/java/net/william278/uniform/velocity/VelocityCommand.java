@@ -51,8 +51,8 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
         super(name, description, aliases);
     }
 
-    protected static ArgumentElement<CommandSource, RegisteredServer> serverArg(ProxyServer server, String name,
-                                                                                SuggestionProvider<CommandSource> suggestionProvider) {
+    public static ArgumentElement<CommandSource, RegisteredServer> server(ProxyServer server, String name,
+                                                                             SuggestionProvider<CommandSource> suggestionProvider) {
         ArgumentType<RegisteredServer> argumentType = reader -> {
             String s = reader.readUnquotedString();
             RegisteredServer server1 = server.getServer(s).orElse(null);
@@ -64,8 +64,8 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
         return new ArgumentElement<>(name, argumentType, suggestionProvider);
     }
 
-    protected static ArgumentElement<CommandSource, RegisteredServer> serverArg(ProxyServer server, String name) {
-        return serverArg(server, name, (context, builder) -> {
+    public static ArgumentElement<CommandSource, RegisteredServer> server(ProxyServer server, String name) {
+        return server(server, name, (context, builder) -> {
             for (RegisteredServer server1 : server.getAllServers()) {
                 builder.suggest(server1.getServerInfo().getName());
             }
@@ -73,8 +73,8 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
         });
     }
 
-    protected static ArgumentElement<CommandSource, CommandSource> sourceArg(ProxyServer server, String name,
-                                                                             SuggestionProvider<CommandSource> suggestionProvider) {
+    public static ArgumentElement<CommandSource, CommandSource> source(ProxyServer server, String name,
+                                                                          SuggestionProvider<CommandSource> suggestionProvider) {
         ArgumentType<CommandSource> argumentType = reader -> {
             String s = reader.readUnquotedString();
             CommandSource source = server.getPlayer(s).orElse(null);
@@ -86,8 +86,8 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
         return new ArgumentElement<>(name, argumentType, suggestionProvider);
     }
 
-    protected static ArgumentElement<CommandSource, CommandSource> sourceArg(ProxyServer server, String name) {
-        return sourceArg(server, name, (context, builder) -> {
+    public static ArgumentElement<CommandSource, CommandSource> source(ProxyServer server, String name) {
+        return source(server, name, (context, builder) -> {
             for (Player source : server.getAllPlayers()) {
                 builder.suggest(source.getUsername());
             }

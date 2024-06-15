@@ -40,6 +40,7 @@ package net.william278.uniform.bukkit;/*
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.william278.uniform.Command;
 import net.william278.uniform.Uniform;
 import org.bukkit.command.CommandSender;
@@ -59,13 +60,18 @@ import java.util.Locale;
 public final class BukkitUniform implements Uniform<CommandSender, BukkitCommand> {
 
     private static BukkitUniform INSTANCE;
+    private static BukkitAudiences AUDIENCES;
+    private static JavaPlugin PLUGIN;
 
-    private final JavaPlugin plugin;
     private final CommandRegistration registrar;
 
     private BukkitUniform(@NotNull JavaPlugin plugin) {
-        this.plugin = plugin;
+        PLUGIN = plugin;
         this.registrar = new MorePaperLib(plugin).commandRegistration();
+    }
+
+    static BukkitAudiences getAudiences() {
+        return AUDIENCES != null ? AUDIENCES : (AUDIENCES = BukkitAudiences.create(PLUGIN));
     }
 
     /**
@@ -89,7 +95,7 @@ public final class BukkitUniform implements Uniform<CommandSender, BukkitCommand
     @Override
     public void register(@NotNull BukkitCommand... commands) {
         registrar.getServerCommandMap().registerAll(
-            plugin.getName().toLowerCase(Locale.ENGLISH),
+            PLUGIN.getName().toLowerCase(Locale.ENGLISH).replaceAll("[^a-z0-9_]", ""),
             Arrays.stream(commands).map(c -> (org.bukkit.command.Command) c.getImpl()).toList()
         );
     }
@@ -102,9 +108,7 @@ public final class BukkitUniform implements Uniform<CommandSender, BukkitCommand
      */
     @Override
     public void register(@NotNull Command... commands) {
-        register(Arrays.stream(commands)
-            .map(command -> new BukkitCommand(command, plugin))
-            .toArray(BukkitCommand[]::new));
+        register(Arrays.stream(commands).map(BukkitCommand::new).toArray(BukkitCommand[]::new));
     }
 
 }

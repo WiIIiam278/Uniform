@@ -21,6 +21,8 @@
 
 package net.william278.uniform;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.william278.uniform.element.CommandElement;
@@ -45,5 +47,15 @@ record Graph<S>(@NotNull Node<S> root) {
         }
         return literalNode;
     }
+
+    @NotNull
+    LiteralArgumentBuilder<S> literal(@NotNull String name) {
+        final LiteralArgumentBuilder<S> builder = LiteralArgumentBuilder.literal(name);
+        final CommandNode<S> command = this.root.build();
+        builder.executes(command.getCommand());
+        this.root.children().forEach(child -> builder.then(child.build()));
+        return builder;
+    }
+
 
 }

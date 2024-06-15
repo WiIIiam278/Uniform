@@ -46,7 +46,7 @@ public final class FabricUniform implements Uniform<ServerCommandSource, FabricC
 
     private FabricUniform() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registry, environment) ->
-            commands.forEach(command -> dispatcher.register(command.build().createBuilder()))
+            commands.forEach(command -> dispatcher.register(command.createBuilder()))
         );
     }
 

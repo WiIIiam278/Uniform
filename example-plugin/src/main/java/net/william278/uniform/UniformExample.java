@@ -21,7 +21,7 @@
 
 package net.william278.uniform;
 
-import net.william278.uniform.paper.PaperUniform;
+import net.william278.uniform.bukkit.BukkitUniform;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @SuppressWarnings("unused")
@@ -29,7 +29,7 @@ public class UniformExample extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        PaperUniform uniform = PaperUniform.getInstance(this);
+        BukkitUniform uniform = BukkitUniform.getInstance(this);
         uniform.register(new ExampleCommand());
     }
 

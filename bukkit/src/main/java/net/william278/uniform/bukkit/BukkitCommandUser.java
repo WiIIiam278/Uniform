@@ -22,7 +22,6 @@
 package net.william278.uniform.bukkit;
 
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.william278.uniform.CommandUser;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,12 +30,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public record BukkitCommandUser(@NotNull CommandSender sender, @NotNull BukkitAudiences adv) implements CommandUser {
+public record BukkitCommandUser(@NotNull CommandSender sender) implements CommandUser {
 
     @Override
     @NotNull
     public Audience getAudience() {
-        return adv.sender(sender);
+        return BukkitUniform.getAudiences().sender(sender);
     }
 
     @Override

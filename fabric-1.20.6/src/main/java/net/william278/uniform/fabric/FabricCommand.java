@@ -52,15 +52,15 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
         super(name, description, aliases);
     }
 
-    protected static ArgumentElement<ServerCommandSource, Item> itemArg(String name) {
-        return registryArg(name, Registries.ITEM);
+    public static ArgumentElement<ServerCommandSource, Item> item(String name) {
+        return registry(name, Registries.ITEM);
     }
 
-    protected static ArgumentElement<ServerCommandSource, Block> blockArg(String name) {
-        return registryArg(name, Registries.BLOCK);
+    public static ArgumentElement<ServerCommandSource, Block> block(String name) {
+        return registry(name, Registries.BLOCK);
     }
 
-    protected static <T> ArgumentElement<ServerCommandSource, T> registryArg(String name, Registry<T> registry) {
+    public static <T> ArgumentElement<ServerCommandSource, T> registry(String name, Registry<T> registry) {
         return new ArgumentElement<>(name, reader -> {
             String itemId = reader.readString();
             final Identifier id;

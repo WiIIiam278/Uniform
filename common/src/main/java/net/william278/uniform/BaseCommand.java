@@ -22,9 +22,9 @@
 package net.william278.uniform;
 
 import com.mojang.brigadier.arguments.*;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import lombok.AccessLevel;
 import lombok.Getter;
 import net.william278.uniform.element.ArgumentElement;
 import net.william278.uniform.element.CommandElement;
@@ -36,15 +36,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+@Getter
 @SuppressWarnings("unused")
 public abstract class BaseCommand<S> {
 
-    @Getter
     private final String name;
-    @Getter
     private final String description;
-    @Getter
     private final List<String> aliases;
+
+    @Nullable
+    private Predicate<S> condition;
+    @Nullable
+    private CommandExecutor<S> defaultExecutor;
+    private final List<CommandSyntax<S>> syntaxes = new ArrayList<>();
+    private final List<BaseCommand<S>> subCommands = new ArrayList<>();
 
     public BaseCommand(@NotNull Command command) {
         this.name = command.getName();
@@ -62,17 +67,6 @@ public abstract class BaseCommand<S> {
     public BaseCommand(@NotNull String name, @NotNull List<String> aliases) {
         this(name, "", aliases);
     }
-
-    @Nullable
-    @Getter(AccessLevel.PACKAGE)
-    private Predicate<S> condition;
-    @Nullable
-    @Getter(AccessLevel.PACKAGE)
-    private CommandExecutor<S> defaultExecutor;
-    @Getter(AccessLevel.PACKAGE)
-    private final List<CommandSyntax<S>> syntaxes = new ArrayList<>();
-    @Getter(AccessLevel.PACKAGE)
-    private final List<BaseCommand<S>> subCommands = new ArrayList<>();
 
     @NotNull
     protected abstract CommandUser getUser(@NotNull Object user);
@@ -115,6 +109,11 @@ public abstract class BaseCommand<S> {
     @NotNull
     public final LiteralCommandNode<S> build() {
         return Graph.create(this).build();
+    }
+
+    @NotNull
+    public final LiteralArgumentBuilder<S> createBuilder() {
+        return Graph.create(this).literal(this.name);
     }
 
     @NotNull

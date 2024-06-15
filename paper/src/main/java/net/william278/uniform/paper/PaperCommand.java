@@ -50,7 +50,7 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         super(name, description, aliases);
     }
 
-    protected static ArgumentElement<CommandSourceStack, Material> materialArg(String name) {
+    public static ArgumentElement<CommandSourceStack, Material> material(String name) {
         return new ArgumentElement<>(name, reader -> {
             String materialName = reader.readString();
             Material material = Material.matchMaterial(materialName);
@@ -66,7 +66,7 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         });
     }
 
-    protected static ArgumentElement<CommandSourceStack, Collection<? extends Player>> playerArg(String name) {
+    public static ArgumentElement<CommandSourceStack, Collection<? extends Player>> player(String name) {
         return new ArgumentElement<>(name, reader -> {
             String playerName = reader.readString();
             if (playerName.equals("@a")) {
