@@ -56,52 +56,63 @@ Using Maven/something else? There's instructions on how to include Uniform on [t
 ## Basic use
 Uniform lets you create commands either natively per-platform, or cross-platform (by compiling against `uniform-common` in a common module, then implementing `uniform-PLATFORM` in each platform, getting the platform specific Uniform manager instance and registering your commands).
 
+Check `example-plugin` for a full example of a cross-platform command being registered on Paper.
+
 ### Platform-specific commands
 Extend the platform-specific `PlatformCommand` class and add your Brigadier syntax.
 
 ```java
 public class ExampleCommand extends PaperCommand {
-
     public ExampleCommand() {
         super("example", "platform-specific");
+        command.setDefaultExecutor((context) -> {
+            context.getSource().getBukkitSender().sendMessage("Hello, world!");
+        });
         addSyntax((context) -> {
             context.getSource().getBukkitSender().sendMessage("Woah!!!!");
             String arg = context.getArgument("message", String.class);
             context.getSource().getBukkitSender().sendMessage(MiniMessage.miniMessage().deserialize(arg));
         }, stringArg("message"));
     }
-
 }
 ```
 
 ### Cross-platform commands
-Target `uniform-common` and implement the `Command` class.
+Target `uniform-common` and extend the `Command` class. You'll want to use `BaseCommand#getUser` to get a platform-agnostic User from which you can acquire the adventure `Audience` to send messages to.
 
 ```java
-public class ExampleCrossPlatCommand implements Command {
+import java.awt.*;
 
-    @Override
-    @NotNull
-    public String getNamespace() {
-        return "example";
-    }
-
-    @Override
-    @NotNull
-    public List<String> getAliases() {
-        return List.of("cross-plat");
+public class ExampleCrossPlatCommand extends Command {
+    public ExampleCrossPlatCommand() {
+        super("example", "cross-platform");
     }
 
     @Override
     public <S> void provide(@NotNull BaseCommand<S> command) {
-        command.setCondition(source -> true);
-        command.setDefaultExecutor((ctx) -> {
-            // Use command.getUser(ctx.getSource()) to get the user
-            final Audience user = command.getUser(ctx.getSource()).getAudience();
+        // What gets executed when no args are passed. For tidiness, feel free to delegate this stuff to methods!
+        command.setDefaultExecutor((context) -> {
+            // Use command.getUser(context.getSource()) to get the user
+            final Audience user = command.getUser(context.getSource()).getAudience();
             user.sendMessage(Component.text("Hello, world!"));
         });
+        
+        // Add syntax to the command
+        command.addSyntax((context) -> {
+            final Audience user = command.getUser(ctx.getSource()).getAudience();
+            user.sendMessage(Component.text("Woah!!!!"));
+            String arg = context.getArgument("message", String.class);
+            user.sendMessage(MiniMessage.miniMessage().deserialize(arg));
+        }, stringArg("message"));
+        
+        // Sub-commands, too
+        command.addSubCommand("subcommand", (sub) -> {
+            sub.setDefaultExecutor((context) -> {
+                final Audience user = sub.getUser(context.getSource()).getAudience();
+                user.sendMessage(Component.text("Subcommand executed!"));
+            });
+        });
     }
-
 }
 ```
 
