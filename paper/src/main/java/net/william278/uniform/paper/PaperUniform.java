@@ -45,11 +45,11 @@ public final class PaperUniform {
     private PaperUniform(@NotNull JavaPlugin plugin) {
         if (isUseModernApi()) {
             PaperCommand.register(plugin, commands);
-        } else {
-            plugin.getServer().getPluginManager().registerEvents(
-                new LegacyPaperCommand.Registrar(plugin, legacyCommands), plugin
-            );
+            return;
         }
+        plugin.getServer().getPluginManager().registerEvents(
+            new LegacyPaperCommand.Registrar(plugin, legacyCommands), plugin
+        );
     }
 
     private static boolean isUseModernApi() {
@@ -102,9 +102,9 @@ public final class PaperUniform {
     public void register(@NotNull Command... commands) {
         if (isUseModernApi()) {
             register(Arrays.stream(commands).map(PaperCommand::new).toArray(PaperCommand[]::new));
-        } else {
-            register(Arrays.stream(commands).map(LegacyPaperCommand::new).toArray(LegacyPaperCommand[]::new));
+            return;
         }
+        register(Arrays.stream(commands).map(LegacyPaperCommand::new).toArray(LegacyPaperCommand[]::new));
     }
 
 }
