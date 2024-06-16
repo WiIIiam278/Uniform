@@ -38,9 +38,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.function.Function;
 
 @SuppressWarnings({"removal", "deprecation", "UnstableApiUsage"})
 public class LegacyPaperCommand extends BaseCommand<BukkitBrigadierCommandSource> {
+
+    static final Function<Object, CommandUser> USER_SUPPLIER = (user) -> new LegacyPaperCommandUser(
+        (BukkitBrigadierCommandSource) user
+    );
 
     public LegacyPaperCommand(@NotNull Command command) {
         super(command);
@@ -55,18 +60,14 @@ public class LegacyPaperCommand extends BaseCommand<BukkitBrigadierCommandSource
     }
 
     @Override
-    @NotNull
-    protected CommandUser getUser(@NotNull Object user) {
-        return new LegacyPaperCommandUser((BukkitBrigadierCommandSource) user);
-    }
-
-    @Override
     public void addSubCommand(@NotNull Command command) {
         addSubCommand(new LegacyPaperCommand(command));
     }
 
     @AllArgsConstructor
     static class Registrar implements Listener {
+        @NotNull
+        private final PaperUniform uniform;
         @NotNull
         private final JavaPlugin plugin;
         @NotNull
@@ -76,7 +77,7 @@ public class LegacyPaperCommand extends BaseCommand<BukkitBrigadierCommandSource
         public void commandRegisterEvent(CommandRegisteredEvent<BukkitBrigadierCommandSource> event) {
             commands.forEach(command -> {
                 // Register root command
-                final LiteralCommandNode<BukkitBrigadierCommandSource> built = command.build();
+                final LiteralCommandNode<BukkitBrigadierCommandSource> built = command.build(uniform);
                 event.getRoot().addChild(built);
 
                 // Register aliases

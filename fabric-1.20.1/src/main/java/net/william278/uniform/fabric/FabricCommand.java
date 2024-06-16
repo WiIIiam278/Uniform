@@ -31,7 +31,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
-import net.william278.uniform.CommandUser;
 import net.william278.uniform.element.ArgumentElement;
 import org.jetbrains.annotations.NotNull;
 
@@ -80,14 +79,7 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
     }
 
     @Override
-    @NotNull
-    protected CommandUser getUser(@NotNull Object user) {
-        return new FabricCommandUser((ServerCommandSource) user);
-    }
-
-    @Override
     public void addSubCommand(@NotNull Command command) {
         addSubCommand(new FabricCommand(command));
     }
-
 }

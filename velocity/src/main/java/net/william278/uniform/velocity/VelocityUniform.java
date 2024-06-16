@@ -22,13 +22,18 @@
 package net.william278.uniform.velocity;
 
 import com.velocitypowered.api.command.BrigadierCommand;
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ProxyServer;
+import lombok.Getter;
+import lombok.Setter;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
+import net.william278.uniform.CommandUser;
 import net.william278.uniform.Uniform;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.function.Function;
 
 /**
  * A class for registering commands with the Velocity server's command manager
@@ -41,6 +46,10 @@ public final class VelocityUniform implements Uniform {
     private static VelocityUniform INSTANCE;
 
     private final ProxyServer server;
+
+    @Getter
+    @Setter
+    Function<Object, CommandUser> commandUserSupplier = (user) -> new VelocityCommandUser((CommandSource) user);
 
     private VelocityUniform(@NotNull ProxyServer server) {
         this.server = server;
@@ -70,7 +79,7 @@ public final class VelocityUniform implements Uniform {
     @Override
     public final <S, T extends BaseCommand<S>> void register(T... commands) {
         Arrays.stream(commands).map(c -> (VelocityCommand) c).forEach(c -> server.getCommandManager()
-            .register(c.getName(), new BrigadierCommand(c.build())));
+            .register(c.getName(), new BrigadierCommand(c.build(this))));
     }
 
     /**

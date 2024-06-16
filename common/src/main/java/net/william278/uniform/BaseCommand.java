@@ -48,6 +48,7 @@ public abstract class BaseCommand<S> {
     private Predicate<S> condition;
     @Nullable
     private CommandExecutor<S> defaultExecutor;
+    private Uniform uniform;
     private final List<CommandSyntax<S>> syntaxes = new ArrayList<>();
     private final List<BaseCommand<S>> subCommands = new ArrayList<>();
 
@@ -58,7 +59,8 @@ public abstract class BaseCommand<S> {
         command.provide(this);
     }
 
-    public BaseCommand(@NotNull String name, @NotNull String description, @NotNull List<String> aliases) {
+    public BaseCommand(@NotNull String name, @NotNull String description,
+                       @NotNull List<String> aliases) {
         this.name = name;
         this.aliases = aliases;
         this.description = description;
@@ -69,7 +71,9 @@ public abstract class BaseCommand<S> {
     }
 
     @NotNull
-    protected abstract CommandUser getUser(@NotNull Object user);
+    public final CommandUser getUser(@NotNull Object user) {
+        return uniform.getCommandUserSupplier().apply(user);
+    }
 
     public final void setCondition(@NotNull Predicate<S> condition) {
         this.condition = condition;
@@ -107,12 +111,14 @@ public abstract class BaseCommand<S> {
     public abstract void addSubCommand(@NotNull Command command);
 
     @NotNull
-    public final LiteralCommandNode<S> build() {
+    public final LiteralCommandNode<S> build(@NotNull Uniform uniform) {
+        this.uniform = uniform;
         return Graph.create(this).build();
     }
 
     @NotNull
-    public final LiteralArgumentBuilder<S> createBuilder() {
+    public final LiteralArgumentBuilder<S> createBuilder(@NotNull Uniform uniform) {
+        this.uniform = uniform;
         return Graph.create(this).literal(this.name);
     }
 

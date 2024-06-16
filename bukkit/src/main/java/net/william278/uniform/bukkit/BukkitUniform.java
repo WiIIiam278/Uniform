@@ -21,10 +21,14 @@
 
 package net.william278.uniform.bukkit;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
+import net.william278.uniform.CommandUser;
 import net.william278.uniform.Uniform;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import space.arim.morepaperlib.MorePaperLib;
@@ -32,6 +36,7 @@ import space.arim.morepaperlib.commands.CommandRegistration;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.function.Function;
 
 /**
  * A class for registering commands with the Bukkit server's CommandMap
@@ -46,6 +51,10 @@ public final class BukkitUniform implements Uniform {
     private static JavaPlugin PLUGIN;
 
     private final CommandRegistration registrar;
+
+    @Getter
+    @Setter
+    Function<Object, CommandUser> commandUserSupplier = (user) -> new BukkitCommandUser((CommandSender) user);
 
     private BukkitUniform(@NotNull JavaPlugin plugin) {
         PLUGIN = plugin;
@@ -81,7 +90,8 @@ public final class BukkitUniform implements Uniform {
     public final <S, T extends BaseCommand<S>> void register(T... commands) {
         registrar.getServerCommandMap().registerAll(
             PLUGIN.getName().toLowerCase(Locale.ENGLISH).replaceAll("[^a-z0-9_]", ""),
-            Arrays.stream(commands).map(c -> (org.bukkit.command.Command) ((BukkitCommand) c).getImpl()).toList()
+            Arrays.stream(commands).map(c -> (BukkitCommand) c)
+                .map(c -> (org.bukkit.command.Command) c.getImpl(this)).toList()
         );
     }
 

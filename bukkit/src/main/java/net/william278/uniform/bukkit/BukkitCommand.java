@@ -30,7 +30,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
-import net.william278.uniform.CommandUser;
+import net.william278.uniform.Uniform;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -55,8 +55,8 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
     }
 
     @NotNull
-    Impl getImpl() {
-        return new Impl(this);
+    Impl getImpl(@NotNull Uniform uniform) {
+        return new Impl(uniform, this);
     }
 
     static final class Impl extends org.bukkit.command.Command {
@@ -65,9 +65,9 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
 
         private final CommandDispatcher<CommandSender> dispatcher = new CommandDispatcher<>();
 
-        public Impl(@NotNull BukkitCommand command) {
+        public Impl(@NotNull Uniform uniform, @NotNull BukkitCommand command) {
             super(command.getName());
-            this.dispatcher.register(command.createBuilder());
+            this.dispatcher.register(command.createBuilder(uniform));
             this.setDescription(command.getDescription());
             this.setAliases(command.getAliases());
         }
@@ -111,15 +111,8 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
 
         @NotNull
         private String getInput(@NotNull String[] args) {
-            return args.length == 0 ? getName()
-                : "%s %s".formatted(getName(), String.join(" ", args));
+            return args.length == 0 ? getName() : "%s %s".formatted(getName(), String.join(" ", args));
         }
-    }
-
-    @Override
-    @NotNull
-    protected CommandUser getUser(@NotNull Object user) {
-        return new BukkitCommandUser((CommandSender) user);
     }
 
     @Override

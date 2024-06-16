@@ -22,14 +22,19 @@
 package net.william278.uniform.fabric;
 
 import com.google.common.collect.Sets;
+import lombok.Getter;
+import lombok.Setter;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.server.command.ServerCommandSource;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
+import net.william278.uniform.CommandUser;
 import net.william278.uniform.Uniform;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * A class for registering commands with the Fabric (1.20.1) server
@@ -43,9 +48,13 @@ public final class FabricUniform implements Uniform {
 
     private final Set<FabricCommand> commands = Sets.newHashSet();
 
+    @Getter
+    @Setter
+    Function<Object, CommandUser> commandUserSupplier = (user) -> new FabricCommandUser((ServerCommandSource) user);
+
     private FabricUniform() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registry, environment) ->
-            commands.forEach(command -> dispatcher.register(command.createBuilder()))
+            commands.forEach(command -> dispatcher.register(command.createBuilder(this)))
         );
     }
 

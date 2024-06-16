@@ -37,9 +37,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 @SuppressWarnings({"unused", "UnstableApiUsage"})
 public class PaperCommand extends BaseCommand<CommandSourceStack> {
+
+    static final Function<Object, CommandUser> USER_SUPPLIER = (user) -> new PaperCommandUser(
+        (CommandSourceStack) user
+    );
 
     public PaperCommand(@NotNull Command command) {
         super(command);
@@ -53,11 +58,12 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         super(name, description, aliases);
     }
 
-    static void register(@NotNull JavaPlugin plugin, @NotNull Set<PaperCommand> commands) {
+    static void register(@NotNull PaperUniform uniform, @NotNull JavaPlugin plugin,
+                         @NotNull Set<PaperCommand> commands) {
         plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, (event) -> {
             commands.forEach(command -> event.registrar().register(
                 plugin.getPluginMeta(),
-                command.build(),
+                command.build(uniform),
                 command.getDescription(),
                 command.getAliases()
             ));
@@ -99,12 +105,6 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
             }
             return builder.buildFuture();
         });
-    }
-
-    @Override
-    @NotNull
-    protected CommandUser getUser(@NotNull Object user) {
-        return new PaperCommandUser((CommandSourceStack) user);
     }
 
     @Override

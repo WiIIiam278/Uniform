@@ -30,7 +30,6 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
-import net.william278.uniform.CommandUser;
 import net.william278.uniform.element.ArgumentElement;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,12 +46,13 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
         super(name, aliases);
     }
 
-    public VelocityCommand(@NotNull String name, @NotNull String description, @NotNull List<String> aliases) {
+    public VelocityCommand(@NotNull String name, @NotNull String description,
+                           @NotNull List<String> aliases) {
         super(name, description, aliases);
     }
 
     public static ArgumentElement<CommandSource, RegisteredServer> server(ProxyServer server, String name,
-                                                                             SuggestionProvider<CommandSource> suggestionProvider) {
+                                                                          SuggestionProvider<CommandSource> suggestionProvider) {
         ArgumentType<RegisteredServer> argumentType = reader -> {
             String s = reader.readUnquotedString();
             RegisteredServer server1 = server.getServer(s).orElse(null);
@@ -74,7 +74,7 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
     }
 
     public static ArgumentElement<CommandSource, CommandSource> source(ProxyServer server, String name,
-                                                                          SuggestionProvider<CommandSource> suggestionProvider) {
+                                                                       SuggestionProvider<CommandSource> suggestionProvider) {
         ArgumentType<CommandSource> argumentType = reader -> {
             String s = reader.readUnquotedString();
             CommandSource source = server.getPlayer(s).orElse(null);
@@ -93,12 +93,6 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
             }
             return builder.buildFuture();
         });
-    }
-
-    @Override
-    @NotNull
-    protected CommandUser getUser(@NotNull Object user) {
-        return new VelocityCommandUser((CommandSource) user);
     }
 
     @Override

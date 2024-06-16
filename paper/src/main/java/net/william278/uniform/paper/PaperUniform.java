@@ -22,14 +22,18 @@
 package net.william278.uniform.paper;
 
 import com.google.common.collect.Sets;
+import lombok.Getter;
+import lombok.Setter;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
+import net.william278.uniform.CommandUser;
 import net.william278.uniform.Uniform;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * A class for registering commands with the Paper server's command manager
@@ -42,24 +46,25 @@ public final class PaperUniform implements Uniform {
 
     private final Set<LegacyPaperCommand> legacyCommands = Sets.newHashSet();
     private final Set<PaperCommand> commands = Sets.newHashSet();
+    private final boolean useModernApi = isUseModernApi();
+
+    @Getter
+    @Setter
+    Function<Object, CommandUser> commandUserSupplier;
 
     private PaperUniform(@NotNull JavaPlugin plugin) {
-        if (isUseModernApi()) {
-            PaperCommand.register(plugin, commands);
+        // Modern (1.20.6+) Lifecycle event based Paper Brigadier API
+        if (useModernApi) {
+            this.commandUserSupplier = PaperCommand.USER_SUPPLIER;
+            PaperCommand.register(this, plugin, commands);
             return;
         }
-        plugin.getServer().getPluginManager().registerEvents(
-            new LegacyPaperCommand.Registrar(plugin, legacyCommands), plugin
-        );
-    }
 
-    private static boolean isUseModernApi() {
-        try {
-            Class.forName("io.papermc.paper.command.brigadier.CommandSourceStack");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+        // Legacy (1.17-1.20.4) event-based Paper Brigadier API
+        this.commandUserSupplier = LegacyPaperCommand.USER_SUPPLIER;
+        plugin.getServer().getPluginManager().registerEvents(
+            new LegacyPaperCommand.Registrar(this, plugin, legacyCommands), plugin
+        );
     }
 
     /**
@@ -74,6 +79,15 @@ public final class PaperUniform implements Uniform {
         return INSTANCE != null ? INSTANCE : (INSTANCE = new PaperUniform(plugin));
     }
 
+    // Check if the modern Paper API is available
+    private static boolean isUseModernApi() {
+        try {
+            Class.forName("io.papermc.paper.command.brigadier.CommandSourceStack");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
 
     /**
      * Register a command with the server's command manager
@@ -103,7 +117,7 @@ public final class PaperUniform implements Uniform {
      * @since 1.0
      */
     public void register(@NotNull Command... commands) {
-        if (isUseModernApi()) {
+        if (useModernApi) {
             register(Arrays.stream(commands).map(PaperCommand::new).toArray(PaperCommand[]::new));
             return;
         }

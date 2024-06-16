@@ -75,7 +75,8 @@ public class ExampleCommand extends PaperCommand {
         addSyntax((context) -> {
             context.getSource().getBukkitSender().sendMessage("Woah!!!!");
             String arg = context.getArgument("message", String.class);
-            context.getSource().getBukkitSender().sendMessage(MiniMessage.miniMessage().deserialize(arg));
+            context.getSource().getBukkitSender()
+                .sendMessage(MiniMessage.miniMessage().deserialize(arg));
         }, stringArg("message"));
     }
 }

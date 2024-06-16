@@ -21,11 +21,20 @@
 
 package net.william278.uniform;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Function;
+
 public interface Uniform {
 
     void register(Command... commands);
 
     @SuppressWarnings("unchecked")
     <S, T extends BaseCommand<S>> void register(T... commands);
+
+    @NotNull
+    Function<Object, CommandUser> getCommandUserSupplier();
+
+    void setCommandUserSupplier(@NotNull Function<Object, CommandUser> supplier);
 
 }

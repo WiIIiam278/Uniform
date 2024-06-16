@@ -31,7 +31,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
-import net.william278.uniform.CommandUser;
 import net.william278.uniform.element.ArgumentElement;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +47,8 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
         super(name, aliases);
     }
 
-    public FabricCommand(@NotNull String name, @NotNull String description, @NotNull List<String> aliases) {
+    public FabricCommand(@NotNull String name, @NotNull String description,
+                         @NotNull List<String> aliases) {
         super(name, description, aliases);
     }
 
@@ -77,12 +77,6 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
             registry.getIds().forEach(id -> builder.suggest(id.toString()));
             return builder.buildFuture();
         });
-    }
-
-    @Override
-    @NotNull
-    protected CommandUser getUser(@NotNull Object user) {
-        return new FabricCommandUser((ServerCommandSource) user);
     }
 
     @Override
