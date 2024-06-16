@@ -21,16 +21,14 @@
 
 package net.william278.uniform.fabric;
 
-
 import com.google.common.collect.Sets;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.server.command.ServerCommandSource;
+import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
 import net.william278.uniform.Uniform;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -38,7 +36,8 @@ import java.util.Set;
  *
  * @since 1.0
  */
-public final class FabricUniform implements Uniform<ServerCommandSource, FabricCommand> {
+@SuppressWarnings("unused")
+public final class FabricUniform implements Uniform {
 
     private static FabricUniform INSTANCE;
 
@@ -62,24 +61,27 @@ public final class FabricUniform implements Uniform<ServerCommandSource, FabricC
     }
 
     /**
-     * Register a command to be added to the server's command manager
+     * Register a command with the server's command manager
      *
      * @param commands The commands to register
+     * @param <S>      The command source type
+     * @param <T>      The command type
      * @since 1.0
      */
+    @SafeVarargs
     @Override
-    public void register(@NotNull FabricCommand... commands) {
-        Collections.addAll(this.commands, commands);
+    public final <S, T extends BaseCommand<S>> void register(T... commands) {
+        Arrays.stream(commands).map(c -> (FabricCommand) c).forEach(this.commands::add);
     }
 
     /**
-     * Register a command to be added to the server's command manager
+     * Register a command with the server's command manager
      *
      * @param commands The commands to register
      * @since 1.0
      */
     @Override
-    public void register(@NotNull Command... commands) {
+    public void register(Command... commands) {
         register(Arrays.stream(commands).map(FabricCommand::new).toArray(FabricCommand[]::new));
     }
 

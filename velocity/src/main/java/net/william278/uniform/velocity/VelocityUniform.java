@@ -22,8 +22,8 @@
 package net.william278.uniform.velocity;
 
 import com.velocitypowered.api.command.BrigadierCommand;
-import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ProxyServer;
+import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
 import net.william278.uniform.Uniform;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +36,7 @@ import java.util.Arrays;
  * @since 1.0
  */
 @SuppressWarnings("unused")
-public final class VelocityUniform implements Uniform<CommandSource, VelocityCommand> {
+public final class VelocityUniform implements Uniform {
 
     private static VelocityUniform INSTANCE;
 
@@ -62,11 +62,15 @@ public final class VelocityUniform implements Uniform<CommandSource, VelocityCom
      * Register a command with the server's command manager
      *
      * @param commands The commands to register
+     * @param <S>      The command source type
+     * @param <T>      The command type
      * @since 1.0
      */
+    @SafeVarargs
     @Override
-    public void register(@NotNull VelocityCommand... commands) {
-        Arrays.stream(commands).forEach(cmd -> server.getCommandManager().register(new BrigadierCommand(cmd.build())));
+    public final <S, T extends BaseCommand<S>> void register(T... commands) {
+        Arrays.stream(commands).map(c -> (VelocityCommand) c).forEach(c -> server.getCommandManager()
+            .register(c.getName(), new BrigadierCommand(c.build())));
     }
 
     /**
@@ -76,7 +80,7 @@ public final class VelocityUniform implements Uniform<CommandSource, VelocityCom
      * @since 1.0
      */
     @Override
-    public void register(@NotNull Command... commands) {
+    public void register(Command... commands) {
         register(Arrays.stream(commands).map(VelocityCommand::new).toArray(VelocityCommand[]::new));
     }
 

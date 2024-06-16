@@ -21,11 +21,11 @@
 
 package net.william278.uniform;
 
-public interface Uniform<S, T extends BaseCommand<S>> {
+public interface Uniform {
 
     void register(Command... commands);
 
     @SuppressWarnings("unchecked")
-    void register(T... commands);
+    <S, T extends BaseCommand<S>> void register(T... commands);
 
 }

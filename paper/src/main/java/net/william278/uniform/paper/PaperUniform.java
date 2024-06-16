@@ -22,12 +22,13 @@
 package net.william278.uniform.paper;
 
 import com.google.common.collect.Sets;
+import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
+import net.william278.uniform.Uniform;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -35,7 +36,7 @@ import java.util.Set;
  *
  * @since 1.0
  */
-public final class PaperUniform {
+public final class PaperUniform implements Uniform {
 
     private static PaperUniform INSTANCE;
 
@@ -73,24 +74,26 @@ public final class PaperUniform {
         return INSTANCE != null ? INSTANCE : (INSTANCE = new PaperUniform(plugin));
     }
 
-    /**
-     * Register a command to be added to the server's command manager
-     *
-     * @param commands The commands to register
-     * @since 1.0
-     */
-    public void register(PaperCommand... commands) {
-        Collections.addAll(this.commands, commands);
-    }
 
     /**
-     * Register a command to be added to the server's command manager
+     * Register a command with the server's command manager
      *
      * @param commands The commands to register
+     * @param <S>      The command source type
+     * @param <T>      The command type
      * @since 1.0
      */
-    public void register(LegacyPaperCommand... commands) {
-        Collections.addAll(this.legacyCommands, commands);
+    @SafeVarargs
+    @Override
+    public final <S, T extends BaseCommand<S>> void register(T... commands) {
+        Arrays.stream(commands).forEach(c -> {
+            if (c instanceof PaperCommand paper) {
+                this.commands.add(paper);
+            } else if (c instanceof LegacyPaperCommand legacy) {
+                this.legacyCommands.add(legacy);
+            }
+            throw new IllegalArgumentException("Command type not supported");
+        });
     }
 
     /**
