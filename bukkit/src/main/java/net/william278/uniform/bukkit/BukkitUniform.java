@@ -46,7 +46,7 @@ import java.util.function.Function;
 @SuppressWarnings("unused")
 public final class BukkitUniform implements Uniform {
 
-    private static BukkitUniform INSTANCE;
+    static BukkitUniform INSTANCE;
     private static BukkitAudiences AUDIENCES;
     private static JavaPlugin PLUGIN;
 

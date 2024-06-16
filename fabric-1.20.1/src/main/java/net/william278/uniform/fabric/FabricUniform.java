@@ -44,7 +44,7 @@ import java.util.function.Function;
 @SuppressWarnings("unused")
 public final class FabricUniform implements Uniform {
 
-    private static FabricUniform INSTANCE;
+    static FabricUniform INSTANCE;
 
     private final Set<FabricCommand> commands = Sets.newHashSet();
 
@@ -54,7 +54,7 @@ public final class FabricUniform implements Uniform {
 
     private FabricUniform() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registry, environment) ->
-            commands.forEach(command -> dispatcher.register(command.createBuilder(this)))
+            commands.forEach(command -> dispatcher.register(command.createBuilder()))
         );
     }
 

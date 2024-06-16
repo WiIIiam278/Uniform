@@ -50,7 +50,6 @@ public abstract class BaseCommand<S> {
     private Predicate<S> condition;
     @Nullable
     private CommandExecutor<S> defaultExecutor;
-    protected Uniform uniform;
 
     public BaseCommand(@NotNull Command command) {
         this.name = command.getName();
@@ -72,7 +71,7 @@ public abstract class BaseCommand<S> {
 
     @NotNull
     public final CommandUser getUser(@NotNull Object user) {
-        return uniform.getCommandUserSupplier().apply(user);
+        return getUniform().getCommandUserSupplier().apply(user);
     }
 
     public final void setCondition(@NotNull Predicate<S> condition) {
@@ -110,15 +109,15 @@ public abstract class BaseCommand<S> {
 
     public abstract void addSubCommand(@NotNull Command command);
 
+    public abstract Uniform getUniform();
+
     @NotNull
-    public final LiteralCommandNode<S> build(@NotNull Uniform uniform) {
-        this.uniform = uniform;
+    public final LiteralCommandNode<S> build() {
         return Graph.create(this).build();
     }
 
     @NotNull
-    public final LiteralArgumentBuilder<S> createBuilder(@NotNull Uniform uniform) {
-        this.uniform = uniform;
+    public final LiteralArgumentBuilder<S> createBuilder() {
         return Graph.create(this).literal(this.name);
     }
 

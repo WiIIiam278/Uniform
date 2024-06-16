@@ -42,7 +42,7 @@ import java.util.function.Function;
  */
 public final class PaperUniform implements Uniform {
 
-    private static PaperUniform INSTANCE;
+    static PaperUniform INSTANCE;
 
     private final Set<LegacyPaperCommand> legacyCommands = Sets.newHashSet();
     private final Set<PaperCommand> commands = Sets.newHashSet();
@@ -56,14 +56,14 @@ public final class PaperUniform implements Uniform {
         // Modern (1.20.6+) Lifecycle event based Paper Brigadier API
         if (useModernApi) {
             this.commandUserSupplier = PaperCommand.USER_SUPPLIER;
-            PaperCommand.register(this, plugin, commands);
+            PaperCommand.register(plugin, commands);
             return;
         }
 
         // Legacy (1.17-1.20.4) event-based Paper Brigadier API
         this.commandUserSupplier = LegacyPaperCommand.USER_SUPPLIER;
         plugin.getServer().getPluginManager().registerEvents(
-            new LegacyPaperCommand.Registrar(this, plugin, legacyCommands), plugin
+            new LegacyPaperCommand.Registrar(plugin, legacyCommands), plugin
         );
     }
 
@@ -101,12 +101,11 @@ public final class PaperUniform implements Uniform {
     @Override
     public final <S, T extends BaseCommand<S>> void register(T... commands) {
         Arrays.stream(commands).forEach(c -> {
-            if (c instanceof PaperCommand paper) {
-                this.commands.add(paper);
-            } else if (c instanceof LegacyPaperCommand legacy) {
-                this.legacyCommands.add(legacy);
+            if (useModernApi) {
+                this.commands.add((PaperCommand) c);
+            } else {
+                this.legacyCommands.add((LegacyPaperCommand) c);
             }
-            throw new IllegalArgumentException("Command type not supported");
         });
     }
 

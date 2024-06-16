@@ -44,11 +44,6 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
         super(command);
     }
 
-    private FabricCommand(@NotNull Command command, @NotNull Uniform uniform) {
-        super(command);
-        this.uniform = uniform;
-    }
-
     public FabricCommand(@NotNull String name, @NotNull List<String> aliases) {
         super(name, aliases);
     }
@@ -87,6 +82,11 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
 
     @Override
     public void addSubCommand(@NotNull Command command) {
-        addSubCommand(new FabricCommand(command, getUniform()));
+        addSubCommand(new FabricCommand(command));
+    }
+
+    @Override
+    public Uniform getUniform() {
+        return FabricUniform.INSTANCE;
     }
 }

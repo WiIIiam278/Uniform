@@ -52,11 +52,6 @@ public class LegacyPaperCommand extends BaseCommand<BukkitBrigadierCommandSource
         super(command);
     }
 
-    private LegacyPaperCommand(@NotNull Command command, @NotNull Uniform uniform) {
-        super(command);
-        this.uniform = uniform;
-    }
-
     public LegacyPaperCommand(@NotNull String name, @NotNull List<String> aliases) {
         super(name, aliases);
     }
@@ -67,13 +62,16 @@ public class LegacyPaperCommand extends BaseCommand<BukkitBrigadierCommandSource
 
     @Override
     public void addSubCommand(@NotNull Command command) {
-        addSubCommand(new LegacyPaperCommand(command, getUniform()));
+        addSubCommand(new LegacyPaperCommand(command));
+    }
+
+    @Override
+    public Uniform getUniform() {
+        return PaperUniform.INSTANCE;
     }
 
     @AllArgsConstructor
     static class Registrar implements Listener {
-        @NotNull
-        private final PaperUniform uniform;
         @NotNull
         private final JavaPlugin plugin;
         @NotNull
@@ -83,7 +81,7 @@ public class LegacyPaperCommand extends BaseCommand<BukkitBrigadierCommandSource
         public void commandRegisterEvent(CommandRegisteredEvent<BukkitBrigadierCommandSource> event) {
             commands.forEach(command -> {
                 // Register root command
-                final LiteralCommandNode<BukkitBrigadierCommandSource> built = command.build(uniform);
+                final LiteralCommandNode<BukkitBrigadierCommandSource> built = command.build();
                 event.getRoot().addChild(built);
 
                 // Register aliases

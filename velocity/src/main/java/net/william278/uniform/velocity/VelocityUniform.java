@@ -43,7 +43,7 @@ import java.util.function.Function;
 @SuppressWarnings("unused")
 public final class VelocityUniform implements Uniform {
 
-    private static VelocityUniform INSTANCE;
+    static VelocityUniform INSTANCE;
 
     private final ProxyServer server;
 
@@ -79,7 +79,7 @@ public final class VelocityUniform implements Uniform {
     @Override
     public final <S, T extends BaseCommand<S>> void register(T... commands) {
         Arrays.stream(commands).map(c -> (VelocityCommand) c).forEach(c -> server.getCommandManager()
-            .register(c.getName(), new BrigadierCommand(c.build(this))));
+            .register(c.getName(), new BrigadierCommand(c.build())));
     }
 
     /**

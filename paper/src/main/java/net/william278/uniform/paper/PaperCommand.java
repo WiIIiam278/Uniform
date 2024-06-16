@@ -51,12 +51,6 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         super(command);
     }
 
-    private PaperCommand(@NotNull Command command, @NotNull Uniform uniform) {
-        super(command);
-        this.uniform = uniform;
-    }
-
-
     public PaperCommand(@NotNull String name, @NotNull List<String> aliases) {
         super(name, aliases);
     }
@@ -65,12 +59,11 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         super(name, description, aliases);
     }
 
-    static void register(@NotNull PaperUniform uniform, @NotNull JavaPlugin plugin,
-                         @NotNull Set<PaperCommand> commands) {
+    static void register(@NotNull JavaPlugin plugin, @NotNull Set<PaperCommand> commands) {
         plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, (event) -> {
             commands.forEach(command -> event.registrar().register(
                 plugin.getPluginMeta(),
-                command.build(uniform),
+                command.build(),
                 command.getDescription(),
                 command.getAliases()
             ));
@@ -116,7 +109,12 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
 
     @Override
     public void addSubCommand(@NotNull Command command) {
-        addSubCommand(new PaperCommand(command, getUniform()));
+        addSubCommand(new PaperCommand(command));
+    }
+
+    @Override
+    public Uniform getUniform() {
+        return PaperUniform.INSTANCE;
     }
 
 }

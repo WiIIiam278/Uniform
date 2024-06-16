@@ -46,11 +46,6 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
         super(command);
     }
 
-    private BukkitCommand(@NotNull Command command, @NotNull Uniform uniform) {
-        super(command);
-        this.uniform = uniform;
-    }
-
     public BukkitCommand(@NotNull String name, @NotNull String description, @NotNull List<String> aliases) {
         super(name, description, aliases);
     }
@@ -72,7 +67,7 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
 
         public Impl(@NotNull Uniform uniform, @NotNull BukkitCommand command) {
             super(command.getName());
-            this.dispatcher.register(command.createBuilder(uniform));
+            this.dispatcher.register(command.createBuilder());
             this.setDescription(command.getDescription());
             this.setAliases(command.getAliases());
         }
@@ -122,7 +117,12 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
 
     @Override
     public void addSubCommand(@NotNull Command command) {
-        addSubCommand(new BukkitCommand(command, uniform));
+        addSubCommand(new BukkitCommand(command));
+    }
+
+    @Override
+    public Uniform getUniform() {
+        return BukkitUniform.INSTANCE;
     }
 
 }

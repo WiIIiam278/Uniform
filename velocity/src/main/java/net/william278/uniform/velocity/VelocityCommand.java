@@ -43,11 +43,6 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
         super(command);
     }
 
-    private VelocityCommand(@NotNull Command command, @NotNull Uniform uniform) {
-        super(command);
-        this.uniform = uniform;
-    }
-
     public VelocityCommand(@NotNull String name, @NotNull List<String> aliases) {
         super(name, aliases);
     }
@@ -103,7 +98,12 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
 
     @Override
     public void addSubCommand(@NotNull Command command) {
-        addSubCommand(new VelocityCommand(command, getUniform()));
+        addSubCommand(new VelocityCommand(command));
+    }
+
+    @Override
+    public Uniform getUniform() {
+        return VelocityUniform.INSTANCE;
     }
 
 }
