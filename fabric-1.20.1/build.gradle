@@ -17,3 +17,11 @@ dependencies {
 
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
 }
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+
+    exclude('net.fabricmc:.*')
+    exclude('net.kyori:.*')
+    exclude '/mappings/*'
+}

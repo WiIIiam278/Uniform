@@ -104,10 +104,6 @@ subprojects {
         archiveClassifier.set('')
     }
 
-    //if (['example-plugin', 'fabric-1.20.6', 'paper'].contains(project.name)) {
-    //    compileJava.options.release.set 21
-    //}
-
     // Don't include example plugin in publishing
     if (['example-plugin'].contains(project.name)) return;
 
