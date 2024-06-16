@@ -85,8 +85,6 @@ public class ExampleCommand extends PaperCommand {
 Target `uniform-common` and extend the `Command` class. You'll want to use `BaseCommand#getUser` to get a platform-agnostic User from which you can acquire the adventure `Audience` to send messages to.
 
 ```java
-import java.awt.*;
-
 public class ExampleCrossPlatCommand extends Command {
     public ExampleCrossPlatCommand() {
         super("example", "cross-platform");
@@ -94,7 +92,8 @@ public class ExampleCrossPlatCommand extends Command {
 
     @Override
     public <S> void provide(@NotNull BaseCommand<S> command) {
-        // What gets executed when no args are passed. For tidiness, feel free to delegate this stuff to methods!
+        // What gets executed when no args are passed. 
+        // For tidiness, feel free to delegate this stuff to methods!
         command.setDefaultExecutor((context) -> {
             // Use command.getUser(context.getSource()) to get the user
             final Audience user = command.getUser(context.getSource()).getAudience();
