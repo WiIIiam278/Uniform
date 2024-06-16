@@ -24,11 +24,10 @@ package net.william278.uniform.paper;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import net.william278.uniform.BaseCommand;
-import net.william278.uniform.Command;
-import net.william278.uniform.CommandUser;
-import net.william278.uniform.Uniform;
+import net.william278.uniform.*;
 import net.william278.uniform.element.ArgumentElement;
+import net.william278.uniform.element.CommandElement;
+import net.william278.uniform.paper.element.PaperArgumentElement;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -105,6 +104,28 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
             }
             return builder.buildFuture();
         });
+    }
+
+    @Override
+    @NotNull
+    @SuppressWarnings("unchecked")
+    public List<CommandSyntax<CommandSourceStack>> getSyntaxes() {
+        return super.getSyntaxes().stream().map(
+            syntax -> new CommandSyntax<>(
+                syntax.condition(),
+                syntax.executor(),
+                syntax.elements().stream()
+                    .filter(e -> e instanceof ArgumentElement)
+                    .map(e -> (ArgumentElement<?, ?>) e)
+                    .map(e -> e.custom() ? new ArgumentElement<>(
+                        e.name(),
+                        new PaperArgumentElement<>(e.type()),
+                        e.suggestionProvider()
+                    ) : e)
+                    .map(e -> (CommandElement<CommandSourceStack>) e)
+                    .toList()
+            )
+        ).toList();
     }
 
     @Override

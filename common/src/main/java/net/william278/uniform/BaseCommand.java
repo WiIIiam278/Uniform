@@ -179,7 +179,7 @@ public abstract class BaseCommand<S> {
     @NotNull
     public static <S, T> ArgumentElement<S, T> arg(@NotNull String name, @NotNull ArgumentType<T> type,
                                                    @Nullable SuggestionProvider<S> suggestionProvider) {
-        return new ArgumentElement<>(name, type, suggestionProvider);
+        return new ArgumentElement<>(name, type, suggestionProvider, false);
     }
 
     @NotNull

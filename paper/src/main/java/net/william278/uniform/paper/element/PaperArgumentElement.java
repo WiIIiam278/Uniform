@@ -19,40 +19,32 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.william278.uniform.element;
+package net.william278.uniform.paper.element;
 
-
+import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.builder.ArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-@Accessors(fluent = true)
-@Getter
 @AllArgsConstructor
-@RequiredArgsConstructor
-public final class ArgumentElement<S, T> implements CommandElement<S> {
+@SuppressWarnings("UnstableApiUsage")
+public class PaperArgumentElement<T> implements CustomArgumentType<T, String> {
 
-    @NotNull
-    private final String name;
-    @NotNull
-    private final ArgumentType<T> type;
-    @Nullable
-    private final SuggestionProvider<S> suggestionProvider;
-    private boolean custom = true;
+    private final ArgumentType<T> wrapped;
 
     @Override
     @NotNull
-    public ArgumentBuilder<S, ?> toBuilder() {
-        var builder = RequiredArgumentBuilder.<S, T>argument(this.name, this.type);
-        if (this.suggestionProvider != null) builder.suggests(this.suggestionProvider);
-        return builder;
+    public T parse(@NotNull StringReader reader) throws CommandSyntaxException {
+        return wrapped.parse(reader);
+    }
+
+    @Override
+    @NotNull
+    public ArgumentType<String> getNativeType() {
+        return StringArgumentType.string();
     }
 
 }
