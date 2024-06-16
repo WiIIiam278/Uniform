@@ -27,6 +27,7 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
 import net.william278.uniform.CommandUser;
+import net.william278.uniform.Uniform;
 import net.william278.uniform.element.ArgumentElement;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -49,6 +50,12 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
     public PaperCommand(@NotNull Command command) {
         super(command);
     }
+
+    private PaperCommand(@NotNull Command command, @NotNull Uniform uniform) {
+        super(command);
+        this.uniform = uniform;
+    }
+
 
     public PaperCommand(@NotNull String name, @NotNull List<String> aliases) {
         super(name, aliases);
@@ -109,7 +116,7 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
 
     @Override
     public void addSubCommand(@NotNull Command command) {
-        addSubCommand(new PaperCommand(command));
+        addSubCommand(new PaperCommand(command, getUniform()));
     }
 
 }

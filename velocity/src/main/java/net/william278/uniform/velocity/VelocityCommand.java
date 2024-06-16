@@ -30,6 +30,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
+import net.william278.uniform.Uniform;
 import net.william278.uniform.element.ArgumentElement;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,6 +41,11 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
 
     public VelocityCommand(@NotNull Command command) {
         super(command);
+    }
+
+    private VelocityCommand(@NotNull Command command, @NotNull Uniform uniform) {
+        super(command);
+        this.uniform = uniform;
     }
 
     public VelocityCommand(@NotNull String name, @NotNull List<String> aliases) {
@@ -97,7 +103,7 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
 
     @Override
     public void addSubCommand(@NotNull Command command) {
-        addSubCommand(new VelocityCommand(command));
+        addSubCommand(new VelocityCommand(command, getUniform()));
     }
 
 }

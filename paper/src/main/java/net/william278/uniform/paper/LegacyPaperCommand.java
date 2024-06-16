@@ -30,6 +30,7 @@ import lombok.AllArgsConstructor;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
 import net.william278.uniform.CommandUser;
+import net.william278.uniform.Uniform;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -51,6 +52,11 @@ public class LegacyPaperCommand extends BaseCommand<BukkitBrigadierCommandSource
         super(command);
     }
 
+    private LegacyPaperCommand(@NotNull Command command, @NotNull Uniform uniform) {
+        super(command);
+        this.uniform = uniform;
+    }
+
     public LegacyPaperCommand(@NotNull String name, @NotNull List<String> aliases) {
         super(name, aliases);
     }
@@ -61,7 +67,7 @@ public class LegacyPaperCommand extends BaseCommand<BukkitBrigadierCommandSource
 
     @Override
     public void addSubCommand(@NotNull Command command) {
-        addSubCommand(new LegacyPaperCommand(command));
+        addSubCommand(new LegacyPaperCommand(command, getUniform()));
     }
 
     @AllArgsConstructor

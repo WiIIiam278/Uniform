@@ -46,6 +46,11 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
         super(command);
     }
 
+    private BukkitCommand(@NotNull Command command, @NotNull Uniform uniform) {
+        super(command);
+        this.uniform = uniform;
+    }
+
     public BukkitCommand(@NotNull String name, @NotNull String description, @NotNull List<String> aliases) {
         super(name, description, aliases);
     }
@@ -117,7 +122,7 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
 
     @Override
     public void addSubCommand(@NotNull Command command) {
-        addSubCommand(new BukkitCommand(command));
+        addSubCommand(new BukkitCommand(command, uniform));
     }
 
 }

@@ -43,14 +43,14 @@ public abstract class BaseCommand<S> {
     private final String name;
     private final String description;
     private final List<String> aliases;
+    private final List<CommandSyntax<S>> syntaxes = new ArrayList<>();
+    private final List<BaseCommand<S>> subCommands = new ArrayList<>();
 
     @Nullable
     private Predicate<S> condition;
     @Nullable
     private CommandExecutor<S> defaultExecutor;
-    private Uniform uniform;
-    private final List<CommandSyntax<S>> syntaxes = new ArrayList<>();
-    private final List<BaseCommand<S>> subCommands = new ArrayList<>();
+    protected Uniform uniform;
 
     public BaseCommand(@NotNull Command command) {
         this.name = command.getName();
