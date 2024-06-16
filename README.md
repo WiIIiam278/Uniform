@@ -22,11 +22,11 @@ Uniform _currently_ targets the following platforms:
 | Platform      | Artifact           | Minecraft  |  Java  |
 |---------------|--------------------|:----------:|:------:|
 | Common        | `uniform-common`   |     -      | \>`17` |
+| Bukkit        | `uniform-bukkit`   | \>`1.17.1` | \>`17` |
 | Paper         | `uniform-paper`    | \>`1.17.1` | \>`21` |
 | Velocity      | `uniform-velocity` | \>`3.3.0`  | \>`17` |
 | Fabric 1.20.1 | `uniform-fabric`   | =`1.20.1`  | \>`17` |
 | Fabric 1.20.6 | `uniform-fabric`   | =`1.20.6`  | \>`21` |
-| Bukkit        | `uniform-bukkit`   | \>`1.17.1` | \>`17` |
 
 </p>
 
@@ -100,7 +100,7 @@ public class ExampleCrossPlatCommand extends Command {
             final Audience user = command.getUser(context.getSource()).getAudience();
             user.sendMessage(Component.text("Hello, world!"));
         });
-        
+
         // Add syntax to the command
         command.addSyntax((context) -> {
             final Audience user = command.getUser(ctx.getSource()).getAudience();
@@ -108,7 +108,7 @@ public class ExampleCrossPlatCommand extends Command {
             String arg = context.getArgument("message", String.class);
             user.sendMessage(MiniMessage.miniMessage().deserialize(arg));
         }, stringArg("message"));
-        
+
         // Sub-commands, too
         command.addSubCommand("subcommand", (sub) -> {
             sub.setDefaultExecutor((context) -> {
