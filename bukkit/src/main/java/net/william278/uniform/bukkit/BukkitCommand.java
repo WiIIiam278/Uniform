@@ -72,6 +72,7 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
             this.setAliases(command.getAliases());
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public boolean execute(@NotNull CommandSender commandSender, @NotNull String alias, @NotNull String[] args) {
             try {
@@ -79,7 +80,7 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
             } catch (CommandSyntaxException e) {
                 getAudience(commandSender).sendMessage(Component
                     .translatable("command.context.parse_error", NamedTextColor.RED)
-                    .arguments(
+                    .args(
                         Component.text(e.getRawMessage().getString()),
                         Component.text(e.getCursor()),
                         Component.text(e.getContext())
