@@ -85,11 +85,10 @@ public class LegacyPaperCommand extends BaseCommand<BukkitBrigadierCommandSource
                 event.getRoot().addChild(built);
 
                 // Register aliases
+                final String namespace = plugin.getName().toLowerCase(Locale.ENGLISH).replaceAll("[^a-z0-9_-]", "");
                 final Set<String> aliases = Sets.newHashSet(command.getAliases());
-                aliases.add("%s:%s".formatted(
-                    plugin.getName().toLowerCase(Locale.ENGLISH).replaceAll("[^a-z0-9_]", ""),
-                    command.getName())
-                );
+                command.getAliases().forEach(a -> aliases.add(namespace + ":" + a));
+                aliases.add(namespace + ":" + command.getName());
                 aliases.forEach(alias -> event.getRoot().addChild(
                     LiteralArgumentBuilder.<BukkitBrigadierCommandSource>literal(alias)
                         .requires(built.getRequirement()).executes(built.getCommand()).redirect(built)
