@@ -2,6 +2,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     id 'org.cadixdev.licenser' version '0.6.1' apply false
+    id 'fabric-loom' version '1.7-SNAPSHOT' apply false
     id 'io.github.goooler.shadow' version '8.1.7'
     id 'org.ajoberstar.grgit' version '5.2.2'
     id 'maven-publish'
@@ -97,6 +98,10 @@ allprojects {
 }
 
 subprojects {
+    if (['fabric-1.20.1', 'fabric-1.20.6'].contains(project.name)) {
+        apply plugin: 'fabric-loom'
+    }
+
     version rootProject.version
     archivesBaseName = "${rootProject.name}-${project.name.capitalize()}"
 
@@ -184,7 +189,7 @@ subprojects {
                     groupId = 'net.william278.uniform'
                     artifactId = 'uniform-fabric'
                     version = "${rootProject.version}+1.20.1"
-                    artifact shadowJar
+                    artifact remapJar
                     artifact sourcesJar
                     artifact javadocJar
                 }
@@ -197,7 +202,7 @@ subprojects {
                     groupId = 'net.william278.uniform'
                     artifactId = 'uniform-fabric'
                     version = "${rootProject.version}+1.20.6"
-                    artifact shadowJar
+                    artifact remapJar
                     artifact sourcesJar
                     artifact javadocJar
                 }
