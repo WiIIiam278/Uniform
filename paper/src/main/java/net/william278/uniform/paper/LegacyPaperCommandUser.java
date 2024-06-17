@@ -24,6 +24,8 @@ package net.william278.uniform.paper;
 import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
 import net.kyori.adventure.audience.Audience;
 import net.william278.uniform.CommandUser;
+import net.william278.uniform.Permission;
+import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,6 +50,16 @@ public record LegacyPaperCommandUser(@NotNull BukkitBrigadierCommandSource sourc
     @Nullable
     public UUID getUuid() {
         return source.getBukkitEntity() != null ? source.getBukkitEntity().getUniqueId() : null;
+    }
+
+    @Override
+    public boolean checkPermission(@NotNull Permission permission) {
+        if (source.getBukkitSender().isPermissionSet(permission.node())) {
+            return source.getBukkitSender().hasPermission(permission.node());
+        }
+        return permission.defaultValue().check(
+            source.getBukkitSender().isOp() || source.getBukkitSender() instanceof ConsoleCommandSender
+        );
     }
 
 }

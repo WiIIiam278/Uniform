@@ -39,6 +39,13 @@ public interface CommandUser {
     @Nullable
     UUID getUuid();
 
+    boolean checkPermission(@NotNull Permission permission);
+
+    default boolean checkPermission(@NotNull String permission,
+                                    @NotNull Permission.Default permissionDefault) {
+        return checkPermission(new Permission(permission, permissionDefault));
+    }
+
     default boolean isConsole() {
         return getName() == null;
     }

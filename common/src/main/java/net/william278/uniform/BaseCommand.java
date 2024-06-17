@@ -55,6 +55,7 @@ public abstract class BaseCommand<S> {
         this.name = command.getName();
         this.aliases = command.getAliases();
         this.description = command.getDescription();
+        command.getPermission().ifPresent(this::setPermission);
         command.provide(this);
     }
 
@@ -76,6 +77,18 @@ public abstract class BaseCommand<S> {
 
     public final void setCondition(@NotNull Predicate<S> condition) {
         this.condition = condition;
+    }
+
+    public final void setPermission(@NotNull Permission permission) {
+        this.setCondition(this.createPermission(permission));
+    }
+
+    public final void setPermission(@NotNull String permission) {
+        this.setCondition(this.createPermission(new Permission(permission)));
+    }
+
+    public final void setPermission(@NotNull String permission, @NotNull Permission.Default permissionDefault) {
+        this.setCondition(this.createPermission(new Permission(permission, permissionDefault)));
     }
 
     public final void setDefaultExecutor(@NotNull CommandExecutor<S> executor) {
@@ -102,14 +115,29 @@ public abstract class BaseCommand<S> {
         this.addSubCommand(new Command.SubCommand(name, provider).command());
     }
 
+    public final void addSubCommand(@NotNull String name, @NotNull Permission permission,
+                                    @NotNull CommandProvider provider) {
+        this.addSubCommand(new Command.SubCommand(name, permission, provider).command());
+    }
+
     public final void addSubCommand(@NotNull String name, @NotNull List<String> aliases,
                                     @NotNull CommandProvider provider) {
-        this.addSubCommand(new Command.SubCommand(name, provider, aliases).command());
+        this.addSubCommand(new Command.SubCommand(name, aliases, provider).command());
+    }
+
+    public final void addSubCommand(@NotNull String name, @NotNull List<String> aliases,
+                                    @NotNull Permission permission, @NotNull CommandProvider provider) {
+        this.addSubCommand(new Command.SubCommand(name, aliases, permission, provider).command());
     }
 
     public abstract void addSubCommand(@NotNull Command command);
 
     public abstract Uniform getUniform();
+
+    @NotNull
+    public final Predicate<S> createPermission(@NotNull Permission permission) {
+        return permission.toPredicate(this);
+    }
 
     @NotNull
     public final LiteralCommandNode<S> build() {

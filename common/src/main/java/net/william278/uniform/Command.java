@@ -21,13 +21,12 @@
 
 package net.william278.uniform;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -36,17 +35,31 @@ import java.util.List;
 public abstract class Command implements CommandProvider {
 
     private final String name;
-    private String description = "";
     private List<String> aliases = List.of();
+    private String description = "";
+    @Getter(AccessLevel.NONE)
+    private @Nullable Permission permission = null;
 
-    record SubCommand(@NotNull String name, @NotNull CommandProvider provider, @NotNull List<String> aliases) {
-        SubCommand(@NotNull String name, @NotNull CommandProvider provider) {
-            this(name, provider, List.of());
+    public Optional<Permission> getPermission() {
+        return Optional.ofNullable(permission);
+    }
+
+    public record SubCommand(@NotNull String name, @NotNull List<String> aliases, @Nullable Permission permission, @NotNull CommandProvider provider) {
+        public SubCommand(@NotNull String name, @NotNull List<String> aliases, @NotNull CommandProvider provider) {
+            this(name, aliases, null, provider);
+        }
+
+        public SubCommand(@NotNull String name, @NotNull CommandProvider provider) {
+            this(name, List.of(),null, provider);
+        }
+
+        public SubCommand(@NotNull String name, @Nullable Permission permission, @NotNull CommandProvider provider) {
+            this(name, List.of(), permission, provider);
         }
 
         @NotNull
         Command command() {
-            return new Command(name, "", aliases) {
+            return new Command(name, aliases, "", permission) {
                 @Override
                 public void provide(@NotNull BaseCommand<?> command) {
                     provider.provide(command);

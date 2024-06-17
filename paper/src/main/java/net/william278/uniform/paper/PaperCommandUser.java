@@ -24,6 +24,8 @@ package net.william278.uniform.paper;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.kyori.adventure.audience.Audience;
 import net.william278.uniform.CommandUser;
+import net.william278.uniform.Permission;
+import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,5 +51,15 @@ public record PaperCommandUser(@NotNull CommandSourceStack source) implements Co
     @Nullable
     public UUID getUuid() {
         return source.getExecutor() != null ? source.getExecutor().getUniqueId() : null;
+    }
+
+    @Override
+    public boolean checkPermission(@NotNull Permission permission) {
+        if (source.getSender().isPermissionSet(permission.node())) {
+            return source.getSender().hasPermission(permission.node());
+        }
+        return permission.defaultValue().check(
+            source.getSender().isOp() || source.getSender() instanceof ConsoleCommandSender
+        );
     }
 }

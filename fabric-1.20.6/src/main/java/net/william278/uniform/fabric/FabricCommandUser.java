@@ -21,9 +21,11 @@
 
 package net.william278.uniform.fabric;
 
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.kyori.adventure.audience.Audience;
 import net.minecraft.server.command.ServerCommandSource;
 import net.william278.uniform.CommandUser;
+import net.william278.uniform.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,6 +48,14 @@ public record FabricCommandUser(@NotNull ServerCommandSource source) implements 
     @Nullable
     public UUID getUuid() {
         return source.getPlayer() != null ? source.getPlayer().getUuid() : null;
+    }
+
+    @Override
+    public boolean checkPermission(@NotNull Permission permission) {
+        return Permissions.check(
+            source, permission.node(),
+            permission.defaultValue().check(source.hasPermissionLevel(4))
+        );
     }
 
 }

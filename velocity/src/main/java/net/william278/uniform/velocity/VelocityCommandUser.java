@@ -22,9 +22,11 @@
 package net.william278.uniform.velocity;
 
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.permission.Tristate;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.audience.Audience;
 import net.william278.uniform.CommandUser;
+import net.william278.uniform.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,6 +50,14 @@ public record VelocityCommandUser(CommandSource source) implements CommandUser {
     @Nullable
     public UUID getUuid() {
         return source instanceof Player ? ((Player) source).getUniqueId() : null;
+    }
+
+    @Override
+    public boolean checkPermission(@NotNull Permission permission) {
+        if (source.getPermissionValue(permission.node()) != Tristate.UNDEFINED) {
+            return source.getPermissionValue(permission.node()) == Tristate.TRUE;
+        }
+        return permission.defaultValue().check(source.hasPermission(permission.node()));
     }
 
 }

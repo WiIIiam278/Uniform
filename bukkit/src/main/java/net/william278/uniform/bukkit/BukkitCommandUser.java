@@ -23,7 +23,9 @@ package net.william278.uniform.bukkit;
 
 import net.kyori.adventure.audience.Audience;
 import net.william278.uniform.CommandUser;
+import net.william278.uniform.Permission;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,6 +49,16 @@ public record BukkitCommandUser(@NotNull CommandSender sender) implements Comman
     @Nullable
     public UUID getUuid() {
         return sender instanceof Player player ? player.getUniqueId() : null;
+    }
+
+    @Override
+    public boolean checkPermission(@NotNull Permission permission) {
+        if (sender.isPermissionSet(permission.node())) {
+            return sender.hasPermission(permission.node());
+        }
+        return permission.defaultValue().check(
+            sender.isOp() || sender instanceof ConsoleCommandSender
+        );
     }
 
 }
