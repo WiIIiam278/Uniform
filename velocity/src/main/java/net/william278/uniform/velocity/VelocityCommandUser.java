@@ -33,7 +33,8 @@ import java.util.UUID;
 public record VelocityCommandUser(CommandSource source) implements CommandUser {
 
     @Override
-    public @NotNull Audience getAudience() {
+    @NotNull
+    public Audience getAudience() {
         return source;
     }
 
