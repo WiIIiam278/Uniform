@@ -21,10 +21,14 @@
 
 package net.william278.uniform;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.kyori.adventure.text.Component;
+import net.william278.uniform.element.ArgumentElement;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static net.william278.uniform.BaseCommand.greedyString;
 
@@ -46,6 +50,38 @@ public class ExampleCommand extends Command {
             final CommandUser user = sub.getUser(ctx.getSource());
             user.getAudience().sendMessage(Component.text(ctx.getArgument("message", String.class)));
         }, greedyString("message")));
+        command.addSubCommand("flavor", (sub) -> sub.addSyntax((ctx) -> {
+            final CommandUser user = sub.getUser(ctx.getSource());
+            final IceCreamFlavor flavor = ctx.getArgument("flavor", IceCreamFlavor.class);
+            switch (flavor) {
+                case VANILLA -> user.getAudience().sendMessage(Component.text("Vanilla ice cream is fine!"));
+                case CHOCOLATE -> user.getAudience().sendMessage(Component.text("Chocolate ice cream is kino!"));
+                case STRAWBERRY -> user.getAudience().sendMessage(Component.text("Strawberry ice cream is ok..."));
+            }
+        }, exampleCustomArg()));
+    }
+
+    private static <S> ArgumentElement<S, ExampleCommand.IceCreamFlavor> exampleCustomArg() {
+        return new ArgumentElement<>("flavor", reader -> {
+            final String flavor = reader.readString();
+            try {
+                return IceCreamFlavor.valueOf(flavor.toUpperCase(Locale.ENGLISH));
+            } catch (IllegalArgumentException e) {
+                throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().create();
+            }
+        }, (context, builder) -> {
+            Arrays.stream(IceCreamFlavor.values()).forEach(
+                flavor -> builder.suggest(flavor.name().toLowerCase(Locale.ENGLISH))
+            );
+            return builder.buildFuture();
+        });
+
+    }
+
+    enum IceCreamFlavor {
+        VANILLA,
+        CHOCOLATE,
+        STRAWBERRY
     }
 
 }
