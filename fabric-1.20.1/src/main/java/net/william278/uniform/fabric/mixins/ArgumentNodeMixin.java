@@ -27,47 +27,32 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.ArgumentTypes;
 import net.minecraft.command.argument.serialize.ArgumentSerializer;
 import net.minecraft.command.suggestion.SuggestionProviders;
+import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket.ArgumentNode;
 import net.minecraft.util.Identifier;
-import org.spongepowered.asm.mixin.Final;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(targets = "net/minecraft/network/packet/s2c/play/CommandTreeS2CPacket$ArgumentNode")
+@Mixin(ArgumentNode.class)
 public class ArgumentNodeMixin {
-    
-    @Mutable
-    @Final
-    @Shadow
-    private String name;
-    
-    @Mutable
-    @Final
-    @Shadow
-    private ArgumentSerializer.ArgumentTypeProperties<?> properties;
-    
-    @Mutable
-    @Final
-    @Shadow
-    private Identifier id; // Worst mapping name in the entirety of yarn. Actually suggestion providers. Lmao. 
-    
-    ArgumentNodeMixin(String name, ArgumentSerializer.ArgumentTypeProperties<?> properties, Identifier id) {
-        this.name = name;
-        this.properties = properties;
-        this.id = id;
+
+    @Invoker("<init>")
+    static ArgumentNode createArgumentNode(String name, ArgumentSerializer.ArgumentTypeProperties<?> properties, @Nullable Identifier id) {
+        throw new AssertionError();
     }
 
     @Redirect(method = "<init>(Lcom/mojang/brigadier/tree/ArgumentCommandNode;)V", at = @At("HEAD"))
-    private static <A> ArgumentNodeMixin onConstruct(ArgumentCommandNode<CommandSource, A> node) {
+    static <A> ArgumentNode onConstruct(ArgumentCommandNode<CommandSource, A> node) {
         ArgumentSerializer.ArgumentTypeProperties<?> properties;
         try {
             properties = ArgumentTypes.get(node.getType()).getArgumentTypeProperties(node.getType());
         } catch (IllegalArgumentException e) {
             properties = ArgumentTypes.get(StringArgumentType.string()).getArgumentTypeProperties(StringArgumentType.string());
         }
-        return new ArgumentNodeMixin(
+
+        return createArgumentNode(
             node.getName(),
             properties,
             node.getCustomSuggestions() != null ? SuggestionProviders.computeId(node.getCustomSuggestions()) : null

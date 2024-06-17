@@ -1,4 +1,3 @@
 accessWidener v2 named
 
 extendable class net/minecraft/network/packet/s2c/play/CommandTreeS2CPacket$ArgumentNode
-accessible method net/minecraft/network/packet/s2c/play/CommandTreeS2CPacket$ArgumentNode <init> (Ljava/lang/String;Lnet/minecraft/command/argument/serialize/ArgumentSerializer$ArgumentTypeProperties;Lnet/minecraft/util/Identifier;)V
