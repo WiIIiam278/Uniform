@@ -13,6 +13,11 @@ version "$ext.library_version${versionMetadata()}"
 description "$ext.library_description"
 defaultTasks 'licenseFormat', 'build'
 
+ext {
+    set 'version', version.toString()
+    set 'description', description.toString()
+}
+
 publishing {
     repositories {
         if (System.getenv("RELEASES_MAVEN_USERNAME") != null) {

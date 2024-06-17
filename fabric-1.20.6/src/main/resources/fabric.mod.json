@@ -1,7 +1,8 @@
 {
   "schemaVersion": 1,
   "id": "uniform",
-  "version": "${project.version}",
+  "version": "${version}",
+  "description": "${description}",
   "name": "uniform",
   "authors": [
     "William278",
