@@ -24,5 +24,9 @@
   },
   "depends": {
     "fabric-api": "*"
-  }
+  },
+  "mixins": [
+    "uniform.mixins.json"
+  ],
+  "accessWidener": "uniform.accesswidener"
 }

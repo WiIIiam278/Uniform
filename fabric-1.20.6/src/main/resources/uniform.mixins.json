@@ -1,0 +1,6 @@
+{
+  "package": "net.william278.uniform.fabric.mixins",
+  "mixins": [
+    "ArgumentNodeMixin"
+  ]
+}

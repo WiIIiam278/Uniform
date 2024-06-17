@@ -21,7 +21,6 @@
 
 package net.william278.uniform.fabric;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -32,10 +31,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
-import net.william278.uniform.CommandSyntax;
 import net.william278.uniform.Uniform;
 import net.william278.uniform.element.ArgumentElement;
-import net.william278.uniform.element.CommandElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -81,28 +78,6 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
             registry.getIds().forEach(id -> builder.suggest(id.toString()));
             return builder.buildFuture();
         });
-    }
-
-    @Override
-    @NotNull
-    @SuppressWarnings("unchecked")
-    public List<CommandSyntax<ServerCommandSource>> getSyntaxes() {
-        return super.getSyntaxes().stream().map(
-            syntax -> new CommandSyntax<>(
-                syntax.condition(),
-                syntax.executor(),
-                syntax.elements().stream()
-                    .filter(e -> e instanceof ArgumentElement)
-                    .map(e -> (ArgumentElement<?, ?>) e)
-                    .map(e -> e.custom() ? new ArgumentElement<>(
-                        e.name(),
-                        StringArgumentType.string(),
-                        e.suggestionProvider()
-                    ) : e)
-                    .map(e -> (CommandElement<ServerCommandSource>) e)
-                    .toList()
-            )
-        ).toList();
     }
 
     @Override
