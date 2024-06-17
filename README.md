@@ -31,7 +31,7 @@ Uniform _currently_ targets the following platforms:
 </p>
 
 * **Fabric:** Please note Uniform on Fabric requires [adventure-platform-fabric](https://docs.advntr.dev/platform/fabric.html) and the [Fabric API](https://fabricmc.net/) as dependencies. To target Fabric, use `uniform-fabric` as the artifact and `<uniform_version>+<minecraft_version>` as the version (e.g. `net.william278.uniform:uniform-fabric:1.0+1.20.1`).
-* **Sponge**: Support for Sponge 8 is also planned in a future version.
+* **Sponge**: Support for Sponge 10 is also planned in a future version.
 
 ## Setup
 Uniform is available [on Maven](https://repo.william278.net/#/releases/net/william278/uniform/). You can browse the Javadocs [here](https://repo.william278.net/javadoc/releases/net/william278/uniform/latest).
