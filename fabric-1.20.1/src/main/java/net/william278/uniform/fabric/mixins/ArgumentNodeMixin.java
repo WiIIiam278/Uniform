@@ -21,43 +21,33 @@
 
 package net.william278.uniform.fabric.mixins;
 
+import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.tree.ArgumentCommandNode;
-import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.ArgumentTypes;
 import net.minecraft.command.argument.serialize.ArgumentSerializer;
-import net.minecraft.command.suggestion.SuggestionProviders;
 import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket.ArgumentNode;
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ArgumentNode.class)
 public class ArgumentNodeMixin {
 
-    @Invoker("<init>")
-    private static ArgumentNode createArgumentNode(String name, ArgumentSerializer.ArgumentTypeProperties<?> properties,
-                                                   @Nullable Identifier id) {
-        throw new AssertionError();
-    }
-
-    @Redirect(method = "<init>(Lcom/mojang/brigadier/tree/ArgumentCommandNode;)V", at = @At("HEAD"))
-    private static ArgumentNode onConstruct(ArgumentCommandNode<CommandSource, ?> node) {
+    @Redirect(
+        method = "<init>(Lcom/mojang/brigadier/tree/ArgumentCommandNode;)V",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/command/argument/ArgumentTypes;getArgumentTypeProperties(Lcom/mojang/brigadier/arguments/ArgumentType;)Lnet/minecraft/command/argument/serialize/ArgumentSerializer$ArgumentTypeProperties;"
+        )
+    )
+    private static ArgumentSerializer.ArgumentTypeProperties<?> onConstruct(ArgumentType<?> type) {
         ArgumentSerializer.ArgumentTypeProperties<?> properties;
         try {
-            properties = ArgumentTypes.getArgumentTypeProperties(node.getType());
+            properties = ArgumentTypes.getArgumentTypeProperties(type);
         } catch (IllegalArgumentException e) {
             properties = ArgumentTypes.getArgumentTypeProperties(StringArgumentType.string());
         }
-
-        return createArgumentNode(
-            node.getName(),
-            properties,
-            node.getCustomSuggestions() != null ? SuggestionProviders.computeId(node.getCustomSuggestions()) : null
-        );
+        return properties;
     }
 
 }
