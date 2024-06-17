@@ -18,6 +18,10 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
 }
 
+loom {
+    accessWidenerPath = file("src/main/resources/uniform.accesswidener")
+}
+
 shadowJar {
     configurations = [project.configurations.shadow]
 
@@ -25,3 +29,5 @@ shadowJar {
     exclude('net.kyori:.*')
     exclude '/mappings/*'
 }
+
+shadowJar.finalizedBy(remapJar)

@@ -28,41 +28,50 @@ import net.minecraft.command.argument.ArgumentTypes;
 import net.minecraft.command.argument.serialize.ArgumentSerializer;
 import net.minecraft.command.suggestion.SuggestionProviders;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(targets = "net/minecraft/network/packet/s2c/play/CommandTreeS2CPacket$ArgumentNode")
 public class ArgumentNodeMixin {
-
+    
     @Mutable
     @Final
     @Shadow
     private String name;
+    
     @Mutable
     @Final
     @Shadow
     private ArgumentSerializer.ArgumentTypeProperties<?> properties;
+    
     @Mutable
     @Final
-    @Nullable
     @Shadow
-    private Identifier id; // Actually, the suggestion provider. Possibly the worst field name in the entire yarn mappings?
+    private Identifier id; // Worst mapping name in the entirety of yarn. Actually suggestion providers. Lmao. 
+    
+    ArgumentNodeMixin(String name, ArgumentSerializer.ArgumentTypeProperties<?> properties, Identifier id) {
+        this.name = name;
+        this.properties = properties;
+        this.id = id;
+    }
 
-    @Inject(method = "<init>(Lcom/mojang/brigadier/tree/ArgumentCommandNode;)V", at = @At("RETURN"))
-    private <A> void onConstruct(ArgumentCommandNode<CommandSource, A> node, CallbackInfo ci) {
-        this.name = node.getName();
-        this.id = node.getCustomSuggestions() != null ? SuggestionProviders.computeId(node.getCustomSuggestions()) : null;
+    @Redirect(method = "<init>(Lcom/mojang/brigadier/tree/ArgumentCommandNode;)V", at = @At("HEAD"))
+    private static <A> ArgumentNodeMixin onConstruct(ArgumentCommandNode<CommandSource, A> node) {
+        ArgumentSerializer.ArgumentTypeProperties<?> properties;
         try {
-            this.properties = ArgumentTypes.get(node.getType()).getArgumentTypeProperties(node.getType());
+            properties = ArgumentTypes.get(node.getType()).getArgumentTypeProperties(node.getType());
         } catch (IllegalArgumentException e) {
-            this.properties = ArgumentTypes.get(StringArgumentType.string()).getArgumentTypeProperties(StringArgumentType.string());
+            properties = ArgumentTypes.get(StringArgumentType.string()).getArgumentTypeProperties(StringArgumentType.string());
         }
+        return new ArgumentNodeMixin(
+            node.getName(),
+            properties,
+            node.getCustomSuggestions() != null ? SuggestionProviders.computeId(node.getCustomSuggestions()) : null
+        );
     }
 
 }
