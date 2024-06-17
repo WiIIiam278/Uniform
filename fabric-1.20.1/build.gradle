@@ -18,9 +18,7 @@ dependencies {
     shadow project(path: ':common')
 }
 
-loom {
-    accessWidenerPath = file("src/main/resources/uniform.accesswidener")
-}
+loom.setAccessWidenerPath(file("src/main/resources/uniform.accesswidener"))
 
 shadowJar {
     configurations = [project.configurations.shadow]
