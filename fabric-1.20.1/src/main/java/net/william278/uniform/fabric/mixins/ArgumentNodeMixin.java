@@ -39,17 +39,18 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class ArgumentNodeMixin {
 
     @Invoker("<init>")
-    private static ArgumentNode createArgumentNode(String name, ArgumentSerializer.ArgumentTypeProperties<?> properties, @Nullable Identifier id) {
+    private static ArgumentNode createArgumentNode(String name, ArgumentSerializer.ArgumentTypeProperties<?> properties,
+                                                   @Nullable Identifier id) {
         throw new AssertionError();
     }
 
     @Redirect(method = "<init>(Lcom/mojang/brigadier/tree/ArgumentCommandNode;)V", at = @At("HEAD"))
-    private static <A> ArgumentNode onConstruct(ArgumentCommandNode<CommandSource, A> node) {
+    private static ArgumentNode onConstruct(ArgumentCommandNode<CommandSource, ?> node) {
         ArgumentSerializer.ArgumentTypeProperties<?> properties;
         try {
-            properties = ArgumentTypes.get(node.getType()).getArgumentTypeProperties(node.getType());
+            properties = ArgumentTypes.getArgumentTypeProperties(node.getType());
         } catch (IllegalArgumentException e) {
-            properties = ArgumentTypes.get(StringArgumentType.string()).getArgumentTypeProperties(StringArgumentType.string());
+            properties = ArgumentTypes.getArgumentTypeProperties(StringArgumentType.string());
         }
 
         return createArgumentNode(
