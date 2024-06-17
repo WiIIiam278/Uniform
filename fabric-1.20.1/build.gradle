@@ -1,12 +1,10 @@
 plugins {
-    id 'fabric-loom' version '1.6-SNAPSHOT'
+    id 'fabric-loom' version '1.7-SNAPSHOT'
     id 'java-library'
     id 'maven-publish'
 }
 
 dependencies {
-    shadow project(path: ':common')
-
     minecraft 'com.mojang:minecraft:1.20.1'
     mappings 'net.fabricmc:yarn:1.20.1+build.10:v2'
 
@@ -14,9 +12,10 @@ dependencies {
     modCompileOnly 'net.fabricmc.fabric-api:fabric-api:0.92.2+1.20.1'
     modImplementation include('me.lucko:fabric-permissions-api:0.3.1')
 
-    compileOnly 'org.projectlombok:lombok:1.18.32'
-
+    modCompileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
+
+    shadow project(path: ':common')
 }
 
 loom {
@@ -25,10 +24,21 @@ loom {
 
 shadowJar {
     configurations = [project.configurations.shadow]
+    destinationDirectory.set(file("$projectDir/build/libs"))
 
     exclude('net.fabricmc:.*')
     exclude('net.kyori:.*')
     exclude '/mappings/*'
+}
+
+remapJar {
+    dependsOn tasks.shadowJar
+    mustRunAfter tasks.shadowJar
+    inputFile = shadowJar.archiveFile.get()
+    addNestedDependencies = true
+
+    destinationDirectory.set(file("$rootDir/target/"))
+    archiveClassifier.set('')
 }
 
 shadowJar.finalizedBy(remapJar)
