@@ -21,44 +21,43 @@
 
 package net.william278.uniform.paper;
 
-import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
 import net.kyori.adventure.audience.Audience;
 import net.william278.uniform.CommandUser;
 import net.william278.uniform.Permission;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-@SuppressWarnings("removal")
-public record LegacyPaperCommandUser(@NotNull BukkitBrigadierCommandSource source) implements CommandUser {
+public record LegacyPaperCommandUser(@NotNull CommandSender sender) implements CommandUser {
 
     @Override
     @NotNull
     public Audience getAudience() {
-        return source.getBukkitSender();
+        return sender;
     }
 
     @Override
-    @Nullable
     public String getName() {
-        return source.getBukkitEntity() != null ? source.getBukkitEntity().getName() : null;
+        return sender.getName();
     }
 
     @Override
     @Nullable
     public UUID getUuid() {
-        return source.getBukkitEntity() != null ? source.getBukkitEntity().getUniqueId() : null;
+        return sender instanceof Player player ? player.getUniqueId() : null;
     }
 
     @Override
     public boolean checkPermission(@NotNull Permission permission) {
-        if (source.getBukkitSender().isPermissionSet(permission.node())) {
-            return source.getBukkitSender().hasPermission(permission.node());
+        if (sender.isPermissionSet(permission.node())) {
+            return sender.hasPermission(permission.node());
         }
         return permission.defaultValue().check(
-            source.getBukkitSender().isOp() || source.getBukkitSender() instanceof ConsoleCommandSender
+            sender.isOp() || sender instanceof ConsoleCommandSender
         );
     }
 

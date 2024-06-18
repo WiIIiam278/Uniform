@@ -32,8 +32,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * A class for registering commands with the Paper server's command manager
@@ -44,27 +46,23 @@ public final class PaperUniform implements Uniform {
 
     static PaperUniform INSTANCE;
 
-    private final Set<LegacyPaperCommand> legacyCommands = Sets.newHashSet();
     private final Set<PaperCommand> commands = Sets.newHashSet();
     private final boolean useModernApi = isUseModernApi();
+    private final JavaPlugin plugin;
 
     @Getter
     @Setter
     Function<Object, CommandUser> commandUserSupplier;
 
     private PaperUniform(@NotNull JavaPlugin plugin) {
+        this.plugin = plugin;
         // Modern (1.20.6+) Lifecycle event based Paper Brigadier API
         if (useModernApi) {
             this.commandUserSupplier = PaperCommand.USER_SUPPLIER;
             PaperCommand.register(plugin, commands);
             return;
         }
-
-        // Legacy (1.17-1.20.4) event-based Paper Brigadier API
         this.commandUserSupplier = LegacyPaperCommand.USER_SUPPLIER;
-        plugin.getServer().getPluginManager().registerEvents(
-            new LegacyPaperCommand.Registrar(plugin, legacyCommands), plugin
-        );
     }
 
     /**
@@ -100,13 +98,18 @@ public final class PaperUniform implements Uniform {
     @SafeVarargs
     @Override
     public final <S, T extends BaseCommand<S>> void register(T... commands) {
-        Arrays.stream(commands).forEach(c -> {
-            if (useModernApi) {
-                this.commands.add((PaperCommand) c);
-            } else {
-                this.legacyCommands.add((LegacyPaperCommand) c);
-            }
-        });
+        // Mark as to be registered with modern API
+        final Stream<T> s = Arrays.stream(commands);
+        if (useModernApi) {
+            s.forEach(c -> this.commands.add((PaperCommand) c));
+            return;
+        }
+
+        // Register with the legacy API
+        plugin.getServer().getCommandMap().registerAll(
+                plugin.getName().toLowerCase(Locale.ENGLISH).replaceAll("[^a-z0-9_]", ""),
+                s.map(c -> (LegacyPaperCommand) c).map(c -> (org.bukkit.command.Command) c.getImpl(this)).toList()
+        );
     }
 
     /**

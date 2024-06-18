@@ -21,43 +21,96 @@
 
 package net.william278.uniform.paper;
 
-import com.destroystokyo.paper.brigadier.BukkitBrigadierCommandSource;
-import com.destroystokyo.paper.event.brigadier.CommandRegisteredEvent;
-import com.google.common.collect.Sets;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.tree.LiteralCommandNode;
-import lombok.AllArgsConstructor;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.Suggestion;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
 import net.william278.uniform.CommandUser;
 import net.william278.uniform.Uniform;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.command.CommandException;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 import java.util.function.Function;
 
-@SuppressWarnings({"removal", "deprecation", "UnstableApiUsage"})
-public class LegacyPaperCommand extends BaseCommand<BukkitBrigadierCommandSource> {
+@SuppressWarnings("unused")
+public class LegacyPaperCommand extends BaseCommand<CommandSender> {
 
     static final Function<Object, CommandUser> USER_SUPPLIER = (user) -> new LegacyPaperCommandUser(
-        (BukkitBrigadierCommandSource) user
+            (CommandSender) user
     );
 
     public LegacyPaperCommand(@NotNull Command command) {
         super(command);
     }
 
+    public LegacyPaperCommand(@NotNull String name, @NotNull String description, @NotNull List<String> aliases) {
+        super(name, description, aliases);
+    }
+
     public LegacyPaperCommand(@NotNull String name, @NotNull List<String> aliases) {
         super(name, aliases);
     }
 
-    public LegacyPaperCommand(@NotNull String name, @NotNull String description, @NotNull List<String> aliases) {
-        super(name, description, aliases);
+    @NotNull
+    Impl getImpl(@NotNull Uniform uniform) {
+        return new Impl(uniform, this);
+    }
+
+    static final class Impl extends org.bukkit.command.Command {
+
+        private static final int COMMAND_SUCCESS = com.mojang.brigadier.Command.SINGLE_SUCCESS;
+
+        private final CommandDispatcher<CommandSender> dispatcher = new CommandDispatcher<>();
+
+        public Impl(@NotNull Uniform uniform, @NotNull LegacyPaperCommand command) {
+            super(command.getName());
+            this.dispatcher.register(command.createBuilder());
+            this.setDescription(command.getDescription());
+            this.setAliases(command.getAliases());
+        }
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public boolean execute(@NotNull CommandSender commandSender, @NotNull String alias, @NotNull String[] args) {
+            try {
+                return dispatcher.execute(getInput(args), commandSender) == COMMAND_SUCCESS;
+            } catch (CommandSyntaxException e) {
+                commandSender.sendMessage(Component
+                        .translatable("command.context.parse_error", NamedTextColor.RED)
+                        .args(
+                                Component.text(e.getRawMessage().getString()),
+                                Component.text(e.getCursor()),
+                                Component.text(e.getContext())
+                        ));
+                return false;
+            } catch (CommandException e) {
+                commandSender.sendMessage(Component.text(e.getMessage(), NamedTextColor.RED));
+                return false;
+            }
+        }
+
+        @NotNull
+        @Override
+        public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args)
+                throws IllegalArgumentException {
+            final String passed = getInput(args);
+            return dispatcher.getCompletionSuggestions(
+                            dispatcher.parse(passed, sender),
+                            passed.length() // Spigot API limitation - we can only TAB complete the full text length :(
+                    )
+                    .thenApply(suggestions -> suggestions.getList().stream().map(Suggestion::getText).toList())
+                    .join();
+        }
+
+        @NotNull
+        private String getInput(@NotNull String[] args) {
+            return args.length == 0 ? getName() : "%s %s".formatted(getName(), String.join(" ", args));
+        }
     }
 
     @Override
@@ -68,35 +121,6 @@ public class LegacyPaperCommand extends BaseCommand<BukkitBrigadierCommandSource
     @Override
     public Uniform getUniform() {
         return PaperUniform.INSTANCE;
-    }
-
-    @AllArgsConstructor
-    static class Registrar implements Listener {
-        @NotNull
-        private final JavaPlugin plugin;
-        @NotNull
-        private final Set<LegacyPaperCommand> commands;
-
-        @EventHandler
-        public void commandRegisterEvent(CommandRegisteredEvent<BukkitBrigadierCommandSource> event) {
-            commands.forEach(command -> {
-                // Register root command
-                final LiteralCommandNode<BukkitBrigadierCommandSource> built = command.build();
-                event.getRoot().addChild(built);
-
-                // Register aliases
-                final String namespace = plugin.getName().toLowerCase(Locale.ENGLISH).replaceAll("[^a-z0-9_-]", "");
-                final Set<String> aliases = Sets.newHashSet(command.getAliases());
-                command.getAliases().forEach(a -> aliases.add(namespace + ":" + a));
-                aliases.add(namespace + ":" + command.getName());
-                aliases.forEach(alias -> event.getRoot().addChild(
-                    LiteralArgumentBuilder.<BukkitBrigadierCommandSource>literal(alias)
-                        .requires(built.getRequirement()).executes(built.getCommand()).redirect(built)
-                        .build()
-                ));
-            });
-            commands.clear();
-        }
     }
 
 }
