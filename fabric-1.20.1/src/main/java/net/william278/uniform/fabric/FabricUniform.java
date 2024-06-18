@@ -22,6 +22,7 @@
 package net.william278.uniform.fabric;
 
 import com.google.common.collect.Sets;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -33,6 +34,7 @@ import net.william278.uniform.Uniform;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -47,14 +49,29 @@ public final class FabricUniform implements Uniform {
     static FabricUniform INSTANCE;
 
     private final Set<FabricCommand> commands = Sets.newHashSet();
+    @Getter
+    private final String modId;
 
     @Getter
     @Setter
     Function<Object, CommandUser> commandUserSupplier = (user) -> new FabricCommandUser((ServerCommandSource) user);
 
-    private FabricUniform() {
+    private FabricUniform(@NotNull String modId) {
+        this.modId = modId.toLowerCase(Locale.ENGLISH).replaceAll("[^a-z0-9_-]", "");
         CommandRegistrationCallback.EVENT.register((dispatcher, registry, environment) ->
-            commands.forEach(command -> dispatcher.register(command.createBuilder()))
+                commands.forEach(command -> {
+                    final LiteralArgumentBuilder<ServerCommandSource> builder = command.createBuilder();
+                    dispatcher.register(builder);
+
+                    final Set<String> aliases = Sets.newHashSet(command.getAliases());
+                    command.getAliases().forEach(a -> aliases.add(modId + ":" + a));
+                    aliases.add(modId + ":" + command.getName());
+                    aliases.forEach(alias -> dispatcher.register(
+                            LiteralArgumentBuilder.<ServerCommandSource>literal(alias)
+                                    .requires(builder.getRequirement()).executes(builder.getCommand())
+                                    .redirect(builder.build())
+                    ));
+                })
         );
     }
 
@@ -65,8 +82,8 @@ public final class FabricUniform implements Uniform {
      * @since 1.0
      */
     @NotNull
-    public static FabricUniform getInstance() {
-        return INSTANCE != null ? INSTANCE : (INSTANCE = new FabricUniform());
+    public static FabricUniform getInstance(@NotNull String modId) {
+        return INSTANCE != null ? INSTANCE : (INSTANCE = new FabricUniform(modId));
     }
 
     /**
