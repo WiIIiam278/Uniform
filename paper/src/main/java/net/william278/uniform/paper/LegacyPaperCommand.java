@@ -83,6 +83,7 @@ public class LegacyPaperCommand extends BaseCommand<CommandSender> {
             // Setup command properties
             this.setDescription(command.getDescription());
             this.setAliases(command.getAliases());
+            this.setUsage(command.build().getUsageText());
             if (permission != null) {
                 this.setPermission(permission.node());
             }
