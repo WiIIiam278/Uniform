@@ -30,10 +30,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
+import net.william278.uniform.Permission;
 import net.william278.uniform.Uniform;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -41,9 +43,11 @@ import java.util.List;
 public class BukkitCommand extends BaseCommand<CommandSender> {
 
     private BukkitAudiences audiences;
+    private @Nullable Permission permission;
 
     public BukkitCommand(@NotNull Command command) {
         super(command);
+        this.permission = command.getPermission().orElse(null);
     }
 
     public BukkitCommand(@NotNull String name, @NotNull String description, @NotNull List<String> aliases) {
@@ -64,12 +68,19 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
         private static final int COMMAND_SUCCESS = com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
         private final CommandDispatcher<CommandSender> dispatcher = new CommandDispatcher<>();
+        private final @Nullable Permission permission;
 
         public Impl(@NotNull Uniform uniform, @NotNull BukkitCommand command) {
             super(command.getName());
             this.dispatcher.register(command.createBuilder());
+            this.permission = command.permission;
+
+            // Setup command properties
             this.setDescription(command.getDescription());
             this.setAliases(command.getAliases());
+            if (permission != null) {
+                this.setPermission(permission.node());
+            }
         }
 
         @SuppressWarnings("deprecation")
@@ -103,6 +114,14 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
                 )
                 .thenApply(suggestions -> suggestions.getList().stream().map(Suggestion::getText).toList())
                 .join();
+        }
+
+        @Override
+        public boolean testPermissionSilent(@NotNull CommandSender target) {
+            if (permission == null || permission.node().isBlank()) {
+                return true;
+            }
+            return new BukkitCommandUser(target).checkPermission(permission);
         }
 
         @NotNull

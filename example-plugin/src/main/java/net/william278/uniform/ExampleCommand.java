@@ -38,6 +38,7 @@ public class ExampleCommand extends Command {
         super("example");
         setDescription("An example command for Uniform");
         setAliases(List.of("helloworld"));
+        setPermission(Permission.defaultIfOp("uniform.example"));
     }
 
     @Override

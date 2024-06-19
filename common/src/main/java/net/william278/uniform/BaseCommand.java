@@ -79,16 +79,16 @@ public abstract class BaseCommand<S> {
         this.condition = condition;
     }
 
-    public final void setPermission(@NotNull Permission permission) {
+    public void setPermission(@NotNull Permission permission) {
         this.setCondition(this.createPermission(permission));
     }
 
     public final void setPermission(@NotNull String permission) {
-        this.setCondition(this.createPermission(new Permission(permission)));
+        this.setPermission(new Permission(permission));
     }
 
     public final void setPermission(@NotNull String permission, @NotNull Permission.Default permissionDefault) {
-        this.setCondition(this.createPermission(new Permission(permission, permissionDefault)));
+        this.setPermission(new Permission(permission, permissionDefault));
     }
 
     public final void setDefaultExecutor(@NotNull CommandExecutor<S> executor) {

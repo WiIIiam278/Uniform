@@ -26,13 +26,11 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.william278.uniform.BaseCommand;
-import net.william278.uniform.Command;
-import net.william278.uniform.CommandUser;
-import net.william278.uniform.Uniform;
+import net.william278.uniform.*;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Function;
@@ -40,12 +38,15 @@ import java.util.function.Function;
 @SuppressWarnings("unused")
 public class LegacyPaperCommand extends BaseCommand<CommandSender> {
 
+    private @Nullable Permission permission;
+
     static final Function<Object, CommandUser> USER_SUPPLIER = (user) -> new LegacyPaperCommandUser(
             (CommandSender) user
     );
 
     public LegacyPaperCommand(@NotNull Command command) {
         super(command);
+        this.permission = command.getPermission().orElse(null);
     }
 
     public LegacyPaperCommand(@NotNull String name, @NotNull String description, @NotNull List<String> aliases) {
@@ -61,17 +62,30 @@ public class LegacyPaperCommand extends BaseCommand<CommandSender> {
         return new Impl(uniform, this);
     }
 
+    @Override
+    public void setPermission(@NotNull Permission permission) {
+        this.permission = permission;
+        super.setPermission(permission);
+    }
+
     static final class Impl extends org.bukkit.command.Command {
 
         private static final int COMMAND_SUCCESS = com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
         private final CommandDispatcher<CommandSender> dispatcher = new CommandDispatcher<>();
+        private final @Nullable Permission permission;
 
         public Impl(@NotNull Uniform uniform, @NotNull LegacyPaperCommand command) {
             super(command.getName());
             this.dispatcher.register(command.createBuilder());
+            this.permission = command.permission;
+
+            // Setup command properties
             this.setDescription(command.getDescription());
             this.setAliases(command.getAliases());
+            if (permission != null) {
+                this.setPermission(permission.node());
+            }
         }
 
         @SuppressWarnings("deprecation")
@@ -105,6 +119,14 @@ public class LegacyPaperCommand extends BaseCommand<CommandSender> {
                     )
                     .thenApply(suggestions -> suggestions.getList().stream().map(Suggestion::getText).toList())
                     .join();
+        }
+
+        @Override
+        public boolean testPermissionSilent(@NotNull CommandSender target) {
+            if (permission == null || permission.node().isBlank()) {
+                return true;
+            }
+            return new LegacyPaperCommandUser(target).checkPermission(permission);
         }
 
         @NotNull
