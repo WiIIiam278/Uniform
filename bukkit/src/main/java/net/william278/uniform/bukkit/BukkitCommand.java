@@ -38,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class BukkitCommand extends BaseCommand<CommandSender> {
@@ -78,10 +79,16 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
             // Setup command properties
             this.setDescription(command.getDescription());
             this.setAliases(command.getAliases());
-            this.setUsage(command.build().getUsageText());
+            this.setUsage(getUsageText());
             if (permission != null) {
                 this.setPermission(permission.node());
             }
+        }
+
+        @NotNull
+        private String getUsageText() {
+            return dispatcher.getSmartUsage(dispatcher.getRoot(), null).values().stream()
+                    .map("/%s"::formatted).collect(Collectors.joining("\n"));
         }
 
         @SuppressWarnings("deprecation")
