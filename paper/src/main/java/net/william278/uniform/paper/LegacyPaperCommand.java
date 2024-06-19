@@ -27,6 +27,7 @@ import com.mojang.brigadier.suggestion.Suggestion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.william278.uniform.*;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -92,7 +93,7 @@ public class LegacyPaperCommand extends BaseCommand<CommandSender> {
 
         @NotNull
         private String getUsageText() {
-            return dispatcher.getSmartUsage(dispatcher.getRoot(), null).values().stream()
+            return dispatcher.getSmartUsage(dispatcher.getRoot(), Bukkit.getConsoleSender()).values().stream()
                     .map("/%s"::formatted).collect(Collectors.joining("\n"));
         }
 

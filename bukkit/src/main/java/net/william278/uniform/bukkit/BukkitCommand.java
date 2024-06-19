@@ -32,6 +32,7 @@ import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
 import net.william278.uniform.Permission;
 import net.william278.uniform.Uniform;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -87,7 +88,7 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
 
         @NotNull
         private String getUsageText() {
-            return dispatcher.getSmartUsage(dispatcher.getRoot(), null).values().stream()
+            return dispatcher.getSmartUsage(dispatcher.getRoot(), Bukkit.getConsoleSender()).values().stream()
                     .map("/%s"::formatted).collect(Collectors.joining("\n"));
         }
 
