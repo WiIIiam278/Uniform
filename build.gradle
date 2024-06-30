@@ -209,6 +209,19 @@ subprojects {
             }
         }
 
+        if (['sponge-11'].contains(project.name)) {
+            publications {
+                mavenSponge11(MavenPublication) {
+                    groupId = 'net.william278.uniform'
+                    artifactId = 'uniform-sponge'
+                    version = "${rootProject.version}+11"
+                    artifact shadowJar
+                    artifact sourcesJar
+                    artifact javadocJar
+                }
+            }
+        }
+
     }
 
     jar.dependsOn shadowJar

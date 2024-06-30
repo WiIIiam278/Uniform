@@ -12,6 +12,7 @@ include(
         // Server Plugins
         'paper',
         'bukkit',
+        'sponge-11',
 
         // Proxy Plugins
         'velocity',

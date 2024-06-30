@@ -1,0 +1,13 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+dependencies {
+    implementation project(path: ':common')
+
+    compileOnly 'org.spongepowered:spongeapi:11.0.0'
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+}
