@@ -39,7 +39,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * A class for registering commands with the Fabric (1.20.6) server
+ * A class for registering commands with the Fabric (1.21) server
  *
  * @since 1.0
  */

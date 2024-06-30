@@ -15,23 +15,76 @@
 
 **Uniform** is cross-platform wrapper for making Brigadier commands, based on [`BrigadierWrapper` by Tofaa2](https://github.com/Tofaa2/BrigadierWrapper/), which itself was inspired by [EmortalMC's `command-system`](https://github.com/emortalmc/command-system).
 
-Uniform _currently_ targets the following platforms:
+## Compatibility
 
-<p align="center">
+Versions are available on maven in the format `net.william278.uniform:ARTIFACT:VERSION`. See below for a table of supported platforms.
 
-| Platform      | Artifact           | Minecraft  |  Java  |
-|---------------|--------------------|:----------:|:------:|
-| Common        | `uniform-common`   |     -      | \>`17` |
-| Bukkit        | `uniform-bukkit`   | \>`1.17.1` | \>`17` |
-| Paper         | `uniform-paper`    | \>`1.17.1` | \>`21` |
-| Velocity      | `uniform-velocity` | \>`3.3.0`  | \>`17` |
-| Fabric 1.20.1 | `uniform-fabric`   | =`1.20.1`  | \>`17` |
-| Fabric 1.20.6 | `uniform-fabric`   | =`1.20.6`  | \>`21` |
+Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed with the target Minecraft version (e.g. `1.1.9+1.21`) and also require Fabric API installed on the server.
 
-</p>
+<table align="center">
+    <thead>
+        <tr>
+            <th colspan="5">Uniform Version Table</th>
+        </tr>
+        <tr>
+            <th>Platform</th>
+            <th>Artifact</th>
+            <th>Platform ver.</th>
+            <th>Java ver.</th>
+            <th>Uniform ver.</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Common</td>
+            <td><code>uniform-common</code></td>
+            <td><code>N/A</code></td>
+            <td align="center">≥<code>17</code></td>
+            <td align="center"><img src="https://img.shields.io/github/v/tag/WiIIiam278/Uniform?color=000000&label=%20&style=flat"/></td>
+        </tr>
+        <tr>
+            <th colspan="5">Supported Platforms</th>
+        </tr>
+        <tr>
+            <td>Bukkit/Spigot</td>
+            <td><code>uniform-bukkit</code></td>
+            <td>≥<code>mc 1.17.1</code></td>
+            <td rowspan="3" align="center">≥<code>17</code></td>
+            <td rowspan="5" align="center"><img src="https://img.shields.io/github/v/tag/WiIIiam278/Uniform?color=000000&label=%20&style=flat"/></td>
+        </tr>
+        <tr>
+            <td>Paper</td>
+            <td><code>uniform-paper</code></td>
+            <td>≥<code>mc 1.17.1</code></td>
+        </tr>
+        <tr>
+            <td>Velocity</td>
+            <td><code>uniform-velocity</code></td>
+            <td>≥<code>3.3.0</code></td>
+        </tr>
+        <tr>
+            <td rowspan="2">Fabric</td>
+            <td rowspan="2"><code>uniform-fabric</code></td>
+            <td>=<code>mc 1.20.1</code></td>
+            <td rowspan="2" align="center">≥<code>21</code></td>
+        </tr>
+        <tr>
+            <td>=<code>mc 1.21</code></td>
+        </tr>
+        <tr>
+            <th colspan="5">Formerly Supported Platforms</th>
+        </tr>
+        <tr>
+            <td>Fabric</td>
+            <td><code>uniform-fabric</code></td>
+            <td>=<code>mc 1.20.6</code></td>
+            <td align="center">≥<code>21</code></td>
+            <td align="center"><code>v1.1.8</code></td>
+        </tr>
+    </tbody>
+</table>
 
-* **Fabric:** Please note Uniform on Fabric requires [adventure-platform-fabric](https://docs.advntr.dev/platform/fabric.html) and the [Fabric API](https://fabricmc.net/) as dependencies. To target Fabric, use `uniform-fabric` as the artifact and `<uniform_version>+<minecraft_version>` as the version (e.g. `net.william278.uniform:uniform-fabric:1.0+1.20.1`).
-* **Sponge**: Support for Sponge 10 is also planned in a future version.
+Example: To target Uniform on Bukkit, the artifact is `net.william278.uniform:uniform-bukkit:1.1.9` (check that this version is up-to-date &ndash; make sure you target the latest available!).
 
 ## Setup
 Uniform is available [on Maven](https://repo.william278.net/#/releases/net/william278/uniform/). You can browse the Javadocs [here](https://repo.william278.net/javadoc/releases/net/william278/uniform/latest).
