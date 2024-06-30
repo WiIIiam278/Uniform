@@ -19,7 +19,7 @@
 
 Versions are available on maven in the format `net.william278.uniform:ARTIFACT:VERSION`. See below for a table of supported platforms.
 
-Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed with the target Minecraft version (e.g. `1.1.10+1.21`) and also require Fabric API installed on the server. Sponge versions are suffixed with the target Sponge API version (e.g. `1.1.10+11`).
+Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed with the target Minecraft version (e.g. `1.1.11+1.21`) and also require Fabric API installed on the server. Sponge versions are suffixed with the target Sponge API version (e.g. `1.1.11+11`).
 
 <table align="center">
     <thead>
@@ -89,7 +89,7 @@ Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed wit
     </tbody>
 </table>
 
-Example: To target Uniform on Bukkit, the artifact is `net.william278.uniform:uniform-bukkit:1.1.10` (check that this version is up-to-date &ndash; make sure you target the latest available!).
+Example: To target Uniform on Bukkit, the artifact is `net.william278.uniform:uniform-bukkit:1.1.11` (check that this version is up-to-date &ndash; make sure you target the latest available!).
 
 ## Setup
 Uniform is available [on Maven](https://repo.william278.net/#/releases/net/william278/uniform/). You can browse the Javadocs [here](https://repo.william278.net/javadoc/releases/net/william278/uniform/latest).
@@ -104,7 +104,7 @@ repositories {
 }
 ```
 
-Then, add the dependency itself. Replace `VERSION` with the latest release version. (e.g., `1.1.10`) and `PLATFORM` with the platform you are targeting (e.g., `paper`). If you want to target pre-release "snapshot" versions (not recommended), you should use the `/snapshots` repository instead.
+Then, add the dependency itself. Replace `VERSION` with the latest release version. (e.g., `1.1.11`) and `PLATFORM` with the platform you are targeting (e.g., `paper`). If you want to target pre-release "snapshot" versions (not recommended), you should use the `/snapshots` repository instead.
 
 ```groovy
 dependencies {
