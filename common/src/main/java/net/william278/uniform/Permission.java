@@ -21,8 +21,10 @@
 
 package net.william278.uniform;
 
+import net.william278.uniform.annotations.PermissionNode;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
@@ -45,6 +47,14 @@ public record Permission(@NotNull String node, @NotNull Default defaultValue) {
     @NotNull
     public static Permission defaultFalse(@NotNull String node) {
         return new Permission(node, Default.FALSE);
+    }
+
+    @NotNull
+    static Optional<Permission> annotated(@NotNull PermissionNode annotation) {
+        if (annotation.value().isBlank()) {
+            return Optional.empty();
+        }
+        return Optional.of(new Permission(annotation.value(), annotation.defaultValue()));
     }
 
     public enum Default {

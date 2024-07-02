@@ -21,16 +21,32 @@
 
 package net.william278.uniform;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import net.william278.uniform.annotations.Argument;
+import net.william278.uniform.annotations.CommandDescription;
+import net.william278.uniform.annotations.CommandNode;
+import net.william278.uniform.annotations.Syntax;
+import net.william278.uniform.element.ArgumentElement;
+import net.william278.uniform.element.CommandElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+
+import static net.william278.uniform.CommandExecutor.methodToExecutor;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
 @AllArgsConstructor
 public abstract class Command implements CommandProvider {
 
@@ -44,13 +60,123 @@ public abstract class Command implements CommandProvider {
         return Optional.ofNullable(permission);
     }
 
-    public record SubCommand(@NotNull String name, @NotNull List<String> aliases, @Nullable Permission permission, @NotNull CommandProvider provider) {
+    Command(@NotNull String name) {
+        this.name = name;
+    }
+
+    Command(@Nullable CommandNode node) {
+        if (node == null) {
+            throw new IllegalArgumentException("@CommandNode annotation is required on annotated command/sub-commands");
+        }
+        this.name = node.value();
+        this.aliases = List.of(node.aliases());
+        this.description = node.description();
+        Permission.annotated(node.permission()).ifPresent(this::setPermission);
+    }
+
+    static class AnnotatedCommand extends Command {
+
+        private final Object annotated;
+
+        AnnotatedCommand(@NotNull Object annotated) {
+            super(annotated.getClass().getAnnotation(CommandNode.class));
+            this.annotated = annotated;
+            this.setDescriptionFromAnnotation();
+        }
+
+        @Override
+        @SuppressWarnings({"rawtypes", "unchecked"})
+        public void provide(@NotNull BaseCommand<?> cmd) {
+            // Add syntaxes
+            for (Method method : annotated.getClass().getDeclaredMethods()) {
+                method.setAccessible(true);
+                final Syntax syntax = method.getAnnotation(Syntax.class);
+                if (syntax == null) {
+                    continue;
+                }
+
+                // Default executor
+                final CommandElement[] args = getMethodArguments(method);
+                if (args.length == 0) {
+                    cmd.setDefaultExecutor(methodToExecutor(method, annotated, cmd));
+                    continue;
+                }
+
+                // Conditional & unconditional syntax
+                final Optional<Predicate> perm = Permission.annotated(syntax.permission()).map(p -> p.toPredicate(cmd));
+                final CommandExecutor executor = methodToExecutor(method, annotated, cmd);
+                if (perm.isPresent()) {
+                    cmd.addConditionalSyntax(perm.get(), executor, args);
+                    continue;
+                }
+                cmd.addSyntax(executor, args);
+            }
+
+            // Add subcommands
+            for (Class<?> subClass : annotated.getClass().getDeclaredClasses()) {
+                if (subClass.getAnnotation(CommandNode.class) == null) {
+                    continue;
+                }
+                try {
+                    cmd.addSubCommand(new AnnotatedCommand(
+                            subClass.getDeclaredConstructor().newInstance()
+                    ));
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                         NoSuchMethodException e) {
+                    throw new IllegalArgumentException(
+                            "Failed to create sub-command instance (does it have a zero-arg constructor?)", e
+                    );
+                }
+            }
+        }
+
+        @NotNull
+        private static CommandElement<?>[] getMethodArguments(@NotNull Method method) {
+            try {
+                final List<ArgumentElement<?, ?>> elements = new ArrayList<>();
+                for (Parameter param : method.getParameters()) {
+                    final Argument arg = param.getAnnotation(Argument.class);
+                    if (arg == null) {
+                        continue;
+                    }
+
+                    // Pass parser properties if needed
+                    if (arg.parserProperties().length == 0) {
+                        elements.add(arg.parser().getDeclaredConstructor()
+                                .newInstance().provide(arg.name()));
+                        continue;
+                    }
+                    elements.add(arg.parser().getDeclaredConstructor(String[].class)
+                            .newInstance((Object) arg.parserProperties()).provide(arg.name()));
+                }
+                return elements.toArray(new ArgumentElement[0]);
+            } catch (Throwable e) {
+                throw new IllegalArgumentException("Failed to create argument elements from method parameters", e);
+            }
+        }
+
+        private void setDescriptionFromAnnotation() {
+            Arrays.stream(annotated.getClass().getFields())
+                    .filter(f -> f.getAnnotation(CommandDescription.class) != null)
+                    .findFirst().ifPresent(f -> {
+                        try {
+                            f.setAccessible(true);
+                            this.setDescription((String) f.get(annotated));
+                        } catch (IllegalAccessException e) {
+                            throw new IllegalArgumentException("Failed to set command description from field", e);
+                        }
+                    });
+        }
+    }
+
+    public record SubCommand(@NotNull String name, @NotNull List<String> aliases, @Nullable Permission permission,
+                             @NotNull CommandProvider provider) {
         public SubCommand(@NotNull String name, @NotNull List<String> aliases, @NotNull CommandProvider provider) {
             this(name, aliases, null, provider);
         }
 
         public SubCommand(@NotNull String name, @NotNull CommandProvider provider) {
-            this(name, List.of(),null, provider);
+            this(name, List.of(), null, provider);
         }
 
         public SubCommand(@NotNull String name, @Nullable Permission permission, @NotNull CommandProvider provider) {
