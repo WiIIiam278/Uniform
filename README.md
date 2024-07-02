@@ -19,7 +19,7 @@
 
 Versions are available on maven in the format `net.william278.uniform:ARTIFACT:VERSION`. See below for a table of supported platforms.
 
-Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed with the target Minecraft version (e.g. `1.1.11+1.21`) and also require Fabric API installed on the server. Sponge versions are suffixed with the target Sponge API version (e.g. `1.1.11+11`).
+Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed with the target Minecraft version (e.g. `1.2+1.21`) and also require Fabric API installed on the server. Sponge versions are suffixed with the target Sponge API version (e.g. `1.2+11`).
 
 <table align="center">
     <thead>
@@ -89,7 +89,7 @@ Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed wit
     </tbody>
 </table>
 
-Example: To target Uniform on Bukkit, the artifact is `net.william278.uniform:uniform-bukkit:1.1.11` (check that this version is up-to-date &ndash; make sure you target the latest available!).
+Example: To target Uniform on Bukkit, the artifact is `net.william278.uniform:uniform-bukkit:1.2` (check that this version is up-to-date &ndash; make sure you target the latest available!).
 
 ## Setup
 Uniform is available [on Maven](https://repo.william278.net/#/releases/net/william278/uniform/). You can browse the Javadocs [here](https://repo.william278.net/javadoc/releases/net/william278/uniform/latest).
@@ -104,7 +104,7 @@ repositories {
 }
 ```
 
-Then, add the dependency itself. Replace `VERSION` with the latest release version. (e.g., `1.1.11`) and `PLATFORM` with the platform you are targeting (e.g., `paper`). If you want to target pre-release "snapshot" versions (not recommended), you should use the `/snapshots` repository instead.
+Then, add the dependency itself. Replace `VERSION` with the latest release version. (e.g., `1.2`) and `PLATFORM` with the platform you are targeting (e.g., `paper`). If you want to target pre-release "snapshot" versions (not recommended), you should use the `/snapshots` repository instead.
 
 ```groovy
 dependencies {
@@ -120,28 +120,53 @@ Uniform lets you create commands either natively per-platform, or cross-platform
 
 Check `example-plugin` for a full example of a cross-platform command being registered on Paper.
 
-### Platform-specific commands
-Extend the platform-specific `PlatformCommand` class and add your Brigadier syntax.
+### Cross-platform commands
+Cross-platform commands can be created by registering `Command` objects; you can create these from `@CommandNode` annotated objects, or by extending `Command` and providing these yourself.
+
+#### Using annotations
+You can use the `@CommandNode` annotations to easily create cross-platform Brigadier commands (since: v1.2). This is the recommended way to create commands.
 
 ```java
-public class ExampleCommand extends PaperCommand {
-    public ExampleCommand() {
-        super("example", "platform-specific");
-        command.setDefaultExecutor((context) -> {
-            context.getSource().getBukkitSender().sendMessage("Hello, world!");
-        });
-        addSyntax((context) -> {
-            context.getSource().getBukkitSender().sendMessage("Woah!!!!");
-            String arg = context.getArgument("message", String.class);
-            context.getSource().getBukkitSender()
-                .sendMessage(MiniMessage.miniMessage().deserialize(arg));
-        }, stringArg("message"));
+@CommandNode(
+        value = "helloworld",
+        aliases = {"hello", "hi"},
+        description = "A simple hello world command",
+        permission = @PermissionNode(
+                value = "example.command.helloworld",
+                defaultValue = Permission.Default.TRUE
+        )
+)
+public class AnnotatedCommand {
+
+    @Syntax
+    public void execute(CommandUser user) {
+        user.getAudience().sendMessage(Component.text("Hello, world!"));
     }
+
+    @Syntax
+    public void pongMessage(
+            CommandUser user,
+            @Argument(name = "message", parser = Argument.StringArg.class) String message
+    ) {
+        user.getAudience().sendMessage(Component.text("Hello, " + message, NamedTextColor.GREEN));
+    }
+    
+    @CommandNode(
+            value = "subcommand",
+            aliases = {"sub", "hi"}
+    )
+    static class SubCommand {
+        @Syntax
+        public void execute(CommandUser user) {
+            user.getAudience().sendMessage(Component.text("Subcommand executed!"));
+        }
+    }
+
 }
 ```
 
-### Cross-platform commands
-Target `uniform-common` and extend the `Command` class. You'll want to use `BaseCommand#getUser` to get a platform-agnostic User from which you can acquire the adventure `Audience` to send messages to.
+#### By extending the Command class.
+You can also extend the `Command` class to create a Command object you can register. You'll want to use `BaseCommand#getUser` to get a platform-agnostic User from which you can acquire the adventure `Audience` to send messages to.
 
 ```java
 public class ExampleCrossPlatCommand extends Command {
@@ -177,6 +202,27 @@ public class ExampleCrossPlatCommand extends Command {
     }
 }
 ```
+
+### Platform-specific commands
+If you need platform-specific features, extend the platform-specific `PlatformCommand` class and add your Brigadier syntax.
+
+```java
+public class ExampleCommand extends PaperCommand {
+    public ExampleCommand() {
+        super("example", "platform-specific");
+        command.setDefaultExecutor((context) -> {
+            context.getSource().getBukkitSender().sendMessage("Hello, world!");
+        });
+        addSyntax((context) -> {
+            context.getSource().getBukkitSender().sendMessage("Woah!!!!");
+            String arg = context.getArgument("message", String.class);
+            context.getSource().getBukkitSender()
+                .sendMessage(MiniMessage.miniMessage().deserialize(arg));
+        }, stringArg("message"));
+    }
+}
+```
+
 
 ### Registering
 Then, register the command with the platform-specific Uniform instance (e.g. `FabricUniform.getInstance()`, `PaperUniform.getInstance()`, etc...)

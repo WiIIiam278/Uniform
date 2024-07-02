@@ -19,18 +19,15 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.william278.uniform;
+package net.william278.uniform.annotations;
 
-import net.william278.uniform.paper.PaperUniform;
-import org.bukkit.plugin.java.JavaPlugin;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@SuppressWarnings("unused")
-public class UniformExample extends JavaPlugin {
-
-    @Override
-    public void onEnable() {
-        PaperUniform uniform = PaperUniform.getInstance(this);
-        uniform.register(new ExtendedCommand(), new AnnotatedCommand());
-    }
+@Target({ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface CommandDescription {
 
 }

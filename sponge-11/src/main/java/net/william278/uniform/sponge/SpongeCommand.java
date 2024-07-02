@@ -31,7 +31,6 @@ import net.william278.uniform.Permission;
 import net.william278.uniform.Uniform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.api.Game;
 import org.spongepowered.api.command.Command.Raw;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.command.CommandCompletion;

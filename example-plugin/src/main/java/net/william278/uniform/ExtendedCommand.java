@@ -32,9 +32,10 @@ import java.util.Locale;
 
 import static net.william278.uniform.BaseCommand.greedyString;
 
-public class ExampleCommand extends Command {
+// Example using the API to extend "Command"
+public class ExtendedCommand extends Command {
 
-    public ExampleCommand() {
+    public ExtendedCommand() {
         super("example");
         setDescription("An example command for Uniform");
         setAliases(List.of("helloworld"));
@@ -62,7 +63,7 @@ public class ExampleCommand extends Command {
         }, exampleCustomArg()));
     }
 
-    private static <S> ArgumentElement<S, ExampleCommand.IceCreamFlavor> exampleCustomArg() {
+    private static <S> ArgumentElement<S, ExtendedCommand.IceCreamFlavor> exampleCustomArg() {
         return new ArgumentElement<>("flavor", reader -> {
             final String flavor = reader.readString();
             try {
@@ -76,7 +77,6 @@ public class ExampleCommand extends Command {
             );
             return builder.buildFuture();
         });
-
     }
 
     enum IceCreamFlavor {

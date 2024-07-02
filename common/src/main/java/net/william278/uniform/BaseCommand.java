@@ -200,6 +200,21 @@ public abstract class BaseCommand<S> {
     }
 
     @NotNull
+    public static <S> ArgumentElement<S, Double> doubleNum(@NotNull String name) {
+        return arg(name, DoubleArgumentType.doubleArg());
+    }
+
+    @NotNull
+    public static <S> ArgumentElement<S, Double> doubleNum(@NotNull String name, double min) {
+        return arg(name, DoubleArgumentType.doubleArg(min));
+    }
+
+    @NotNull
+    public static <S> ArgumentElement<S, Double> doubleNum(@NotNull String name, double min, double max) {
+        return arg(name, DoubleArgumentType.doubleArg(min, max));
+    }
+
+    @NotNull
     public static <S> ArgumentElement<S, Boolean> bool(@NotNull String name) {
         return arg(name, BoolArgumentType.bool());
     }

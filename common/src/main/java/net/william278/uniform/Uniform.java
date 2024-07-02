@@ -23,11 +23,18 @@ package net.william278.uniform;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.function.Function;
 
 public interface Uniform {
 
-    void register(Command... commands);
+    void register(@NotNull Command... commands);
+
+    default void register(@NotNull Object... annotated) {
+        register(Arrays.stream(annotated)
+                .map(c -> c instanceof Command cmd ? cmd : new Command.AnnotatedCommand(c))
+                .toArray(Command[]::new));
+    }
 
     @SuppressWarnings("unchecked")
     <S, T extends BaseCommand<S>> void register(T... commands);

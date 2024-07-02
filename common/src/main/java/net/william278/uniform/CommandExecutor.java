@@ -22,10 +22,53 @@
 package net.william278.uniform;
 
 import com.mojang.brigadier.context.CommandContext;
+import net.william278.uniform.annotations.Argument;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 public interface CommandExecutor<S> {
 
     void execute(@NotNull CommandContext<S> context);
+
+    @NotNull
+    static <S> CommandExecutor<S> methodToExecutor(@NotNull Method method, @NotNull Object instance,
+                                                   @NotNull BaseCommand<?> cmd) {
+        return (context) -> {
+            try {
+                method.invoke(instance, injectParams(method, context, cmd));
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new IllegalStateException("Failed to invoke command executor from annotated method", e);
+            }
+        };
+    }
+
+    @Nullable
+    private static Object @NotNull [] injectParams(@NotNull Method method, @NotNull CommandContext<?> context,
+                                                   @NotNull BaseCommand<?> cmd) {
+        final Object[] params = new Object[method.getParameterCount()];
+        for (int i = 0; i < method.getParameterCount(); i++) {
+            final Parameter param = method.getParameters()[i];
+            final Class<?> type = param.getType();
+            final Argument arg = param.getAnnotation(Argument.class);
+            if (arg != null) {
+                params[i] = context.getArgument(arg.name(), type);
+                continue;
+            }
+            if (type.isAssignableFrom(CommandUser.class)) {
+                params[i] = cmd.getUser(context.getSource());
+                continue;
+            }
+            if (type.isAssignableFrom(context.getClass())) {
+                params[i] = context;
+                continue;
+            }
+            params[i] = null;
+        }
+        return params;
+    }
 
 }
