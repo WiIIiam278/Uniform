@@ -55,6 +55,7 @@ public abstract class BaseCommand<S> {
         this.name = command.getName();
         this.aliases = command.getAliases();
         this.description = command.getDescription();
+        setExecutionScope(command.getScope());
         command.getPermission().ifPresent(this::setPermission);
         command.provide(this);
     }
@@ -79,8 +80,16 @@ public abstract class BaseCommand<S> {
         this.condition = condition;
     }
 
+    public final void addCondition(@NotNull Predicate<S> condition) {
+        if (this.condition == null) {
+            this.condition = condition;
+        } else {
+            this.condition = this.condition.and(condition);
+        }
+    }
+
     public void setPermission(@NotNull Permission permission) {
-        this.setCondition(this.createPermission(permission));
+        this.addCondition(this.createPermission(permission));
     }
 
     public final void setPermission(@NotNull String permission) {
@@ -89,6 +98,13 @@ public abstract class BaseCommand<S> {
 
     public final void setPermission(@NotNull String permission, @NotNull Permission.Default permissionDefault) {
         this.setPermission(new Permission(permission, permissionDefault));
+    }
+
+    public final void setExecutionScope(@NotNull Command.ExecutionScope scope) {
+        final Predicate<S> predicate = scope.toPredicate(this);
+        if (predicate != null) {
+            this.addCondition(predicate);
+        }
     }
 
     public final void setDefaultExecutor(@NotNull CommandExecutor<S> executor) {
@@ -128,6 +144,12 @@ public abstract class BaseCommand<S> {
     public final void addSubCommand(@NotNull String name, @NotNull List<String> aliases,
                                     @NotNull Permission permission, @NotNull CommandProvider provider) {
         this.addSubCommand(new Command.SubCommand(name, aliases, permission, provider).command());
+    }
+
+    public final void addSubCommand(@NotNull String name, @NotNull List<String> aliases,
+                                    @NotNull Permission permission, @NotNull Command.ExecutionScope scope,
+                                    @NotNull CommandProvider provider) {
+        this.addSubCommand(new Command.SubCommand(name, aliases, permission, scope, provider).command());
     }
 
     public abstract void addSubCommand(@NotNull Command command);

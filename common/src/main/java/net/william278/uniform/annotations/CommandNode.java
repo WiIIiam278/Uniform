@@ -21,6 +21,8 @@
 
 package net.william278.uniform.annotations;
 
+import net.william278.uniform.Command;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -34,5 +36,6 @@ public @interface CommandNode {
     String[] aliases() default {};
     String description() default "";
     PermissionNode permission() default @PermissionNode("");
+    Command.ExecutionScope scope() default Command.ExecutionScope.ALL;
 
 }

@@ -55,6 +55,7 @@ public abstract class Command implements CommandProvider {
     private String description = "";
     @Getter(AccessLevel.NONE)
     private @Nullable Permission permission = null;
+    private ExecutionScope scope = ExecutionScope.ALL;
 
     public Optional<Permission> getPermission() {
         return Optional.ofNullable(permission);
@@ -71,7 +72,27 @@ public abstract class Command implements CommandProvider {
         this.name = node.value();
         this.aliases = List.of(node.aliases());
         this.description = node.description();
+        this.scope = node.scope();
         Permission.annotated(node.permission()).ifPresent(this::setPermission);
+    }
+
+    public enum ExecutionScope {
+        IN_GAME,
+        CONSOLE,
+        ALL;
+
+        @Nullable
+        public <S> Predicate<S> toPredicate(@NotNull BaseCommand<S> command) {
+            return this == ALL ? null : user -> this.contains(command.getUser(user));
+        }
+
+        public boolean contains(@NotNull CommandUser user) {
+            return switch (this) {
+                case IN_GAME -> !user.isConsole();
+                case CONSOLE -> user.isConsole();
+                case ALL -> true;
+            };
+        }
     }
 
     static class AnnotatedCommand extends Command {
@@ -102,11 +123,15 @@ public abstract class Command implements CommandProvider {
                     continue;
                 }
 
-                // Conditional & unconditional syntax
+                // Determine predicates
                 final Optional<Predicate> perm = Permission.annotated(syntax.permission()).map(p -> p.toPredicate(cmd));
+                final Optional<Predicate> scope = Optional.ofNullable(syntax.scope().toPredicate(cmd));
+                final Optional<Predicate> combined = scope.map(sp -> perm.map(pp -> sp.and(pp)).orElse(sp));
+
+                // Conditional & unconditional syntax
                 final CommandExecutor executor = methodToExecutor(method, annotated, cmd);
-                if (perm.isPresent()) {
-                    cmd.addConditionalSyntax(perm.get(), executor, args);
+                if (combined.isPresent()) {
+                    cmd.addConditionalSyntax(combined.get(), executor, args);
                     continue;
                 }
                 cmd.addSyntax(executor, args);
@@ -170,22 +195,28 @@ public abstract class Command implements CommandProvider {
     }
 
     public record SubCommand(@NotNull String name, @NotNull List<String> aliases, @Nullable Permission permission,
-                             @NotNull CommandProvider provider) {
-        public SubCommand(@NotNull String name, @NotNull List<String> aliases, @NotNull CommandProvider provider) {
-            this(name, aliases, null, provider);
+                             @NotNull ExecutionScope scope, @NotNull CommandProvider provider) {
+        public SubCommand(@NotNull String name, @NotNull List<String> aliases, @Nullable Permission permission,
+                          @NotNull CommandProvider provider) {
+            this(name, aliases, permission, ExecutionScope.ALL, provider);
         }
 
-        public SubCommand(@NotNull String name, @NotNull CommandProvider provider) {
-            this(name, List.of(), null, provider);
+        public SubCommand(@NotNull String name, @NotNull List<String> aliases, @NotNull CommandProvider provider) {
+            this(name, aliases, null, ExecutionScope.ALL, provider);
         }
 
         public SubCommand(@NotNull String name, @Nullable Permission permission, @NotNull CommandProvider provider) {
-            this(name, List.of(), permission, provider);
+            this(name, List.of(), permission, ExecutionScope.ALL, provider);
         }
+
+        public SubCommand(@NotNull String name, @NotNull CommandProvider provider) {
+            this(name, List.of(), null, ExecutionScope.ALL, provider);
+        }
+
 
         @NotNull
         Command command() {
-            return new Command(name, aliases, "", permission) {
+            return new Command(name, aliases, "", permission, scope) {
                 @Override
                 public void provide(@NotNull BaseCommand<?> command) {
                     provider.provide(command);
