@@ -8,7 +8,7 @@ dependencies {
     minecraft 'com.mojang:minecraft:1.21'
     mappings 'net.fabricmc:yarn:1.21+build.7:v2'
 
-    modCompileOnly 'net.fabricmc:fabric-loader:0.15.11'
+    modCompileOnly 'net.fabricmc:fabric-loader:0.16.2'
     modCompileOnly 'net.fabricmc.fabric-api:fabric-api:0.100.4+1.21'
     modImplementation include('me.lucko:fabric-permissions-api:0.3.1')
 
