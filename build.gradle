@@ -198,7 +198,7 @@ subprojects {
 
         if (['fabric-1.21.3'].contains(project.name)) {
             publications {
-                mavenJavaFabric1_21(MavenPublication) {
+                mavenJavaFabric1_21_3(MavenPublication) {
                     groupId = 'net.william278.uniform'
                     artifactId = 'uniform-fabric'
                     version = "${rootProject.version}+1.21.3"
