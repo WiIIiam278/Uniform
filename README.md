@@ -73,8 +73,8 @@ Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed wit
             <td>=<code>1.20.1</code></td>
         </tr>
         <tr>
-            <td>Fabric <small>(1.21)</small></td>
-            <td>=<code>1.21</code></td>
+            <td>Fabric <small>(1.21.3)</small></td>
+            <td>=<code>1.21.3</code></td>
         </tr>
         <tr>
             <th colspan="5">Formerly Supported Platforms</th>
@@ -85,6 +85,13 @@ Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed wit
             <td>=<code>1.20.6</code></td>
             <td align="center">≥<code>21</code></td>
             <td align="center"><code>v1.1.8</code></td>
+        </tr>
+        <tr>
+            <td>Fabric <small>(1.21)</small></td>
+            <td><code>uniform-fabric</code></td>
+            <td>=<code>1.21</code></td>
+            <td align="center">≥<code>21</code></td>
+            <td align="center"><code>v1.2.1</code></td>
         </tr>
     </tbody>
 </table>

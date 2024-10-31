@@ -70,7 +70,7 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
             } catch (InvalidIdentifierException e) {
                 throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().createWithContext(reader);
             }
-            if (registry.getOrEmpty(id).isEmpty()) {
+            if (!registry.containsId(id)) {
                 throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().createWithContext(reader);
             }
             return registry.get(id);

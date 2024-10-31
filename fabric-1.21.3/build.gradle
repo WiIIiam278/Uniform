@@ -1,19 +1,19 @@
 plugins {
-    id 'fabric-loom' version '1.7-SNAPSHOT'
+    id 'fabric-loom' version "$fabric_loom_version"
     id 'java-library'
     id 'maven-publish'
 }
 
 dependencies {
-    minecraft 'com.mojang:minecraft:1.21'
-    mappings 'net.fabricmc:yarn:1.21+build.7:v2'
+    minecraft 'com.mojang:minecraft:1.21.3'
+    mappings 'net.fabricmc:yarn:1.21.3+build.2:v2'
 
-    modCompileOnly 'net.fabricmc:fabric-loader:0.15.11'
-    modCompileOnly 'net.fabricmc.fabric-api:fabric-api:0.100.4+1.21'
-    modImplementation include('me.lucko:fabric-permissions-api:0.3.1')
+    modCompileOnly 'net.fabricmc:fabric-loader:0.16.9'
+    modCompileOnly 'net.fabricmc.fabric-api:fabric-api:0.107.0+1.21.3'
+    modImplementation include('me.lucko:fabric-permissions-api:0.3.3')
 
-    modCompileOnly 'org.projectlombok:lombok:1.18.32'
-    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    modCompileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
 
     shadow project(path: ':common')
 }
