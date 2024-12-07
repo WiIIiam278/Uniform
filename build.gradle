@@ -98,7 +98,7 @@ allprojects {
 }
 
 subprojects {
-    if (['fabric-1.20.1', 'fabric-1.21.4'].contains(project.name)) {
+    if (project.name.startsWith('fabric')) {
         apply plugin: 'fabric-loom'
     }
 
