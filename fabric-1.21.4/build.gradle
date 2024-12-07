@@ -5,15 +5,15 @@ plugins {
 }
 
 dependencies {
-    minecraft 'com.mojang:minecraft:1.21.3'
-    mappings 'net.fabricmc:yarn:1.21.3+build.2:v2'
+    minecraft 'com.mojang:minecraft:1.21.4'
+    mappings 'net.fabricmc:yarn:1.21.4+build.1:v2'
 
     modCompileOnly 'net.fabricmc:fabric-loader:0.16.9'
-    modCompileOnly 'net.fabricmc.fabric-api:fabric-api:0.107.0+1.21.3'
+    modCompileOnly 'net.fabricmc.fabric-api:fabric-api:0.111.0+1.21.4'
     modImplementation include('me.lucko:fabric-permissions-api:0.3.3')
 
-    modCompileOnly 'org.projectlombok:lombok:1.18.34'
-    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+    modCompileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
 
     shadow project(path: ':common')
 }

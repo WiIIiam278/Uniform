@@ -50,7 +50,7 @@ Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed wit
             <td><code>uniform-bukkit</code></td>
             <td rowspan="2">≥<code>1.17.1</code></td>
             <td rowspan="3" align="center">≥<code>17</code></td>
-            <td rowspan="6" align="center"><img src="https://img.shields.io/github/v/tag/WiIIiam278/Uniform?color=000000&label=%20&style=flat"/></td>
+            <td rowspan="7" align="center"><img src="https://img.shields.io/github/v/tag/WiIIiam278/Uniform?color=000000&label=%20&style=flat"/></td>
         </tr>
         <tr>
             <td>Paper</td>
@@ -65,15 +65,18 @@ Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed wit
             <td>Sponge <small>(api 11)</small></td>
             <td><code>uniform-sponge</code></td>
             <td>=<code>1.20.6</code></td>
-            <td rowspan="3" align="center">≥<code>21</code></td>
+            <td rowspan="4" align="center">≥<code>21</code></td>
         </tr>
         <tr>
             <td>Fabric <small>(1.20.1)</small></td>
-            <td rowspan="2"><code>uniform-fabric</code></td>
+            <td rowspan="3"><code>uniform-fabric</code></td>
             <td>=<code>1.20.1</code></td>
+        <tr>
+            <td>Fabric <small>(1.21.1)</small></td>
+            <td>=<code>1.21.1</code></td>
         </tr>
         <tr>
-            <td>Fabric <small>(1.21.3)</small></td>
+            <td>Fabric <small>(1.21.4)</small></td>
             <td>=<code>1.21.3</code></td>
         </tr>
         <tr>
@@ -83,15 +86,20 @@ Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed wit
             <td>Fabric <small>(1.20.6)</small></td>
             <td><code>uniform-fabric</code></td>
             <td>=<code>1.20.6</code></td>
-            <td align="center">≥<code>21</code></td>
+            <td align="center" rowspan="3">≥<code>21</code></td>
             <td align="center"><code>v1.1.8</code></td>
         </tr>
         <tr>
             <td>Fabric <small>(1.21)</small></td>
             <td><code>uniform-fabric</code></td>
             <td>=<code>1.21</code></td>
-            <td align="center">≥<code>21</code></td>
             <td align="center"><code>v1.2.1</code></td>
+        </tr>
+        <tr>
+            <td>Fabric <small>(1.21.3)</small></td>
+            <td><code>uniform-fabric</code></td>
+            <td>=<code>1.21.3</code></td>
+            <td align="center"><code>v1.2.2</code></td>
         </tr>
     </tbody>
 </table>

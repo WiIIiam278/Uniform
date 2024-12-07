@@ -10,7 +10,7 @@ dependencies {
     implementation 'space.arim.morepaperlib:morepaperlib:0.4.4'
 
     compileOnlyApi 'org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT'
-    compileOnly 'org.projectlombok:lombok:1.18.32'
+    compileOnly 'org.projectlombok:lombok:1.18.36'
 
-    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
 }

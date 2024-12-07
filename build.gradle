@@ -98,7 +98,7 @@ allprojects {
 }
 
 subprojects {
-    if (['fabric-1.20.1', 'fabric-1.21.3'].contains(project.name)) {
+    if (['fabric-1.20.1', 'fabric-1.21.4'].contains(project.name)) {
         apply plugin: 'fabric-loom'
     }
 
@@ -196,12 +196,25 @@ subprojects {
             }
         }
 
-        if (['fabric-1.21.3'].contains(project.name)) {
+        if (['fabric-1.21.1'].contains(project.name)) {
             publications {
-                mavenJavaFabric1_21_3(MavenPublication) {
+                mavenJavaFabric1_21_1(MavenPublication) {
                     groupId = 'net.william278.uniform'
                     artifactId = 'uniform-fabric'
-                    version = "${rootProject.version}+1.21.3"
+                    version = "${rootProject.version}+1.21.1"
+                    artifact remapJar
+                    artifact sourcesJar
+                    artifact javadocJar
+                }
+            }
+        }
+
+        if (['fabric-1.21.4'].contains(project.name)) {
+            publications {
+                mavenJavaFabric1_21_4(MavenPublication) {
+                    groupId = 'net.william278.uniform'
+                    artifactId = 'uniform-fabric'
+                    version = "${rootProject.version}+1.21.4"
                     artifact remapJar
                     artifact sourcesJar
                     artifact javadocJar
