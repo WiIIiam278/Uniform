@@ -58,7 +58,7 @@ public interface CommandExecutor<S> {
                 params[i] = context.getArgument(arg.name(), type);
                 continue;
             }
-            if (type.isAssignableFrom(CommandUser.class)) {
+            if (CommandUser.class.isAssignableFrom(type)) {
                 params[i] = cmd.getUser(context.getSource());
                 continue;
             }
