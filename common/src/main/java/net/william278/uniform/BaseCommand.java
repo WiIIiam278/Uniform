@@ -25,6 +25,8 @@ import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import lombok.Getter;
 import net.william278.uniform.element.ArgumentElement;
 import net.william278.uniform.element.CommandElement;
@@ -39,6 +41,8 @@ import java.util.function.Predicate;
 @Getter
 @SuppressWarnings("unused")
 public abstract class BaseCommand<S> {
+
+    protected static final ExecutorService CACHED_EXECUTOR = Executors.newCachedThreadPool();
 
     private final String name;
     private final String description;

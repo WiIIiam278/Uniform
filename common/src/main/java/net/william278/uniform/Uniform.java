@@ -44,4 +44,8 @@ public interface Uniform {
 
     void setCommandUserSupplier(@NotNull Function<Object, CommandUser> supplier);
 
+    default void shutdown() {
+        BaseCommand.CACHED_EXECUTOR.shutdownNow();
+    }
+
 }
