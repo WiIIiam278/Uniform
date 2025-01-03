@@ -26,6 +26,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.command.ServerCommandSource;
 import net.william278.uniform.BaseCommand;
 import net.william278.uniform.Command;
@@ -73,6 +74,8 @@ public final class FabricUniform implements Uniform {
                     ));
                 })
         );
+
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> shutdown());
     }
 
     /**

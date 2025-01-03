@@ -25,14 +25,10 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 
 record Execution<S>(@NotNull Predicate<S> predicate, @Nullable CommandExecutor<S> defaultExecutor,
                     @Nullable CommandExecutor<S> executor, @Nullable Predicate<S> condition) implements Predicate<S> {
-
-    private static final Executor CACHED_EXECUTOR = Executors.newCachedThreadPool();
 
     @NotNull
     static <S> Execution<S> fromCommand(@NotNull BaseCommand<S> command) {
@@ -75,7 +71,7 @@ record Execution<S>(@NotNull Predicate<S> predicate, @Nullable CommandExecutor<S
     @NotNull
     private static <S> com.mojang.brigadier.Command<S> convertExecutor(@NotNull CommandExecutor<S> executor) {
         return context -> {
-            CACHED_EXECUTOR.execute(() -> executor.execute(context));
+            BaseCommand.CACHED_EXECUTOR.execute(() -> executor.execute(context));
             return 1;
         };
     }
