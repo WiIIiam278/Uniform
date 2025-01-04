@@ -1,0 +1,52 @@
+plugins {
+    id 'gg.essential.multi-version'
+    id 'gg.essential.defaults'
+    id 'java-library'
+}
+
+dependencies {
+    def fabricApiVersion
+    def fabricPermissionsApiVersion = "0.3.1"
+    if (platform.mcVersion == 12001) {
+        fabricApiVersion = "0.92.2+1.20.1"
+    } else if (platform.mcVersion == 12101) {
+        fabricApiVersion = "0.110.0+1.21.1"
+    } else if (platform.mcVersion == 12104) {
+        fabricApiVersion = "0.111.0+1.21.4"
+        fabricPermissionsApiVersion = "0.3.3"
+    } else {
+        throw org.gradle.api.GradleException("Unsupported platform $platform")
+    }
+
+    modCompileOnly "net.fabricmc.fabric-api:fabric-api:$fabricApiVersion"
+
+    modImplementation include("me.lucko:fabric-permissions-api:$fabricPermissionsApiVersion")
+
+    modCompileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+    shadow project(path: ':common')
+}
+
+loom.setAccessWidenerPath(parent.file("src/main/resources/uniform.accesswidener"))
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+    destinationDirectory.set(file("$projectDir/build/libs"))
+
+    exclude('net.fabricmc:.*')
+    exclude('net.kyori:.*')
+    exclude '/mappings/*'
+}
+
+remapJar {
+    dependsOn tasks.shadowJar
+    mustRunAfter tasks.shadowJar
+    inputFile = shadowJar.archiveFile.get()
+    addNestedDependencies = true
+
+    destinationDirectory.set(file("$rootDir/target/"))
+    archiveClassifier.set('')
+}
+
+shadowJar.finalizedBy(remapJar)
