@@ -6,19 +6,21 @@ plugins {
 
 dependencies {
     def fabricApiVersion
+    def fabricPermissionsApiVersion = "0.3.1"
     if (platform.mcVersion == 12001) {
         fabricApiVersion = "0.92.2+1.20.1"
     } else if (platform.mcVersion == 12101) {
         fabricApiVersion = "0.110.0+1.21.1"
     } else if (platform.mcVersion == 12104) {
         fabricApiVersion = "0.111.0+1.21.4"
+        fabricPermissionsApiVersion = "0.3.3"
     } else {
         throw org.gradle.api.GradleException("Unsupported platform $platform")
     }
 
     modCompileOnly "net.fabricmc.fabric-api:fabric-api:$fabricApiVersion"
 
-    modImplementation include('me.lucko:fabric-permissions-api:0.3.3')
+    modImplementation include("me.lucko:fabric-permissions-api:$fabricPermissionsApiVersion")
 
     modCompileOnly 'org.projectlombok:lombok:1.18.36'
     annotationProcessor 'org.projectlombok:lombok:1.18.36'
