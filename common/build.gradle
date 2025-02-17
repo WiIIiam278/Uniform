@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     compileOnlyApi 'com.mojang:brigadier:1.1.8'
-    compileOnlyApi 'net.kyori:adventure-api:4.17.0'
+    compileOnlyApi 'net.kyori:adventure-api:4.19.0'
 
     compileOnly 'org.jetbrains:annotations:24.1.0'
     compileOnly 'org.projectlombok:lombok:1.18.36'
