@@ -11,10 +11,10 @@ dependencies {
 
 tasks {
     runServer {
-        minecraftVersion("1.21.3")
+        minecraftVersion("1.21.4")
 
         downloadPlugins {
-//            url('https://download.luckperms.net/1549/bukkit/loader/LuckPerms-Bukkit-5.4.134.jar')
+            url('https://download.luckperms.net/1573/bukkit/loader/LuckPerms-Bukkit-5.4.156.jar')
         }
     }
 }
