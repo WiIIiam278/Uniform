@@ -9,6 +9,6 @@ preprocess {
     def fabric12001 = createNode("1.20.1", 12001, "yarn")
 
     fabric12104.link(fabric12105, null)
-    fabric12101.link(fabric12104, null)
-    fabric12001.link(fabric12104, null)
+    fabric12101.link(fabric12105, null)
+    fabric12001.link(fabric12105, null)
 }
