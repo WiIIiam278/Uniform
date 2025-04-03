@@ -30,6 +30,9 @@ import net.william278.uniform.element.CommandElement;
 import net.william278.uniform.paper.element.PaperArgumentElement;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -81,6 +84,54 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         }, (context, builder) -> {
             for (Material material : Material.values()) {
                 builder.suggest(material.name());
+            }
+            return builder.buildFuture();
+        });
+    }
+
+    public static ArgumentElement<CommandSourceStack, Sound> sound(String name) {
+        return enumArgument(name, Sound.class);
+    }
+
+    public static ArgumentElement<CommandSourceStack, EntityType> entityType(String name) {
+        return enumArgument(name, EntityType.class);
+    }
+
+    /**
+     * Argument element for a generic enum class
+     *
+     * @param name the name of the argument
+     * @return the argument element
+     */
+    private static <E extends Enum<E>> ArgumentElement<CommandSourceStack, E> enumArgument(String name, Class<E> enumClass) {
+        return new ArgumentElement<>(name, reader -> {
+            String enumName = reader.readString();
+            E enumValue;
+            try {
+                enumValue = Enum.valueOf(enumClass, enumName);
+            } catch (IllegalArgumentException e) {
+                throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().createWithContext(reader);
+            }
+            return enumValue;
+        }, (context, builder) -> {
+            for (E enumValue : enumClass.getEnumConstants()) {
+                builder.suggest(enumValue.name());
+            }
+            return builder.buildFuture();
+        });
+    }
+
+    public static ArgumentElement<CommandSourceStack, World> world(String name) {
+        return new ArgumentElement<>(name, reader -> {
+            String worldName = reader.readString();
+            World world = Bukkit.getWorld(worldName);
+            if (world == null) {
+                throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().createWithContext(reader);
+            }
+            return world;
+        }, (context, builder) -> {
+            for (World world : Bukkit.getWorlds()) {
+                builder.suggest(world.getName());
             }
             return builder.buildFuture();
         });
