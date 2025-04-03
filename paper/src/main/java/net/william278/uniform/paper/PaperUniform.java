@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -110,6 +111,27 @@ public final class PaperUniform implements Uniform {
                 plugin.getName().toLowerCase(Locale.ENGLISH).replaceAll("[^a-z0-9_]", ""),
                 s.map(c -> (LegacyPaperCommand) c).map(c -> (org.bukkit.command.Command) c.getImpl(this)).toList()
         );
+    }
+
+    /**
+     * Unregister command(s) from the server's command manager
+     *
+     * @param commands The commands to unregister
+     */
+    public void unregister(@NotNull String... commands) {
+        final Set<String> commandSet = Arrays.stream(commands)
+                .map(String::toLowerCase)
+                .collect(Collectors.toSet());
+
+        plugin.getServer().getCommandMap().getKnownCommands()
+                .entrySet()
+                .removeIf(entry -> {
+                    if (commandSet.contains(entry.getKey().toLowerCase())) {
+                        entry.getValue().unregister(plugin.getServer().getCommandMap());
+                        return true;
+                    }
+                    return false;
+                });
     }
 
     /**
