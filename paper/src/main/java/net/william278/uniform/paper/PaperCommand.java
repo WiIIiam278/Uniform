@@ -21,7 +21,10 @@
 
 package net.william278.uniform.paper;
 
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.william278.uniform.*;
@@ -151,58 +154,92 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         private List<String> aliases = new ArrayList<>();
         private Permission permission;
         private CommandExecutor<CommandSourceStack> defaultExecutor;
-        private final List<BaseCommand<CommandSourceStack>> subCommands = new ArrayList<>();
-        private final List<CommandSyntax<CommandSourceStack>> syntaxes = new ArrayList<>();
+        private final List<PaperCommand> subCommands = new ArrayList<>();
+        private final List<CommandElement<CommandSourceStack>> elements = new ArrayList<>();
 
         public Builder(String name) {
             this.name = name;
         }
 
-        public Builder setDescription(@NotNull String description) {
+        public final Builder setDescription(@NotNull String description) {
             this.description = description;
             return this;
         }
 
-        public Builder setAliases(@NotNull List<String> aliases) {
+        public final Builder setAliases(@NotNull List<String> aliases) {
             this.aliases = aliases;
             return this;
         }
 
-        public Builder setPermission(@NotNull Permission permission) {
+        public final Builder setPermission(@NotNull Permission permission) {
             this.permission = permission;
             return this;
         }
 
-        public Builder addSubCommand(@NotNull BaseCommand<CommandSourceStack> command) {
-            this.subCommands.add(command);
+        public final Builder addSubCommand(@NotNull Command command) {
+            subCommands.add(new PaperCommand(command));
             return this;
         }
 
-        public Builder setDefaultExecutor(@NotNull CommandExecutor<CommandSourceStack> executor) {
+        public final Builder setDefaultExecutor(@NotNull CommandExecutor<CommandSourceStack> executor) {
             this.defaultExecutor = executor;
             return this;
         }
 
-        @SafeVarargs
-        public final Builder addSyntax(@NotNull CommandExecutor<CommandSourceStack> executor, @NotNull CommandElement<CommandSourceStack>... elements) {
-            return addConditionalSyntax(null, executor, elements);
-        }
-
-        @SafeVarargs
-        public final Builder addConditionalSyntax(@Nullable Predicate<CommandSourceStack> condition, @NotNull CommandExecutor<CommandSourceStack> executor,
-                                                      @NotNull CommandElement<CommandSourceStack>... elements) {
-            var syntax = new CommandSyntax<>(condition, executor, List.of(elements));
-            this.syntaxes.add(syntax);
+        public final Builder addArgument(String argName,
+                                         @NotNull ArgumentType<?> argumentType,
+                                         @NotNull SuggestionProvider<CommandSourceStack> suggestionProvider) {
+            this.elements.add(new ArgumentElement<>(argName, argumentType, suggestionProvider));
             return this;
         }
 
-        public PaperCommand build() {
-            PaperCommand command = new PaperCommand(name, description, aliases);
-            command.setPermission(permission);
-            subCommands.forEach(command::addSubCommand);
-            command.setDefaultExecutor(defaultExecutor);
-            command.syntaxes.addAll(this.syntaxes);
-            return command;
+        public final Builder addStringArgument(String argName, @NotNull SuggestionProvider<CommandSourceStack> suggestionProvider) {
+            return addArgument(argName, StringArgumentType.string(), suggestionProvider);
+        }
+
+        public final BuilderExecuteStage execute(@NotNull CommandExecutor<CommandSourceStack> executor) {
+            return executeConditional(null, executor);
+        }
+
+        public final BuilderExecuteStage executeConditional(@Nullable Predicate<CommandSourceStack> condition, @NotNull CommandExecutor<CommandSourceStack> executor) {
+            CommandSyntax<CommandSourceStack> syntax = new CommandSyntax<>(condition, executor, elements);
+            return new BuilderExecuteStage(syntax);
+        }
+
+        public class BuilderExecuteStage {
+            private final List<CommandSyntax<CommandSourceStack>> syntaxes = new ArrayList<>();
+
+            private BuilderExecuteStage(CommandSyntax<CommandSourceStack> defaultSyntax) {
+                this.syntaxes.add(defaultSyntax);
+            }
+
+            @SafeVarargs
+            public final BuilderExecuteStage addConditionalSyntax(@Nullable Predicate<CommandSourceStack> condition, @NotNull CommandExecutor<CommandSourceStack> executor,
+                                                                  @NotNull CommandElement<CommandSourceStack>... elements) {
+                var syntax = new CommandSyntax<>(condition, executor, List.of(elements));
+                this.syntaxes.add(syntax);
+                return this;
+            }
+
+            @SafeVarargs
+            public final BuilderExecuteStage addSyntax(@NotNull CommandExecutor<CommandSourceStack> executor, @NotNull CommandElement<CommandSourceStack>... elements) {
+                return addConditionalSyntax(null, executor, elements);
+            }
+
+            public PaperCommand build() {
+                var command = new PaperCommand(name, description, aliases);
+                command.setPermission(permission);
+                subCommands.forEach(command::addSubCommand);
+                command.setDefaultExecutor(defaultExecutor);
+                command.syntaxes.addAll(syntaxes);
+                return command;
+            }
+
+            public PaperCommand register(JavaPlugin plugin) {
+                var builtCmd = build();
+                PaperCommand.register(plugin, Set.of(builtCmd));
+                return builtCmd;
+            }
         }
     }
 }
