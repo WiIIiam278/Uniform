@@ -47,7 +47,7 @@ public abstract class BaseCommand<S> {
     private final String name;
     private final String description;
     private final List<String> aliases;
-    private final List<CommandSyntax<S>> syntaxes = new ArrayList<>();
+    protected final List<CommandSyntax<S>> syntaxes = new ArrayList<>();
     private final List<BaseCommand<S>> subCommands = new ArrayList<>();
 
     @Nullable

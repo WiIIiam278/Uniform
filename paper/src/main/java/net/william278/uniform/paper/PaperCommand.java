@@ -33,11 +33,14 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @SuppressWarnings({"unused", "UnstableApiUsage"})
 public class PaperCommand extends BaseCommand<CommandSourceStack> {
@@ -138,4 +141,64 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         return PaperUniform.INSTANCE;
     }
 
+    public static class Builder {
+        private final String name;
+        private String description = "";
+        private List<String> aliases = new ArrayList<>();
+        private Permission permission;
+        private CommandExecutor<CommandSourceStack> defaultExecutor;
+        private final List<BaseCommand<CommandSourceStack>> subCommands = new ArrayList<>();
+        private final List<CommandSyntax<CommandSourceStack>> syntaxes = new ArrayList<>();
+
+        public Builder(String name) {
+            this.name = name;
+        }
+
+        public Builder setDescription(@NotNull String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder setAliases(@NotNull List<String> aliases) {
+            this.aliases = aliases;
+            return this;
+        }
+
+        public Builder setPermission(@NotNull Permission permission) {
+            this.permission = permission;
+            return this;
+        }
+
+        public Builder addSubCommand(@NotNull BaseCommand<CommandSourceStack> command) {
+            this.subCommands.add(command);
+            return this;
+        }
+
+        public Builder setDefaultExecutor(@NotNull CommandExecutor<CommandSourceStack> executor) {
+            this.defaultExecutor = executor;
+            return this;
+        }
+
+        @SafeVarargs
+        public final Builder addSyntax(@NotNull CommandExecutor<CommandSourceStack> executor, @NotNull CommandElement<CommandSourceStack>... elements) {
+            return addConditionalSyntax(null, executor, elements);
+        }
+
+        @SafeVarargs
+        public final Builder addConditionalSyntax(@Nullable Predicate<CommandSourceStack> condition, @NotNull CommandExecutor<CommandSourceStack> executor,
+                                                      @NotNull CommandElement<CommandSourceStack>... elements) {
+            var syntax = new CommandSyntax<>(condition, executor, List.of(elements));
+            this.syntaxes.add(syntax);
+            return this;
+        }
+
+        public PaperCommand build() {
+            PaperCommand command = new PaperCommand(name, description, aliases);
+            command.setPermission(permission);
+            subCommands.forEach(command::addSubCommand);
+            command.setDefaultExecutor(defaultExecutor);
+            command.syntaxes.addAll(this.syntaxes);
+            return command;
+        }
+    }
 }
