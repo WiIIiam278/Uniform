@@ -73,7 +73,7 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         });
     }
 
-    public Builder builder(String name) {
+    public static Builder builder(String name) {
         return new Builder(name);
     }
 
