@@ -38,10 +38,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -155,7 +152,8 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         private Permission permission;
         private CommandExecutor<CommandSourceStack> defaultExecutor;
         private final List<PaperCommand> subCommands = new ArrayList<>();
-        private final List<CommandElement<CommandSourceStack>> elements = new ArrayList<>();
+        private final Map<String, ArgumentElement<CommandSourceStack, ?>> argumentElements = new HashMap<>();
+        private final List<CommandSyntax<CommandSourceStack>> syntaxes = new ArrayList<>();
 
         public Builder(String name) {
             this.name = name;
@@ -180,16 +178,19 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
             subCommands.add(new PaperCommand(command));
             return this;
         }
+        public final Builder addSubCommand(@NotNull PaperCommand paperCommand) {
+            subCommands.add(paperCommand);
+            return this;
+        }
 
         public final Builder setDefaultExecutor(@NotNull CommandExecutor<CommandSourceStack> executor) {
             this.defaultExecutor = executor;
             return this;
         }
 
-        public final Builder addArgument(String argName,
-                                         @NotNull ArgumentType<?> argumentType,
+        public final Builder addArgument(String argName, @NotNull ArgumentType<?> argumentType,
                                          @NotNull SuggestionProvider<CommandSourceStack> suggestionProvider) {
-            this.elements.add(new ArgumentElement<>(argName, argumentType, suggestionProvider));
+            this.argumentElements.put(argName, new ArgumentElement<>(argName, argumentType, suggestionProvider));
             return this;
         }
 
@@ -197,49 +198,37 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
             return addArgument(argName, StringArgumentType.string(), suggestionProvider);
         }
 
-        public final BuilderExecuteStage execute(@NotNull CommandExecutor<CommandSourceStack> executor) {
-            return executeConditional(null, executor);
+        public final Builder execute(@NotNull CommandExecutor<CommandSourceStack> executor, String... registeredArguments) {
+            return executeConditional(null, executor, registeredArguments);
         }
 
-        public final BuilderExecuteStage executeConditional(@Nullable Predicate<CommandSourceStack> condition, @NotNull CommandExecutor<CommandSourceStack> executor) {
-            CommandSyntax<CommandSourceStack> syntax = new CommandSyntax<>(condition, executor, elements);
-            return new BuilderExecuteStage(syntax);
+        public final Builder executeConditional(@Nullable Predicate<CommandSourceStack> condition,
+                                                            @NotNull CommandExecutor<CommandSourceStack> executor,
+                                                            String... requiredArgs) {
+            syntaxes.add(new CommandSyntax<>(condition, executor, Arrays.stream(requiredArgs).map(argString -> {
+                CommandElement<CommandSourceStack> argumentElement = argumentElements.get(argString);
+                if (argumentElement == null) {
+                    throw new IllegalArgumentException("Argument " + argString + " not found");
+                }
+                return argumentElement;
+            }).toList()));
+            return this;
         }
 
-        public class BuilderExecuteStage {
-            private final List<CommandSyntax<CommandSourceStack>> syntaxes = new ArrayList<>();
-
-            private BuilderExecuteStage(CommandSyntax<CommandSourceStack> defaultSyntax) {
-                this.syntaxes.add(defaultSyntax);
-            }
-
-            @SafeVarargs
-            public final BuilderExecuteStage addConditionalSyntax(@Nullable Predicate<CommandSourceStack> condition, @NotNull CommandExecutor<CommandSourceStack> executor,
-                                                                  @NotNull CommandElement<CommandSourceStack>... elements) {
-                var syntax = new CommandSyntax<>(condition, executor, List.of(elements));
-                this.syntaxes.add(syntax);
-                return this;
-            }
-
-            @SafeVarargs
-            public final BuilderExecuteStage addSyntax(@NotNull CommandExecutor<CommandSourceStack> executor, @NotNull CommandElement<CommandSourceStack>... elements) {
-                return addConditionalSyntax(null, executor, elements);
-            }
-
-            public PaperCommand build() {
-                var command = new PaperCommand(name, description, aliases);
-                command.setPermission(permission);
-                subCommands.forEach(command::addSubCommand);
-                command.setDefaultExecutor(defaultExecutor);
-                command.syntaxes.addAll(syntaxes);
-                return command;
-            }
-
-            public PaperCommand register(JavaPlugin plugin) {
-                var builtCmd = build();
-                PaperCommand.register(plugin, Set.of(builtCmd));
-                return builtCmd;
-            }
+        public PaperCommand build() {
+            var command = new PaperCommand(name, description, aliases);
+            command.setPermission(permission);
+            subCommands.forEach(command::addSubCommand);
+            command.setDefaultExecutor(defaultExecutor);
+            command.syntaxes.addAll(syntaxes);
+            return command;
         }
+
+        public PaperCommand register(JavaPlugin plugin) {
+            var builtCmd = build();
+            PaperCommand.register(plugin, Set.of(builtCmd));
+            return builtCmd;
+        }
+
     }
 }
