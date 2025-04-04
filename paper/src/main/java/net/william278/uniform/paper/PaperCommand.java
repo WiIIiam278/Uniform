@@ -73,6 +73,10 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         });
     }
 
+    public Builder builder(String name) {
+        return new Builder(name);
+    }
+
     public static ArgumentElement<CommandSourceStack, Material> material(String name) {
         return new ArgumentElement<>(name, reader -> {
             String materialName = reader.readString();
