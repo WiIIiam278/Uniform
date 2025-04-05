@@ -21,6 +21,7 @@
 
 package net.william278.uniform;
 
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.william278.uniform.paper.PaperCommand;
 import net.william278.uniform.paper.PaperUniform;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -36,7 +37,7 @@ public class UniformExample extends JavaPlugin {
         uniform.register(new ExtendedCommand(), getBuiltCommand(),new AnnotatedCommand());
     }
 
-    public PaperCommand getBuiltCommand() {
+    public BaseCommand getBuiltCommand() {
         return PaperCommand.builder("builded")
                 .setDescription("A builded command")
                 .setAliases(List.of("builded", "build"))
@@ -45,7 +46,7 @@ public class UniformExample extends JavaPlugin {
                 .build();
     }
 
-    private PaperCommand builtSubCommand() {
+    private BaseCommand<CommandSourceStack> builtSubCommand() {
         return PaperCommand.builder("get-pet")
                 .setDescription("Gets a pet")
                 .setAliases(List.of("pet", "lilpet"))

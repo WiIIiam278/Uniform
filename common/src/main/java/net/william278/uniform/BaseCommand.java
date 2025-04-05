@@ -25,6 +25,7 @@ import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import lombok.Getter;
@@ -34,8 +35,6 @@ import net.william278.uniform.element.LiteralElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Predicate;
 
 @Getter
@@ -254,6 +253,76 @@ public abstract class BaseCommand<S> {
     @NotNull
     public static <S, T> ArgumentElement<S, T> arg(@NotNull String name, @NotNull ArgumentType<T> type) {
         return arg(name, type, null);
+    }
+
+    public static abstract class BaseCommandBuilder<S>{
+        protected final String name;
+        protected String description = "";
+        protected List<String> aliases = new ArrayList<>();
+        protected Permission permission;
+        protected CommandExecutor<S> defaultExecutor;
+        protected final List<BaseCommand<S>> subCommands = new ArrayList<>();
+        protected final Map<String, ArgumentElement<S, ?>> argumentElements = new HashMap<>();
+        protected final List<CommandSyntax<S>> syntaxes = new ArrayList<>();
+
+        public BaseCommandBuilder(String name) {
+            this.name = name;
+        }
+
+        public final BaseCommandBuilder<S> setDescription(@NotNull String description) {
+            this.description = description;
+            return this;
+        }
+
+        public final BaseCommandBuilder<S> setAliases(@NotNull List<String> aliases) {
+            this.aliases = aliases;
+            return this;
+        }
+
+        public final BaseCommandBuilder<S> setPermission(@NotNull Permission permission) {
+            this.permission = permission;
+            return this;
+        }
+
+        public final BaseCommandBuilder<S> addSubCommand(@NotNull BaseCommand<S> paperCommand) {
+            subCommands.add(paperCommand);
+            return this;
+        }
+
+        public final BaseCommandBuilder<S> setDefaultExecutor(@NotNull CommandExecutor<S> executor) {
+            this.defaultExecutor = executor;
+            return this;
+        }
+
+        public final BaseCommandBuilder<S> addArgument(String argName, @NotNull ArgumentType<?> argumentType,
+                                                    @NotNull SuggestionProvider<S> suggestionProvider) {
+            this.argumentElements.put(argName, new ArgumentElement<>(argName, argumentType, suggestionProvider));
+            return this;
+        }
+
+        public final BaseCommandBuilder<S> addStringArgument(String argName, @NotNull SuggestionProvider<S> suggestionProvider) {
+            return addArgument(argName, StringArgumentType.string(), suggestionProvider);
+        }
+
+        public final BaseCommandBuilder<S> execute(@NotNull CommandExecutor<S> executor, String... registeredArguments) {
+            return executeConditional(null, executor, registeredArguments);
+        }
+
+        public final BaseCommandBuilder<S> executeConditional(@Nullable Predicate<S> condition,
+                                                           @NotNull CommandExecutor<S> executor,
+                                                           String... requiredArgs) {
+            syntaxes.add(new CommandSyntax<>(condition, executor, Arrays.stream(requiredArgs).map(argString -> {
+                CommandElement<S> argumentElement = argumentElements.get(argString);
+                if (argumentElement == null) {
+                    throw new IllegalArgumentException("Argument " + argString + " not found");
+                }
+                return argumentElement;
+            }).toList()));
+            return this;
+        }
+
+        public abstract BaseCommand<S> build();
+
     }
 
 }

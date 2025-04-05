@@ -73,8 +73,8 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         });
     }
 
-    public static Builder builder(String name) {
-        return new Builder(name);
+    public static PaperCommandBuilder builder(String name) {
+        return new PaperCommandBuilder(name);
     }
 
     public static ArgumentElement<CommandSourceStack, Material> material(String name) {
@@ -145,76 +145,18 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         return PaperUniform.INSTANCE;
     }
 
-    public static class Builder {
-        private final String name;
-        private String description = "";
-        private List<String> aliases = new ArrayList<>();
-        private Permission permission;
-        private CommandExecutor<CommandSourceStack> defaultExecutor;
-        private final List<PaperCommand> subCommands = new ArrayList<>();
-        private final Map<String, ArgumentElement<CommandSourceStack, ?>> argumentElements = new HashMap<>();
-        private final List<CommandSyntax<CommandSourceStack>> syntaxes = new ArrayList<>();
+    public static class PaperCommandBuilder extends BaseCommandBuilder<CommandSourceStack> {
 
-        public Builder(String name) {
-            this.name = name;
+        public PaperCommandBuilder(String name) {
+            super(name);
         }
 
-        public final Builder setDescription(@NotNull String description) {
-            this.description = description;
-            return this;
-        }
-
-        public final Builder setAliases(@NotNull List<String> aliases) {
-            this.aliases = aliases;
-            return this;
-        }
-
-        public final Builder setPermission(@NotNull Permission permission) {
-            this.permission = permission;
-            return this;
-        }
-
-        public final Builder addSubCommand(@NotNull Command command) {
+        public final PaperCommandBuilder addSubCommand(@NotNull Command command) {
             subCommands.add(new PaperCommand(command));
             return this;
         }
-        public final Builder addSubCommand(@NotNull PaperCommand paperCommand) {
-            subCommands.add(paperCommand);
-            return this;
-        }
 
-        public final Builder setDefaultExecutor(@NotNull CommandExecutor<CommandSourceStack> executor) {
-            this.defaultExecutor = executor;
-            return this;
-        }
-
-        public final Builder addArgument(String argName, @NotNull ArgumentType<?> argumentType,
-                                         @NotNull SuggestionProvider<CommandSourceStack> suggestionProvider) {
-            this.argumentElements.put(argName, new ArgumentElement<>(argName, argumentType, suggestionProvider));
-            return this;
-        }
-
-        public final Builder addStringArgument(String argName, @NotNull SuggestionProvider<CommandSourceStack> suggestionProvider) {
-            return addArgument(argName, StringArgumentType.string(), suggestionProvider);
-        }
-
-        public final Builder execute(@NotNull CommandExecutor<CommandSourceStack> executor, String... registeredArguments) {
-            return executeConditional(null, executor, registeredArguments);
-        }
-
-        public final Builder executeConditional(@Nullable Predicate<CommandSourceStack> condition,
-                                                            @NotNull CommandExecutor<CommandSourceStack> executor,
-                                                            String... requiredArgs) {
-            syntaxes.add(new CommandSyntax<>(condition, executor, Arrays.stream(requiredArgs).map(argString -> {
-                CommandElement<CommandSourceStack> argumentElement = argumentElements.get(argString);
-                if (argumentElement == null) {
-                    throw new IllegalArgumentException("Argument " + argString + " not found");
-                }
-                return argumentElement;
-            }).toList()));
-            return this;
-        }
-
+        @Override
         public PaperCommand build() {
             var command = new PaperCommand(name, description, aliases);
             command.setPermission(permission);
