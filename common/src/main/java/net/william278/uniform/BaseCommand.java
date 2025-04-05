@@ -23,6 +23,7 @@ package net.william278.uniform;
 
 import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import java.util.*;
@@ -253,6 +254,25 @@ public abstract class BaseCommand<S> {
     @NotNull
     public static <S, T> ArgumentElement<S, T> arg(@NotNull String name, @NotNull ArgumentType<T> type) {
         return arg(name, type, null);
+    }
+
+    @NotNull
+    public static <S, T extends Enum<T>> ArgumentElement<S, T> enumArgument(String name, Class<T> enumClass) {
+        return new ArgumentElement<>(name, reader -> {
+            String enumName = reader.readString();
+            T enumValue;
+            try {
+                enumValue = Enum.valueOf(enumClass, enumName);
+            } catch (IllegalArgumentException e) {
+                throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().createWithContext(reader);
+            }
+            return enumValue;
+        }, (context, builder) -> {
+            for (T enumValue : enumClass.getEnumConstants()) {
+                builder.suggest(enumValue.name());
+            }
+            return builder.buildFuture();
+        });
     }
 
     public static abstract class BaseCommandBuilder<S>{

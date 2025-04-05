@@ -21,10 +21,7 @@
 
 package net.william278.uniform.paper;
 
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.william278.uniform.*;
@@ -33,20 +30,23 @@ import net.william278.uniform.element.CommandElement;
 import net.william278.uniform.paper.element.PaperArgumentElement;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 @SuppressWarnings({"unused", "UnstableApiUsage"})
 public class PaperCommand extends BaseCommand<CommandSourceStack> {
 
     static final Function<Object, CommandUser> USER_SUPPLIER = (user) -> new PaperCommandUser(
-        (CommandSourceStack) user
+            (CommandSourceStack) user
     );
 
     public PaperCommand(@NotNull Command command) {
@@ -108,6 +108,30 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
             builder.suggest("@a");
             for (Player player : Bukkit.getOnlinePlayers()) {
                 builder.suggest(player.getName());
+            }
+            return builder.buildFuture();
+        });
+    }
+
+    public static ArgumentElement<CommandSourceStack, Sound> sound(String name) {
+        return enumArgument(name, Sound.class);
+    }
+
+    public static ArgumentElement<CommandSourceStack, EntityType> entityType(String name) {
+        return enumArgument(name, EntityType.class);
+    }
+
+    public static ArgumentElement<CommandSourceStack, World> world(String name) {
+        return new ArgumentElement<>(name, reader -> {
+            String worldName = reader.readString();
+            World world = Bukkit.getWorld(worldName);
+            if (world == null) {
+                throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().createWithContext(reader);
+            }
+            return world;
+        }, (context, builder) -> {
+            for (World world : Bukkit.getWorlds()) {
+                builder.suggest(world.getName());
             }
             return builder.buildFuture();
         });

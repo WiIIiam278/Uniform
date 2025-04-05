@@ -53,6 +53,10 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
         super(name, description, aliases);
     }
 
+    public static FabricCommandBuilder builder(String name) {
+        return new FabricCommandBuilder(name);
+    }
+
     public static ArgumentElement<ServerCommandSource, Item> item(String name) {
         return registry(name, Registries.ITEM);
     }
@@ -88,5 +92,27 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
     @Override
     public Uniform getUniform() {
         return FabricUniform.INSTANCE;
+    }
+
+    public static class FabricCommandBuilder extends BaseCommandBuilder<ServerCommandSource> {
+
+        public FabricCommandBuilder(String name) {
+            super(name);
+        }
+
+        public final FabricCommandBuilder addSubCommand(@NotNull Command command) {
+            subCommands.add(new FabricCommand(command));
+            return this;
+        }
+
+        @Override
+        public FabricCommand build() {
+            var command = new FabricCommand(name, description, aliases);
+            command.setPermission(permission);
+            subCommands.forEach(command::addSubCommand);
+            command.setDefaultExecutor(defaultExecutor);
+            command.syntaxes.addAll(syntaxes);
+            return command;
+        }
     }
 }
