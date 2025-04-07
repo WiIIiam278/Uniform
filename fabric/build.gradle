@@ -25,8 +25,8 @@ dependencies {
 
     modImplementation include("me.lucko:fabric-permissions-api:$fabricPermissionsApiVersion")
 
-    modCompileOnly 'org.projectlombok:lombok:1.18.36'
-    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+    modCompileOnly 'org.projectlombok:lombok:1.18.38'
+    annotationProcessor 'org.projectlombok:lombok:1.18.38'
 
     shadow project(path: ':common')
 }
