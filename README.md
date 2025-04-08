@@ -144,6 +144,7 @@ Cross-platform commands can be created by registering `Command` objects; you can
 
 #### Using annotations
 You can use the `@CommandNode` annotations to easily create cross-platform Brigadier commands (since: v1.2). This is the recommended way to create commands.
+This is useful for creating commands with not so many subcommands and arguments.
 
 ```java
 @CommandNode(
@@ -181,6 +182,41 @@ public class AnnotatedCommand {
         }
     }
 
+}
+```
+
+#### By using the command builder
+You can use the builder available for paper and fabric (PaperCommand and FabricCommand) to create commands
+This is mostly useful for creating commands with many subcommands and arguments
+
+```java
+public class WhicheverClass {
+    public PaperCommand getBuiltCommand() {
+        return PaperCommand.builder("helloworld")
+                .setDescription("A simple hello world command")
+                .setAliases(List.of("hello", "hi"))
+                .setPermission(new Permission("example.command.helloworld", Permission.Default.TRUE))
+                .addSubCommand(messageSubCommand())
+                .build();
+    }
+
+    private PaperCommand messageSubCommand() {
+        return PaperCommand.builder("message")
+                .setDescription("Echoes message")
+                .addStringArgument("message", ((commandContext, suggestionsBuilder) -> {
+                    //Here is for suggestions but you can skip this part
+                    return suggestionsBuilder.suggest("Message content...").buildFuture();
+                }))
+                .execute(commandContext -> {
+                    String message = commandContext.getArgument("message", String.class);
+                    commandContext.getSource().getSender()
+                            .sendMessage(Component.text("Hello, " + message, NamedTextColor.GREEN));
+                }, "message") //Specify the arguments used in the correct order
+                .execute(commandContext -> {
+                    commandContext.getSource().getSender().sendMessage("Missing argument 'message'");
+                })
+                .build();
+    }
 }
 ```
 
@@ -236,7 +272,7 @@ public class ExampleCommand extends PaperCommand {
             context.getSource().getBukkitSender().sendMessage("Woah!!!!");
             String arg = context.getArgument("message", String.class);
             context.getSource().getBukkitSender()
-                .sendMessage(MiniMessage.miniMessage().deserialize(arg));
+                    .sendMessage(MiniMessage.miniMessage().deserialize(arg));
         }, stringArg("message"));
     }
 }
