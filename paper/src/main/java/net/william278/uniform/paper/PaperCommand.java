@@ -30,6 +30,9 @@ import net.william278.uniform.element.CommandElement;
 import net.william278.uniform.paper.element.PaperArgumentElement;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +46,7 @@ import java.util.function.Function;
 public class PaperCommand extends BaseCommand<CommandSourceStack> {
 
     static final Function<Object, CommandUser> USER_SUPPLIER = (user) -> new PaperCommandUser(
-        (CommandSourceStack) user
+            (CommandSourceStack) user
     );
 
     public PaperCommand(@NotNull Command command) {
@@ -68,6 +71,10 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
             ));
             commands.clear();
         });
+    }
+
+    public static PaperCommandBuilder builder(String name) {
+        return new PaperCommandBuilder(name);
     }
 
     public static ArgumentElement<CommandSourceStack, Material> material(String name) {
@@ -106,6 +113,30 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         });
     }
 
+    public static ArgumentElement<CommandSourceStack, Sound> sound(String name) {
+        return enumArgument(name, Sound.class);
+    }
+
+    public static ArgumentElement<CommandSourceStack, EntityType> entityType(String name) {
+        return enumArgument(name, EntityType.class);
+    }
+
+    public static ArgumentElement<CommandSourceStack, World> world(String name) {
+        return new ArgumentElement<>(name, reader -> {
+            String worldName = reader.readString();
+            World world = Bukkit.getWorld(worldName);
+            if (world == null) {
+                throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().createWithContext(reader);
+            }
+            return world;
+        }, (context, builder) -> {
+            for (World world : Bukkit.getWorlds()) {
+                builder.suggest(world.getName());
+            }
+            return builder.buildFuture();
+        });
+    }
+
     @Override
     @NotNull
     @SuppressWarnings("unchecked")
@@ -138,4 +169,32 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         return PaperUniform.INSTANCE;
     }
 
+    public static class PaperCommandBuilder extends BaseCommandBuilder<CommandSourceStack> {
+
+        public PaperCommandBuilder(String name) {
+            super(name);
+        }
+
+        public final PaperCommandBuilder addSubCommand(@NotNull Command command) {
+            subCommands.add(new PaperCommand(command));
+            return this;
+        }
+
+        @Override
+        public PaperCommand build() {
+            var command = new PaperCommand(name, description, aliases);
+            command.setPermission(permission);
+            subCommands.forEach(command::addSubCommand);
+            command.setDefaultExecutor(defaultExecutor);
+            command.syntaxes.addAll(syntaxes);
+            return command;
+        }
+
+        public PaperCommand register(JavaPlugin plugin) {
+            var builtCmd = build();
+            PaperCommand.register(plugin, Set.of(builtCmd));
+            return builtCmd;
+        }
+
+    }
 }

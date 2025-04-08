@@ -114,4 +114,13 @@ public final class FabricUniform implements Uniform {
         register(Arrays.stream(commands).map(FabricCommand::new).toArray(FabricCommand[]::new));
     }
 
+    /**
+     * Unregister command(s) from the server's command manager
+     *
+     * @param commands The commands to unregister
+     */
+    public void unregister(@NotNull String... commands) {
+        this.commands.removeIf(command -> Arrays.stream(commands).anyMatch(c -> command.getName().equals(c)));
+    }
+
 }
