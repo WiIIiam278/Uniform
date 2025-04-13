@@ -61,7 +61,7 @@ public class AnnotatedCommand {
         @Syntax
         public void pongMessage(
                 CommandUser user,
-                @Argument(name = "message", parser = Argument.StringArg.class) String message
+                @Argument(parser = Argument.StringArg.class) String message
         ) {
             user.getAudience().sendMessage(Component.text("Pong! " + message, NamedTextColor.GREEN));
         }

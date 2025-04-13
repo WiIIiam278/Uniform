@@ -164,15 +164,17 @@ public abstract class Command implements CommandProvider {
                     if (arg == null) {
                         continue;
                     }
+                    // Get the argument name
+                    final String argName = arg.name().isEmpty() ? param.getName() : arg.name();
 
                     // Pass parser properties if needed
                     if (arg.parserProperties().length == 0) {
                         elements.add(arg.parser().getDeclaredConstructor()
-                                .newInstance().provide(arg.name()));
+                                .newInstance().provide(argName));
                         continue;
                     }
                     elements.add(arg.parser().getDeclaredConstructor(String[].class)
-                            .newInstance((Object) arg.parserProperties()).provide(arg.name()));
+                            .newInstance((Object) arg.parserProperties()).provide(argName));
                 }
                 return elements.toArray(new ArgumentElement[0]);
             } catch (Throwable e) {

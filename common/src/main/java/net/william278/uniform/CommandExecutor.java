@@ -55,7 +55,7 @@ public interface CommandExecutor<S> {
             final Class<?> type = param.getType();
             final Argument arg = param.getAnnotation(Argument.class);
             if (arg != null) {
-                params[i] = context.getArgument(arg.name(), type);
+                params[i] = context.getArgument(arg.name().isEmpty() ? param.getName() : arg.name(), type);
                 continue;
             }
             if (CommandUser.class.isAssignableFrom(type)) {

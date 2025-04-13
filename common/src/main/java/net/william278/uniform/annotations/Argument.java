@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Argument {
 
-    String name();
+    String name() default "";
     Class<? extends ArgumentProvider<?>> parser();
     String[] parserProperties() default {};
 
