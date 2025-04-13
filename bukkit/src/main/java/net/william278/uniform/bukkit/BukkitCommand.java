@@ -161,7 +161,7 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
 
     public static class BukkitCommandBuilder extends BaseCommandBuilder<CommandSender> {
 
-        public BukkitCommandBuilder(String name) {
+        public BukkitCommandBuilder(@NotNull String name) {
             super(name);
         }
 
@@ -171,7 +171,7 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
         }
 
         @Override
-        public BukkitCommand build() {
+        public @NotNull BukkitCommand build() {
             var command = new BukkitCommand(name, description, aliases);
             command.addPermissions(permissions);
             subCommands.forEach(command::addSubCommand);
@@ -183,7 +183,7 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
             return command;
         }
 
-        public BukkitCommand register(JavaPlugin plugin) {
+        public BukkitCommand register(@NotNull JavaPlugin plugin) {
             final BukkitCommand builtCmd = build();
             BukkitUniform.getInstance(plugin).register(builtCmd);
             return builtCmd;

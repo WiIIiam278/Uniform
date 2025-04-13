@@ -49,7 +49,6 @@ public abstract class BaseCommand<S> {
     private final List<String> aliases;
     protected final List<CommandSyntax<S>> syntaxes = new ArrayList<>();
     protected final List<BaseCommand<S>> subCommands = new ArrayList<>();
-
     @Nullable
     private Predicate<S> condition;
     @Nullable
@@ -80,7 +79,7 @@ public abstract class BaseCommand<S> {
         return getUniform().getCommandUserSupplier().apply(user);
     }
 
-    public void setCondition(@NotNull Predicate<S> condition) {
+    public void setCondition(@Nullable Predicate<S> condition) {
         this.condition = condition;
     }
 
@@ -269,7 +268,7 @@ public abstract class BaseCommand<S> {
     }
 
     @NotNull
-    public static <S, T extends Enum<T>> ArgumentElement<S, T> enumArgument(String name, Class<T> enumClass) {
+    public static <S, T extends Enum<T>> ArgumentElement<S, T> enumArgument(@NotNull String name, @NotNull Class<T> enumClass) {
         return new ArgumentElement<>(name, reader -> {
             String enumName = reader.readString();
             T enumValue;
@@ -291,15 +290,17 @@ public abstract class BaseCommand<S> {
         protected final String name;
         protected String description = "";
         protected List<String> aliases = new ArrayList<>();
-        protected Predicate<S> condition = null;
-        protected CommandExecutor<S> defaultExecutor = null;
+        @Nullable
+        protected Predicate<S> condition;
+        @Nullable
+        protected CommandExecutor<S> defaultExecutor;
         protected Command.ExecutionScope executionScope = Command.ExecutionScope.ALL;
         protected final List<Permission> permissions = new ArrayList<>();
         protected final List<BaseCommand<S>> subCommands = new ArrayList<>();
         protected final Map<String, ArgumentElement<S, ?>> argumentElements = new HashMap<>();
         protected final List<CommandSyntax<S>> syntaxes = new ArrayList<>();
 
-        public BaseCommandBuilder(String name) {
+        public BaseCommandBuilder(@NotNull String name) {
             this.name = name;
         }
 
@@ -356,7 +357,7 @@ public abstract class BaseCommand<S> {
             return this;
         }
 
-        public final BaseCommandBuilder<S> addArgument(String argName, @NotNull ArgumentType<?> argumentType,
+        public final BaseCommandBuilder<S> addArgument(@NotNull String argName, @NotNull ArgumentType<?> argumentType,
                                                        @NotNull SuggestionProvider<S> suggestionProvider) {
             return addArgument(new ArgumentElement<>(argName, argumentType, suggestionProvider));
         }
@@ -371,17 +372,17 @@ public abstract class BaseCommand<S> {
             return this;
         }
 
-        public final BaseCommandBuilder<S> addStringArgument(String argName, @NotNull SuggestionProvider<S> suggestionProvider) {
+        public final BaseCommandBuilder<S> addStringArgument(@NotNull String argName, @NotNull SuggestionProvider<S> suggestionProvider) {
             return addArgument(argName, StringArgumentType.string(), suggestionProvider);
         }
 
-        public final BaseCommandBuilder<S> execute(@NotNull CommandExecutor<S> executor, String... requiredArgs) {
+        public final BaseCommandBuilder<S> execute(@NotNull CommandExecutor<S> executor, @NotNull String... requiredArgs) {
             return executeConditional(null, executor, requiredArgs);
         }
 
         public final BaseCommandBuilder<S> executeConditional(@Nullable Predicate<S> condition,
                                                               @NotNull CommandExecutor<S> executor,
-                                                              String... requiredArgs) {
+                                                              @NotNull String... requiredArgs) {
             this.syntaxes.add(new CommandSyntax<>(condition, executor, Arrays.stream(requiredArgs).map(argString -> {
                 CommandElement<S> argumentElement = argumentElements.get(argString);
                 if (argumentElement == null) {
@@ -392,6 +393,7 @@ public abstract class BaseCommand<S> {
             return this;
         }
 
+        @NotNull
         public abstract BaseCommand<S> build();
 
     }

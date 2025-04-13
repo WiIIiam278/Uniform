@@ -73,11 +73,11 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         });
     }
 
-    public static PaperCommandBuilder builder(String name) {
+    public static PaperCommandBuilder builder(@NotNull String name) {
         return new PaperCommandBuilder(name);
     }
 
-    public static ArgumentElement<CommandSourceStack, Material> material(String name) {
+    public static ArgumentElement<CommandSourceStack, Material> material(@NotNull String name) {
         return new ArgumentElement<>(name, reader -> {
             String materialName = reader.readString();
             Material material = Material.matchMaterial(materialName);
@@ -93,7 +93,7 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         });
     }
 
-    public static ArgumentElement<CommandSourceStack, Collection<? extends Player>> player(String name) {
+    public static ArgumentElement<CommandSourceStack, Collection<? extends Player>> player(@NotNull String name) {
         return new ArgumentElement<>(name, reader -> {
             String playerName = reader.readString();
             if (playerName.equals("@a")) {
@@ -113,15 +113,15 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         });
     }
 
-    public static ArgumentElement<CommandSourceStack, Sound> sound(String name) {
+    public static ArgumentElement<CommandSourceStack, Sound> sound(@NotNull String name) {
         return enumArgument(name, Sound.class);
     }
 
-    public static ArgumentElement<CommandSourceStack, EntityType> entityType(String name) {
+    public static ArgumentElement<CommandSourceStack, EntityType> entityType(@NotNull String name) {
         return enumArgument(name, EntityType.class);
     }
 
-    public static ArgumentElement<CommandSourceStack, World> world(String name) {
+    public static ArgumentElement<CommandSourceStack, World> world(@NotNull String name) {
         return new ArgumentElement<>(name, reader -> {
             String worldName = reader.readString();
             World world = Bukkit.getWorld(worldName);
@@ -171,7 +171,7 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
 
     public static class PaperCommandBuilder extends BaseCommandBuilder<CommandSourceStack> {
 
-        public PaperCommandBuilder(String name) {
+        public PaperCommandBuilder(@NotNull String name) {
             super(name);
         }
 
@@ -181,8 +181,8 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         }
 
         @Override
-        public PaperCommand build() {
-            var command = new PaperCommand(name, description, aliases);
+        public @NotNull PaperCommand build() {
+            final PaperCommand command = new PaperCommand(name, description, aliases);
             command.addPermissions(permissions);
             subCommands.forEach(command::addSubCommand);
             command.setDefaultExecutor(defaultExecutor);
@@ -193,8 +193,9 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
             return command;
         }
 
-        public PaperCommand register(JavaPlugin plugin) {
-            var builtCmd = build();
+        @NotNull
+        public PaperCommand register(@NotNull JavaPlugin plugin) {
+            final PaperCommand builtCmd = build();
             PaperCommand.register(plugin, Set.of(builtCmd));
             return builtCmd;
         }

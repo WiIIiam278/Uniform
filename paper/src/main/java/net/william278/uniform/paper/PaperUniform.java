@@ -98,7 +98,7 @@ public final class PaperUniform implements Uniform {
      */
     @SafeVarargs
     @Override
-    public final <S, T extends BaseCommand<S>> void register(T... commands) {
+    public final <S, T extends BaseCommand<S>> void register(@NotNull T... commands) {
         // Mark as to be registered with modern API
         final Stream<T> s = Arrays.stream(commands);
         if (useModernApi) {
@@ -119,7 +119,7 @@ public final class PaperUniform implements Uniform {
      * @param commands The commands to unregister
      * @since 1.0
      */
-    public void unregister(String... commands) {
+    public void unregister(@NotNull String... commands) {
         // Mark as to be registered with modern API
         final List<String> s = List.of(commands);
         if (useModernApi) {

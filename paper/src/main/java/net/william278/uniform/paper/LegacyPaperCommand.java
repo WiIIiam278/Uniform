@@ -161,7 +161,7 @@ public class LegacyPaperCommand extends BaseCommand<CommandSender> {
 
     public static class LegacyPaperCommandBuilder extends BaseCommandBuilder<CommandSender> {
 
-        public LegacyPaperCommandBuilder(String name) {
+        public LegacyPaperCommandBuilder(@NotNull String name) {
             super(name);
         }
 
@@ -171,19 +171,20 @@ public class LegacyPaperCommand extends BaseCommand<CommandSender> {
         }
 
         @Override
-        public LegacyPaperCommand build() {
+        public @NotNull LegacyPaperCommand build() {
             var command = new LegacyPaperCommand(name, description, aliases);
             command.addPermissions(permissions);
             subCommands.forEach(command::addSubCommand);
             command.setDefaultExecutor(defaultExecutor);
             command.syntaxes.addAll(syntaxes);
             command.setExecutionScope(executionScope);
-            command.setCondition(condition);
+            //Condition is not yet implemented in this type of command
 
             return command;
         }
 
-        public LegacyPaperCommand register(JavaPlugin plugin) {
+        @NotNull
+        public LegacyPaperCommand register(@NotNull JavaPlugin plugin) {
             final LegacyPaperCommand builtCmd = build();
             PaperUniform.getInstance(plugin).register(builtCmd);
             return builtCmd;
