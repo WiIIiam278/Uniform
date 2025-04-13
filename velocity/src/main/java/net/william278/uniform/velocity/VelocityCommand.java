@@ -52,6 +52,10 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
         super(name, description, aliases);
     }
 
+    public static VelocityCommandBuilder builder(String name) {
+        return new VelocityCommandBuilder(name);
+    }
+
     public static ArgumentElement<CommandSource, RegisteredServer> server(ProxyServer server, String name,
                                                                           SuggestionProvider<CommandSource> suggestionProvider) {
         ArgumentType<RegisteredServer> argumentType = reader -> {
@@ -104,6 +108,38 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
     @Override
     public Uniform getUniform() {
         return VelocityUniform.INSTANCE;
+    }
+
+
+    public static class VelocityCommandBuilder extends BaseCommandBuilder<CommandSource> {
+
+        public VelocityCommandBuilder(String name) {
+            super(name);
+        }
+
+        public final VelocityCommand.VelocityCommandBuilder addSubCommand(@NotNull Command command) {
+            subCommands.add(new VelocityCommand(command));
+            return this;
+        }
+
+        @Override
+        public VelocityCommand build() {
+            var command = new VelocityCommand(name, description, aliases);
+            command.addPermissions(permissions);
+            subCommands.forEach(command::addSubCommand);
+            command.setDefaultExecutor(defaultExecutor);
+            command.syntaxes.addAll(syntaxes);
+            command.setExecutionScope(executionScope);
+            command.setCondition(condition);
+
+            return command;
+        }
+
+        public VelocityCommand register(ProxyServer proxyServer) {
+            final VelocityCommand builtCmd = build();
+            VelocityUniform.getInstance(proxyServer).register(builtCmd);
+            return builtCmd;
+        }
     }
 
 }

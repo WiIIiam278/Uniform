@@ -108,10 +108,12 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
         @Override
         public FabricCommand build() {
             var command = new FabricCommand(name, description, aliases);
-            command.setPermission(permission);
+            command.addPermissions(permissions);
             subCommands.forEach(command::addSubCommand);
             command.setDefaultExecutor(defaultExecutor);
             command.syntaxes.addAll(syntaxes);
+            command.setExecutionScope(executionScope);
+            command.setCondition(condition);
             return command;
         }
     }

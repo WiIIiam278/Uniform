@@ -35,6 +35,7 @@ import net.william278.uniform.Uniform;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,6 +59,10 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
 
     public BukkitCommand(@NotNull String name, @NotNull List<String> aliases) {
         super(name, aliases);
+    }
+
+    public static BukkitCommandBuilder builder(@NotNull String name) {
+        return new BukkitCommandBuilder(name);
     }
 
     @NotNull
@@ -154,4 +159,34 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
         return BukkitUniform.INSTANCE;
     }
 
+    public static class BukkitCommandBuilder extends BaseCommandBuilder<CommandSender> {
+
+        public BukkitCommandBuilder(String name) {
+            super(name);
+        }
+
+        public final BukkitCommand.BukkitCommandBuilder addSubCommand(@NotNull Command command) {
+            subCommands.add(new BukkitCommand(command));
+            return this;
+        }
+
+        @Override
+        public BukkitCommand build() {
+            var command = new BukkitCommand(name, description, aliases);
+            command.addPermissions(permissions);
+            subCommands.forEach(command::addSubCommand);
+            command.setDefaultExecutor(defaultExecutor);
+            command.syntaxes.addAll(syntaxes);
+            command.setExecutionScope(executionScope);
+            command.setCondition(condition);
+
+            return command;
+        }
+
+        public BukkitCommand register(JavaPlugin plugin) {
+            final BukkitCommand builtCmd = build();
+            BukkitUniform.getInstance(plugin).register(builtCmd);
+            return builtCmd;
+        }
+    }
 }

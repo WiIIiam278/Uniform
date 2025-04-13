@@ -183,10 +183,13 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         @Override
         public PaperCommand build() {
             var command = new PaperCommand(name, description, aliases);
-            command.setPermission(permission);
+            command.addPermissions(permissions);
             subCommands.forEach(command::addSubCommand);
             command.setDefaultExecutor(defaultExecutor);
             command.syntaxes.addAll(syntaxes);
+            command.setExecutionScope(executionScope);
+            command.setCondition(condition);
+
             return command;
         }
 
