@@ -305,7 +305,7 @@ public abstract class BaseCommand<S> {
             this.name = name;
         }
 
-        public final  T setDescription(@NotNull String description) {
+        public final T setDescription(@NotNull String description) {
             this.description = description;
             return (T) this;
         }
