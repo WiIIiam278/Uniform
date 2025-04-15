@@ -159,7 +159,7 @@ public class LegacyPaperCommand extends BaseCommand<CommandSender> {
         return PaperUniform.INSTANCE;
     }
 
-    public static class LegacyPaperCommandBuilder extends BaseCommandBuilder<CommandSender> {
+    public static class LegacyPaperCommandBuilder extends BaseCommandBuilder<CommandSender, LegacyPaperCommandBuilder> {
 
         public LegacyPaperCommandBuilder(@NotNull String name) {
             super(name);

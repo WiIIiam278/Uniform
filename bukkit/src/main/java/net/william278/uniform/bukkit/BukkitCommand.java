@@ -159,7 +159,7 @@ public class BukkitCommand extends BaseCommand<CommandSender> {
         return BukkitUniform.INSTANCE;
     }
 
-    public static class BukkitCommandBuilder extends BaseCommandBuilder<CommandSender> {
+    public static class BukkitCommandBuilder extends BaseCommandBuilder<CommandSender, BukkitCommandBuilder> {
 
         public BukkitCommandBuilder(@NotNull String name) {
             super(name);

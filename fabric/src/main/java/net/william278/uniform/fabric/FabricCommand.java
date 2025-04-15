@@ -95,7 +95,7 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
     }
 
 
-    public static class FabricCommandBuilder extends BaseCommandBuilder<ServerCommandSource> {
+    public static class FabricCommandBuilder extends BaseCommandBuilder<ServerCommandSource, FabricCommandBuilder> {
 
         public FabricCommandBuilder(@NotNull String name) {
             super(name);

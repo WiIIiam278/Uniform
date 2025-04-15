@@ -286,7 +286,8 @@ public abstract class BaseCommand<S> {
         });
     }
 
-    public static abstract class BaseCommandBuilder<S> {
+    @SuppressWarnings("unchecked")
+    public static abstract class BaseCommandBuilder<S, T extends BaseCommandBuilder<S, T>> {
         protected final String name;
         protected String description = "";
         protected List<String> aliases = new ArrayList<>();
@@ -304,83 +305,83 @@ public abstract class BaseCommand<S> {
             this.name = name;
         }
 
-        public final BaseCommandBuilder<S> setDescription(@NotNull String description) {
+        public final  T setDescription(@NotNull String description) {
             this.description = description;
-            return this;
+            return (T) this;
         }
 
-        public final BaseCommandBuilder<S> setAliases(@NotNull List<String> aliases) {
+        public final T setAliases(@NotNull List<String> aliases) {
             this.aliases = aliases;
-            return this;
+            return (T) this;
         }
 
-        public final BaseCommandBuilder<S> addPermissions(@NotNull Permission... permissions) {
+        public final T addPermissions(@NotNull Permission... permissions) {
             this.permissions.addAll(List.of(permissions));
-            return this;
+            return (T) this;
         }
 
-        public final BaseCommandBuilder<S> setPermission(@NotNull Permission permission) {
+        public final T setPermission(@NotNull Permission permission) {
             return addPermissions(permission);
         }
 
-        public final BaseCommandBuilder<S> addPermissions(@NotNull String... permissions) {
+        public final T addPermissions(@NotNull String... permissions) {
             return addPermissions(Arrays.stream(permissions)
                     .map(Permission::new)
                     .toArray(Permission[]::new));
         }
 
-        public final BaseCommandBuilder<S> setPermission(@NotNull String permission) {
+        public final T setPermission(@NotNull String permission) {
             return addPermissions(permission);
         }
 
-        public final BaseCommandBuilder<S> setCondition(@NotNull Predicate<S> condition) {
+        public final T setCondition(@NotNull Predicate<S> condition) {
             this.condition = condition;
-            return this;
+            return (T) this;
         }
 
-        public final BaseCommandBuilder<S> addCondition(@NotNull Predicate<S> condition) {
+        public final T addCondition(@NotNull Predicate<S> condition) {
             if (this.condition == null) {
                 this.condition = condition;
             } else {
                 this.condition = this.condition.and(condition);
             }
-            return this;
+            return (T) this;
         }
 
-        public final BaseCommandBuilder<S> addSubCommand(@NotNull BaseCommand<S> paperCommand) {
+        public final T addSubCommand(@NotNull BaseCommand<S> paperCommand) {
             this.subCommands.add(paperCommand);
-            return this;
+            return (T) this;
         }
 
-        public final BaseCommandBuilder<S> setDefaultExecutor(@NotNull CommandExecutor<S> executor) {
+        public final T setDefaultExecutor(@NotNull CommandExecutor<S> executor) {
             this.defaultExecutor = executor;
-            return this;
+            return (T) this;
         }
 
-        public final BaseCommandBuilder<S> addArgument(@NotNull String argName, @NotNull ArgumentType<?> argumentType,
+        public final T addArgument(@NotNull String argName, @NotNull ArgumentType<?> argumentType,
                                                        @NotNull SuggestionProvider<S> suggestionProvider) {
             return addArgument(new ArgumentElement<>(argName, argumentType, suggestionProvider));
         }
 
-        public final BaseCommandBuilder<S> addArgument(@NotNull ArgumentElement<S, ?> argumentElement) {
+        public final T addArgument(@NotNull ArgumentElement<S, ?> argumentElement) {
             this.argumentElements.put(argumentElement.name(), argumentElement);
-            return this;
+            return (T) this;
         }
 
-        public final BaseCommandBuilder<S> setExecutionScope(@NotNull Command.ExecutionScope executionScope) {
+        public final T setExecutionScope(@NotNull Command.ExecutionScope executionScope) {
             this.executionScope = executionScope;
-            return this;
+            return (T) this;
         }
 
-        public final BaseCommandBuilder<S> addStringArgument(@NotNull String argName, @NotNull SuggestionProvider<S> suggestionProvider) {
+        public final T addStringArgument(@NotNull String argName, @NotNull SuggestionProvider<S> suggestionProvider) {
             return addArgument(argName, StringArgumentType.string(), suggestionProvider);
         }
 
-        public final BaseCommandBuilder<S> execute(@NotNull CommandExecutor<S> executor, @NotNull String... requiredArgs) {
+        public final T execute(@NotNull CommandExecutor<S> executor, @NotNull String... requiredArgs) {
             return executeConditional(null, executor, requiredArgs);
         }
 
-        public final BaseCommandBuilder<S> executeConditional(@Nullable Predicate<S> condition,
+        public final T executeConditional(@Nullable Predicate<S> condition,
                                                               @NotNull CommandExecutor<S> executor,
                                                               @NotNull String... requiredArgs) {
             this.syntaxes.add(new CommandSyntax<>(condition, executor, Arrays.stream(requiredArgs).map(argString -> {
@@ -390,7 +391,7 @@ public abstract class BaseCommand<S> {
                 }
                 return argumentElement;
             }).toList()));
-            return this;
+            return (T) this;
         }
 
         @NotNull

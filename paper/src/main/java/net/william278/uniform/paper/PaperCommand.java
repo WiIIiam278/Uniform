@@ -169,7 +169,7 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
         return PaperUniform.INSTANCE;
     }
 
-    public static class PaperCommandBuilder extends BaseCommandBuilder<CommandSourceStack> {
+    public static class PaperCommandBuilder extends BaseCommandBuilder<CommandSourceStack, PaperCommandBuilder> {
 
         public PaperCommandBuilder(@NotNull String name) {
             super(name);

@@ -110,7 +110,7 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
         return VelocityUniform.INSTANCE;
     }
 
-    public static class VelocityCommandBuilder extends BaseCommandBuilder<CommandSource> {
+    public static class VelocityCommandBuilder extends BaseCommandBuilder<CommandSource, VelocityCommandBuilder> {
 
         public VelocityCommandBuilder(@NotNull String name) {
             super(name);
