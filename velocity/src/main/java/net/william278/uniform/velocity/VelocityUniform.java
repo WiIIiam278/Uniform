@@ -77,9 +77,9 @@ public final class VelocityUniform implements Uniform {
      */
     @SafeVarargs
     @Override
-    public final <S, T extends BaseCommand<S>> void register(T... commands) {
+    public final <S, T extends BaseCommand<S>> void register(@NotNull T... commands) {
         Arrays.stream(commands).map(c -> (VelocityCommand) c).forEach(c -> server.getCommandManager()
-            .register(c.getName(), new BrigadierCommand(c.build())));
+                .register(c.getName(), new BrigadierCommand(c.build())));
     }
 
     /**
@@ -89,8 +89,20 @@ public final class VelocityUniform implements Uniform {
      * @since 1.0
      */
     @Override
-    public void register(Command... commands) {
+    public void register(@NotNull Command... commands) {
         register(Arrays.stream(commands).map(VelocityCommand::new).toArray(VelocityCommand[]::new));
+    }
+
+    /**
+     * Unregister a command with the Velocity's command manager
+     *
+     * @param commands The commands to unregister
+     * @since 1.0
+     */
+    public void unregister(@NotNull String... commands) {
+        for (String command : commands) {
+            server.getCommandManager().unregister(command);
+        }
     }
 
 }

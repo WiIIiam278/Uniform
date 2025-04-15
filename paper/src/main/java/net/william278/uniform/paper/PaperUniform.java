@@ -32,6 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
@@ -97,7 +98,7 @@ public final class PaperUniform implements Uniform {
      */
     @SafeVarargs
     @Override
-    public final <S, T extends BaseCommand<S>> void register(T... commands) {
+    public final <S, T extends BaseCommand<S>> void register(@NotNull T... commands) {
         // Mark as to be registered with modern API
         final Stream<T> s = Arrays.stream(commands);
         if (useModernApi) {
@@ -113,6 +114,33 @@ public final class PaperUniform implements Uniform {
     }
 
     /**
+     * Unregister a command with the server's command manager
+     *
+     * @param commands The commands to unregister
+     * @since 1.0
+     */
+    public void unregister(@NotNull String... commands) {
+        // Mark as to be registered with modern API
+        final List<String> s = List.of(commands);
+        if (useModernApi) {
+            s.forEach(c -> this.commands.removeIf(cmd -> cmd.getName().equals(c)));
+            return;
+        }
+
+        // Unregister with the legacy API
+        final String pluginName = plugin.getName().toLowerCase(Locale.ENGLISH).replaceAll("[^a-z0-9_]", "");
+        plugin.getServer().getCommandMap().getKnownCommands()
+                .keySet()
+                .removeIf(cmdName -> {
+                    String[] splitPluginName = cmdName.split(":");
+                    if (splitPluginName.length > 1) {
+                        return splitPluginName[0].equalsIgnoreCase(pluginName) && s.contains(splitPluginName[1]);
+                    }
+                    return cmdName.equalsIgnoreCase(plugin.getName()) && s.contains(cmdName);
+                });
+    }
+
+    /**
      * Register command(s) to be added to the server's command manager
      *
      * @param commands The commands to register
@@ -124,6 +152,16 @@ public final class PaperUniform implements Uniform {
             return;
         }
         register(Arrays.stream(commands).map(LegacyPaperCommand::new).toArray(LegacyPaperCommand[]::new));
+    }
+
+    /**
+     * Unregister command(s) to be added to the server's command manager
+     *
+     * @param commands The commands to register
+     * @since 1.0
+     */
+    public void unregister(@NotNull Command... commands) {
+        unregister(Arrays.stream(commands).map(Command::getName).toArray(String[]::new));
     }
 
 }

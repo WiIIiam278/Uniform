@@ -53,19 +53,19 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
         super(name, description, aliases);
     }
 
-    public static FabricCommandBuilder builder(String name) {
+    public static FabricCommandBuilder builder(@NotNull String name) {
         return new FabricCommandBuilder(name);
     }
 
-    public static ArgumentElement<ServerCommandSource, Item> item(String name) {
+    public static ArgumentElement<ServerCommandSource, Item> item(@NotNull String name) {
         return registry(name, Registries.ITEM);
     }
 
-    public static ArgumentElement<ServerCommandSource, Block> block(String name) {
+    public static ArgumentElement<ServerCommandSource, Block> block(@NotNull String name) {
         return registry(name, Registries.BLOCK);
     }
 
-    public static <T> ArgumentElement<ServerCommandSource, T> registry(String name, Registry<T> registry) {
+    public static <T> ArgumentElement<ServerCommandSource, T> registry(@NotNull String name, @NotNull Registry<T> registry) {
         return new ArgumentElement<>(name, reader -> {
             String itemId = reader.readString();
             final Identifier id;
@@ -94,9 +94,10 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
         return FabricUniform.INSTANCE;
     }
 
-    public static class FabricCommandBuilder extends BaseCommandBuilder<ServerCommandSource> {
 
-        public FabricCommandBuilder(String name) {
+    public static class FabricCommandBuilder extends BaseCommandBuilder<ServerCommandSource, FabricCommandBuilder> {
+
+        public FabricCommandBuilder(@NotNull String name) {
             super(name);
         }
 
@@ -106,12 +107,14 @@ public class FabricCommand extends BaseCommand<ServerCommandSource> {
         }
 
         @Override
-        public FabricCommand build() {
+        public @NotNull FabricCommand build() {
             var command = new FabricCommand(name, description, aliases);
-            command.setPermission(permission);
+            command.addPermissions(permissions);
             subCommands.forEach(command::addSubCommand);
             command.setDefaultExecutor(defaultExecutor);
             command.syntaxes.addAll(syntaxes);
+            command.setExecutionScope(executionScope);
+            command.setCondition(condition);
             return command;
         }
     }

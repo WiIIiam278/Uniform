@@ -52,8 +52,12 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
         super(name, description, aliases);
     }
 
-    public static ArgumentElement<CommandSource, RegisteredServer> server(ProxyServer server, String name,
-                                                                          SuggestionProvider<CommandSource> suggestionProvider) {
+    public static VelocityCommandBuilder builder(@NotNull String name) {
+        return new VelocityCommandBuilder(name);
+    }
+
+    public static ArgumentElement<CommandSource, RegisteredServer> server(@NotNull ProxyServer server, @NotNull String name,
+                                                                          @NotNull SuggestionProvider<CommandSource> suggestionProvider) {
         ArgumentType<RegisteredServer> argumentType = reader -> {
             String s = reader.readUnquotedString();
             RegisteredServer server1 = server.getServer(s).orElse(null);
@@ -65,7 +69,7 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
         return new ArgumentElement<>(name, argumentType, suggestionProvider);
     }
 
-    public static ArgumentElement<CommandSource, RegisteredServer> server(ProxyServer server, String name) {
+    public static ArgumentElement<CommandSource, RegisteredServer> server(@NotNull ProxyServer server, @NotNull String name) {
         return server(server, name, (context, builder) -> {
             for (RegisteredServer server1 : server.getAllServers()) {
                 builder.suggest(server1.getServerInfo().getName());
@@ -74,8 +78,8 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
         });
     }
 
-    public static ArgumentElement<CommandSource, CommandSource> source(ProxyServer server, String name,
-                                                                       SuggestionProvider<CommandSource> suggestionProvider) {
+    public static ArgumentElement<CommandSource, CommandSource> source(@NotNull ProxyServer server, @NotNull String name,
+                                                                       @NotNull SuggestionProvider<CommandSource> suggestionProvider) {
         ArgumentType<CommandSource> argumentType = reader -> {
             String s = reader.readUnquotedString();
             CommandSource source = server.getPlayer(s).orElse(null);
@@ -87,7 +91,7 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
         return new ArgumentElement<>(name, argumentType, suggestionProvider);
     }
 
-    public static ArgumentElement<CommandSource, CommandSource> source(ProxyServer server, String name) {
+    public static ArgumentElement<CommandSource, CommandSource> source(@NotNull ProxyServer server, @NotNull String name) {
         return source(server, name, (context, builder) -> {
             for (Player source : server.getAllPlayers()) {
                 builder.suggest(source.getUsername());
@@ -104,6 +108,37 @@ public class VelocityCommand extends BaseCommand<CommandSource> {
     @Override
     public Uniform getUniform() {
         return VelocityUniform.INSTANCE;
+    }
+
+    public static class VelocityCommandBuilder extends BaseCommandBuilder<CommandSource, VelocityCommandBuilder> {
+
+        public VelocityCommandBuilder(@NotNull String name) {
+            super(name);
+        }
+
+        public final VelocityCommand.VelocityCommandBuilder addSubCommand(@NotNull Command command) {
+            subCommands.add(new VelocityCommand(command));
+            return this;
+        }
+
+        @Override
+        public @NotNull VelocityCommand build() {
+            var command = new VelocityCommand(name, description, aliases);
+            command.addPermissions(permissions);
+            subCommands.forEach(command::addSubCommand);
+            command.setDefaultExecutor(defaultExecutor);
+            command.syntaxes.addAll(syntaxes);
+            command.setExecutionScope(executionScope);
+            command.setCondition(condition);
+
+            return command;
+        }
+
+        public VelocityCommand register(@NotNull ProxyServer proxyServer) {
+            final VelocityCommand builtCmd = build();
+            VelocityUniform.getInstance(proxyServer).register(builtCmd);
+            return builtCmd;
+        }
     }
 
 }

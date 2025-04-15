@@ -26,9 +26,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import lombok.Getter;
 import net.william278.uniform.element.ArgumentElement;
 import net.william278.uniform.element.CommandElement;
@@ -36,6 +33,9 @@ import net.william278.uniform.element.LiteralElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 
 @Getter
@@ -48,8 +48,7 @@ public abstract class BaseCommand<S> {
     private final String description;
     private final List<String> aliases;
     protected final List<CommandSyntax<S>> syntaxes = new ArrayList<>();
-    private final List<BaseCommand<S>> subCommands = new ArrayList<>();
-
+    protected final List<BaseCommand<S>> subCommands = new ArrayList<>();
     @Nullable
     private Predicate<S> condition;
     @Nullable
@@ -76,15 +75,15 @@ public abstract class BaseCommand<S> {
     }
 
     @NotNull
-    public final CommandUser getUser(@NotNull Object user) {
+    public CommandUser getUser(@NotNull Object user) {
         return getUniform().getCommandUserSupplier().apply(user);
     }
 
-    public final void setCondition(@NotNull Predicate<S> condition) {
+    public void setCondition(@Nullable Predicate<S> condition) {
         this.condition = condition;
     }
 
-    public final void addCondition(@NotNull Predicate<S> condition) {
+    public void addCondition(@NotNull Predicate<S> condition) {
         if (this.condition == null) {
             this.condition = condition;
         } else {
@@ -93,25 +92,37 @@ public abstract class BaseCommand<S> {
     }
 
     public void setPermission(@NotNull Permission permission) {
-        this.addCondition(this.createPermission(permission));
+        this.addPermissions(permission);
     }
 
-    public final void setPermission(@NotNull String permission) {
-        this.setPermission(new Permission(permission));
+    public void addPermissions(@NotNull Permission... permission) {
+        for (Permission singlePerm : permission) {
+            this.addCondition(this.createPermission(singlePerm));
+        }
     }
 
-    public final void setPermission(@NotNull String permission, @NotNull Permission.Default permissionDefault) {
-        this.setPermission(new Permission(permission, permissionDefault));
+    public void addPermissions(@NotNull List<Permission> permissionList) {
+        permissionList.forEach(perm -> this.addCondition(this.createPermission(perm)));
     }
 
-    public final void setExecutionScope(@NotNull Command.ExecutionScope scope) {
+    public void addPermissions(@NotNull String... permission) {
+        this.addPermissions(Arrays.stream(permission)
+                .map(Permission::new)
+                .toArray(Permission[]::new));
+    }
+
+    public void addPermission(@NotNull String permission, @NotNull Permission.Default permissionDefault) {
+        this.addPermissions(new Permission(permission, permissionDefault));
+    }
+
+    public void setExecutionScope(@NotNull Command.ExecutionScope scope) {
         final Predicate<S> predicate = scope.toPredicate(this);
         if (predicate != null) {
             this.addCondition(predicate);
         }
     }
 
-    public final void setDefaultExecutor(@NotNull CommandExecutor<S> executor) {
+    public void setDefaultExecutor(@Nullable CommandExecutor<S> executor) {
         this.defaultExecutor = executor;
     }
 
@@ -127,32 +138,32 @@ public abstract class BaseCommand<S> {
         this.addConditionalSyntax(null, executor, elements);
     }
 
-    public final void addSubCommand(@NotNull BaseCommand<S> command) {
+    public void addSubCommand(@NotNull BaseCommand<S> command) {
         this.subCommands.add(command);
     }
 
-    public final void addSubCommand(@NotNull String name, @NotNull CommandProvider provider) {
+    public void addSubCommand(@NotNull String name, @NotNull CommandProvider provider) {
         this.addSubCommand(new Command.SubCommand(name, provider).command());
     }
 
-    public final void addSubCommand(@NotNull String name, @NotNull Permission permission,
-                                    @NotNull CommandProvider provider) {
+    public void addSubCommand(@NotNull String name, @NotNull Permission permission,
+                              @NotNull CommandProvider provider) {
         this.addSubCommand(new Command.SubCommand(name, permission, provider).command());
     }
 
-    public final void addSubCommand(@NotNull String name, @NotNull List<String> aliases,
-                                    @NotNull CommandProvider provider) {
+    public void addSubCommand(@NotNull String name, @NotNull List<String> aliases,
+                              @NotNull CommandProvider provider) {
         this.addSubCommand(new Command.SubCommand(name, aliases, provider).command());
     }
 
-    public final void addSubCommand(@NotNull String name, @NotNull List<String> aliases,
-                                    @NotNull Permission permission, @NotNull CommandProvider provider) {
+    public void addSubCommand(@NotNull String name, @NotNull List<String> aliases,
+                              @NotNull Permission permission, @NotNull CommandProvider provider) {
         this.addSubCommand(new Command.SubCommand(name, aliases, permission, provider).command());
     }
 
-    public final void addSubCommand(@NotNull String name, @NotNull List<String> aliases,
-                                    @NotNull Permission permission, @NotNull Command.ExecutionScope scope,
-                                    @NotNull CommandProvider provider) {
+    public void addSubCommand(@NotNull String name, @NotNull List<String> aliases,
+                              @NotNull Permission permission, @NotNull Command.ExecutionScope scope,
+                              @NotNull CommandProvider provider) {
         this.addSubCommand(new Command.SubCommand(name, aliases, permission, scope, provider).command());
     }
 
@@ -161,17 +172,17 @@ public abstract class BaseCommand<S> {
     public abstract Uniform getUniform();
 
     @NotNull
-    public final Predicate<S> createPermission(@NotNull Permission permission) {
+    public Predicate<S> createPermission(@NotNull Permission permission) {
         return permission.toPredicate(this);
     }
 
     @NotNull
-    public final LiteralCommandNode<S> build() {
+    public LiteralCommandNode<S> build() {
         return Graph.create(this).build();
     }
 
     @NotNull
-    public final LiteralArgumentBuilder<S> createBuilder() {
+    public LiteralArgumentBuilder<S> createBuilder() {
         return Graph.create(this).literal(this.name);
     }
 
@@ -257,7 +268,7 @@ public abstract class BaseCommand<S> {
     }
 
     @NotNull
-    public static <S, T extends Enum<T>> ArgumentElement<S, T> enumArgument(String name, Class<T> enumClass) {
+    public static <S, T extends Enum<T>> ArgumentElement<S, T> enumArgument(@NotNull String name, @NotNull Class<T> enumClass) {
         return new ArgumentElement<>(name, reader -> {
             String enumName = reader.readString();
             T enumValue;
@@ -275,72 +286,115 @@ public abstract class BaseCommand<S> {
         });
     }
 
-    public static abstract class BaseCommandBuilder<S>{
+    @SuppressWarnings("unchecked")
+    public static abstract class BaseCommandBuilder<S, T extends BaseCommandBuilder<S, T>> {
         protected final String name;
         protected String description = "";
         protected List<String> aliases = new ArrayList<>();
-        protected Permission permission;
+        @Nullable
+        protected Predicate<S> condition;
+        @Nullable
         protected CommandExecutor<S> defaultExecutor;
+        protected Command.ExecutionScope executionScope = Command.ExecutionScope.ALL;
+        protected final List<Permission> permissions = new ArrayList<>();
         protected final List<BaseCommand<S>> subCommands = new ArrayList<>();
         protected final Map<String, ArgumentElement<S, ?>> argumentElements = new HashMap<>();
         protected final List<CommandSyntax<S>> syntaxes = new ArrayList<>();
 
-        public BaseCommandBuilder(String name) {
+        public BaseCommandBuilder(@NotNull String name) {
             this.name = name;
         }
 
-        public final BaseCommandBuilder<S> setDescription(@NotNull String description) {
+        public final T setDescription(@NotNull String description) {
             this.description = description;
-            return this;
+            return (T) this;
         }
 
-        public final BaseCommandBuilder<S> setAliases(@NotNull List<String> aliases) {
+        public final T setAliases(@NotNull List<String> aliases) {
             this.aliases = aliases;
-            return this;
+            return (T) this;
         }
 
-        public final BaseCommandBuilder<S> setPermission(@NotNull Permission permission) {
-            this.permission = permission;
-            return this;
+        public final T addPermissions(@NotNull Permission... permissions) {
+            this.permissions.addAll(List.of(permissions));
+            return (T) this;
         }
 
-        public final BaseCommandBuilder<S> addSubCommand(@NotNull BaseCommand<S> paperCommand) {
-            subCommands.add(paperCommand);
-            return this;
+        public final T setPermission(@NotNull Permission permission) {
+            return addPermissions(permission);
         }
 
-        public final BaseCommandBuilder<S> setDefaultExecutor(@NotNull CommandExecutor<S> executor) {
+        public final T addPermissions(@NotNull String... permissions) {
+            return addPermissions(Arrays.stream(permissions)
+                    .map(Permission::new)
+                    .toArray(Permission[]::new));
+        }
+
+        public final T setPermission(@NotNull String permission) {
+            return addPermissions(permission);
+        }
+
+        public final T setCondition(@NotNull Predicate<S> condition) {
+            this.condition = condition;
+            return (T) this;
+        }
+
+        public final T addCondition(@NotNull Predicate<S> condition) {
+            if (this.condition == null) {
+                this.condition = condition;
+            } else {
+                this.condition = this.condition.and(condition);
+            }
+            return (T) this;
+        }
+
+        public final T addSubCommand(@NotNull BaseCommand<S> paperCommand) {
+            this.subCommands.add(paperCommand);
+            return (T) this;
+        }
+
+        public final T setDefaultExecutor(@NotNull CommandExecutor<S> executor) {
             this.defaultExecutor = executor;
-            return this;
+            return (T) this;
         }
 
-        public final BaseCommandBuilder<S> addArgument(String argName, @NotNull ArgumentType<?> argumentType,
-                                                    @NotNull SuggestionProvider<S> suggestionProvider) {
-            this.argumentElements.put(argName, new ArgumentElement<>(argName, argumentType, suggestionProvider));
-            return this;
+        public final T addArgument(@NotNull String argName, @NotNull ArgumentType<?> argumentType,
+                                                       @NotNull SuggestionProvider<S> suggestionProvider) {
+            return addArgument(new ArgumentElement<>(argName, argumentType, suggestionProvider));
         }
 
-        public final BaseCommandBuilder<S> addStringArgument(String argName, @NotNull SuggestionProvider<S> suggestionProvider) {
+        public final T addArgument(@NotNull ArgumentElement<S, ?> argumentElement) {
+            this.argumentElements.put(argumentElement.name(), argumentElement);
+            return (T) this;
+        }
+
+        public final T setExecutionScope(@NotNull Command.ExecutionScope executionScope) {
+            this.executionScope = executionScope;
+            return (T) this;
+        }
+
+        public final T addStringArgument(@NotNull String argName, @NotNull SuggestionProvider<S> suggestionProvider) {
             return addArgument(argName, StringArgumentType.string(), suggestionProvider);
         }
 
-        public final BaseCommandBuilder<S> execute(@NotNull CommandExecutor<S> executor, String... registeredArguments) {
-            return executeConditional(null, executor, registeredArguments);
+        public final T execute(@NotNull CommandExecutor<S> executor, @NotNull String... requiredArgs) {
+            return executeConditional(null, executor, requiredArgs);
         }
 
-        public final BaseCommandBuilder<S> executeConditional(@Nullable Predicate<S> condition,
-                                                           @NotNull CommandExecutor<S> executor,
-                                                           String... requiredArgs) {
-            syntaxes.add(new CommandSyntax<>(condition, executor, Arrays.stream(requiredArgs).map(argString -> {
+        public final T executeConditional(@Nullable Predicate<S> condition,
+                                                              @NotNull CommandExecutor<S> executor,
+                                                              @NotNull String... requiredArgs) {
+            this.syntaxes.add(new CommandSyntax<>(condition, executor, Arrays.stream(requiredArgs).map(argString -> {
                 CommandElement<S> argumentElement = argumentElements.get(argString);
                 if (argumentElement == null) {
                     throw new IllegalArgumentException("Argument " + argString + " not found");
                 }
                 return argumentElement;
             }).toList()));
-            return this;
+            return (T) this;
         }
 
+        @NotNull
         public abstract BaseCommand<S> build();
 
     }

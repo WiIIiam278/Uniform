@@ -99,7 +99,7 @@ public final class FabricUniform implements Uniform {
      */
     @SafeVarargs
     @Override
-    public final <S, T extends BaseCommand<S>> void register(T... commands) {
+    public final <S, T extends BaseCommand<S>> void register(@NotNull T... commands) {
         Arrays.stream(commands).map(c -> (FabricCommand) c).forEach(this.commands::add);
     }
 
@@ -110,7 +110,7 @@ public final class FabricUniform implements Uniform {
      * @since 1.0
      */
     @Override
-    public void register(Command... commands) {
+    public void register(@NotNull Command... commands) {
         register(Arrays.stream(commands).map(FabricCommand::new).toArray(FabricCommand[]::new));
     }
 

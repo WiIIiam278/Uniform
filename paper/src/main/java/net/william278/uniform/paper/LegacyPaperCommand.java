@@ -30,6 +30,7 @@ import net.william278.uniform.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,15 +60,19 @@ public class LegacyPaperCommand extends BaseCommand<CommandSender> {
         super(name, aliases);
     }
 
+    public static LegacyPaperCommandBuilder builder(@NotNull String name) {
+        return new LegacyPaperCommandBuilder(name);
+    }
+
     @NotNull
     Impl getImpl(@NotNull Uniform uniform) {
         return new Impl(uniform, this);
     }
 
     @Override
-    public void setPermission(@NotNull Permission permission) {
+    public final void setPermission(@NotNull Permission permission) {
         this.permission = permission;
-        super.setPermission(permission);
+        super.addPermissions(permission);
     }
 
     static final class Impl extends org.bukkit.command.Command {
@@ -152,6 +157,38 @@ public class LegacyPaperCommand extends BaseCommand<CommandSender> {
     @Override
     public Uniform getUniform() {
         return PaperUniform.INSTANCE;
+    }
+
+    public static class LegacyPaperCommandBuilder extends BaseCommandBuilder<CommandSender, LegacyPaperCommandBuilder> {
+
+        public LegacyPaperCommandBuilder(@NotNull String name) {
+            super(name);
+        }
+
+        public final LegacyPaperCommand.LegacyPaperCommandBuilder addSubCommand(@NotNull Command command) {
+            subCommands.add(new LegacyPaperCommand(command));
+            return this;
+        }
+
+        @Override
+        public @NotNull LegacyPaperCommand build() {
+            var command = new LegacyPaperCommand(name, description, aliases);
+            command.addPermissions(permissions);
+            subCommands.forEach(command::addSubCommand);
+            command.setDefaultExecutor(defaultExecutor);
+            command.syntaxes.addAll(syntaxes);
+            command.setExecutionScope(executionScope);
+            //Condition is not yet implemented in this type of command
+
+            return command;
+        }
+
+        @NotNull
+        public LegacyPaperCommand register(@NotNull JavaPlugin plugin) {
+            final LegacyPaperCommand builtCmd = build();
+            PaperUniform.getInstance(plugin).register(builtCmd);
+            return builtCmd;
+        }
     }
 
 }
