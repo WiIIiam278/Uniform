@@ -37,6 +37,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -79,16 +80,16 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
 
     public static ArgumentElement<CommandSourceStack, Material> material(@NotNull String name) {
         return new ArgumentElement<>(name, reader -> {
-            String materialName = reader.readString();
-            Material material = Material.matchMaterial(materialName);
-            if (material == null) {
+            try {
+                return Material.valueOf(reader.readString());
+            } catch (IllegalArgumentException e) {
                 throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().createWithContext(reader);
             }
-            return material;
         }, (context, builder) -> {
-            for (Material material : Material.values()) {
-                builder.suggest(material.name());
-            }
+            if (builder.getRemainingLowerCase().isEmpty()) return builder.buildFuture();
+            Arrays.stream(Material.values())
+                    .filter(material -> material.name().toLowerCase().contains(builder.getRemainingLowerCase()))
+                    .forEach(material -> builder.suggest(material.name()));
             return builder.buildFuture();
         });
     }
