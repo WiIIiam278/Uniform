@@ -22,6 +22,7 @@
 package net.william278.uniform.velocity;
 
 import com.velocitypowered.api.command.BrigadierCommand;
+import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
@@ -78,8 +79,11 @@ public final class VelocityUniform implements Uniform {
     @SafeVarargs
     @Override
     public final <S, T extends BaseCommand<S>> void register(@NotNull T... commands) {
-        Arrays.stream(commands).map(c -> (VelocityCommand) c).forEach(c -> server.getCommandManager()
-                .register(c.getName(), new BrigadierCommand(c.build())));
+        final CommandManager commandManager = server.getCommandManager();
+        Arrays.stream(commands).map(c -> (VelocityCommand) c).forEach(c -> commandManager
+                .register(commandManager.metaBuilder(c.getName())
+                        .aliases(c.getAliases().toArray(new String[0]))
+                        .build(), new BrigadierCommand(c.build())));
     }
 
     /**
