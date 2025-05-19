@@ -48,7 +48,7 @@ public final class PaperUniform implements Uniform {
     static PaperUniform INSTANCE;
 
     private final Set<PaperCommand> commands = Sets.newHashSet();
-    private final boolean useModernApi = isUseModernApi();
+    private final boolean useModernApi;
     private final JavaPlugin plugin;
 
     @Getter
@@ -56,9 +56,14 @@ public final class PaperUniform implements Uniform {
     Function<Object, CommandUser> commandUserSupplier;
 
     private PaperUniform(@NotNull JavaPlugin plugin) {
+        this(plugin, isUseModernApi());
+    }
+
+    private PaperUniform(@NotNull JavaPlugin plugin, boolean useModernApi) {
         this.plugin = plugin;
+        this.useModernApi = useModernApi;
         // Modern (1.20.6+) Lifecycle event based Paper Brigadier API
-        if (useModernApi) {
+        if (this.useModernApi) {
             this.commandUserSupplier = PaperCommand.USER_SUPPLIER;
             PaperCommand.register(plugin, commands);
             return;
@@ -76,6 +81,19 @@ public final class PaperUniform implements Uniform {
     @NotNull
     public static PaperUniform getInstance(@NotNull JavaPlugin plugin) {
         return INSTANCE != null ? INSTANCE : (INSTANCE = new PaperUniform(plugin));
+    }
+
+    /**
+     * Get the PaperUniform instance for registering commands
+     *
+     * @param plugin       The plugin instance
+     * @param useModernApi Force the use of the modern Paper API or not
+     * @return The PaperUniform instance
+     * @since 1.0
+     */
+    @NotNull
+    public static PaperUniform getInstance(@NotNull JavaPlugin plugin, boolean useModernApi) {
+        return INSTANCE != null && INSTANCE.useModernApi == useModernApi ? INSTANCE : (INSTANCE = new PaperUniform(plugin, useModernApi));
     }
 
     // Check if the modern Paper API is available
