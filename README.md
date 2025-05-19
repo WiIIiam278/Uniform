@@ -49,8 +49,8 @@ Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed wit
             <td>Bukkit / Spigot</td>
             <td><code>uniform-bukkit</code></td>
             <td rowspan="2">≥<code>1.17.1</code></td>
-            <td rowspan="3" align="center">≥<code>17</code></td>
-            <td rowspan="8" align="center"><img src="https://img.shields.io/github/v/tag/WiIIiam278/Uniform?color=000000&label=%20&style=flat"/></td>
+            <td rowspan="4" align="center">≥<code>17</code></td>
+            <td rowspan="9" align="center"><img src="https://img.shields.io/github/v/tag/WiIIiam278/Uniform?color=000000&label=%20&style=flat"/></td>
         </tr>
         <tr>
             <td>Paper</td>
@@ -60,6 +60,11 @@ Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed wit
             <td>Velocity <small>(3.3.0)</small></td>
             <td><code>uniform-velocity</code></td>
             <td>≥<code>1.8.9</code></td>
+        </tr>
+        <tr>
+            <td>Bungee / Waterfall</td>
+            <td><code>uniform-bungee</code></td>
+            <td>≥<code>1.17.1</code></td>
         </tr>
         <tr>
             <td>Sponge <small>(api 11)</small></td>
