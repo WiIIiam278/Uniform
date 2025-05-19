@@ -86,14 +86,14 @@ public final class PaperUniform implements Uniform {
     /**
      * Get the PaperUniform instance for registering commands
      *
-     * @param plugin The plugin instance
+     * @param plugin       The plugin instance
      * @param useModernApi Force the use of the modern Paper API or not
      * @return The PaperUniform instance
      * @since 1.0
      */
     @NotNull
     public static PaperUniform getInstance(@NotNull JavaPlugin plugin, boolean useModernApi) {
-        return INSTANCE != null ? INSTANCE : (INSTANCE = new PaperUniform(plugin, useModernApi));
+        return INSTANCE != null && INSTANCE.useModernApi == useModernApi ? INSTANCE : (INSTANCE = new PaperUniform(plugin, useModernApi));
     }
 
     // Check if the modern Paper API is available
