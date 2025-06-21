@@ -50,7 +50,7 @@ Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed wit
             <td><code>uniform-bukkit</code></td>
             <td rowspan="2">≥<code>1.17.1</code></td>
             <td rowspan="4" align="center">≥<code>17</code></td>
-            <td rowspan="9" align="center"><img src="https://img.shields.io/github/v/tag/WiIIiam278/Uniform?color=000000&label=%20&style=flat"/></td>
+            <td rowspan="10" align="center"><img src="https://img.shields.io/github/v/tag/WiIIiam278/Uniform?color=000000&label=%20&style=flat"/></td>
         </tr>
         <tr>
             <td>Paper</td>
@@ -70,11 +70,11 @@ Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed wit
             <td>Sponge <small>(api 11)</small></td>
             <td><code>uniform-sponge</code></td>
             <td>=<code>1.20.6</code></td>
-            <td rowspan="5" align="center">≥<code>21</code></td>
+            <td rowspan="6" align="center">≥<code>21</code></td>
         </tr>
         <tr>
             <td>Fabric <small>(1.20.1)</small></td>
-            <td rowspan="4"><code>uniform-fabric</code></td>
+            <td rowspan="5"><code>uniform-fabric</code></td>
             <td>=<code>1.20.1</code></td>
         <tr>
             <td>Fabric <small>(1.21.1)</small></td>
@@ -87,6 +87,10 @@ Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed wit
         <tr>
             <td>Fabric <small>(1.21.5)</small></td>
             <td>=<code>1.21.5</code></td>
+        </tr>
+        <tr>
+            <td>Fabric <small>(1.21.6)</small></td>
+            <td>=<code>1.21.6</code></td>
         </tr>
         <tr>
             <th colspan="5">Formerly Supported Platforms</th>
