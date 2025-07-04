@@ -27,5 +27,6 @@
   },
   "mixins": [
     "uniform.mixins.json"
-  ]
+  ],
+  "accessWidener": "uniform.accesswidener"
 }
