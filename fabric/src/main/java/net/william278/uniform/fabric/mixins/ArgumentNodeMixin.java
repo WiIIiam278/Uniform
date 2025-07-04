@@ -19,35 +19,40 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.william278.uniform.fabric.mixins;
-
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import net.minecraft.command.argument.ArgumentTypes;
-import net.minecraft.command.argument.serialize.ArgumentSerializer;
-import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket.ArgumentNode;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
-
-@Mixin(ArgumentNode.class)
-public class ArgumentNodeMixin {
-
-    @Redirect(
-        method = "<init>(Lcom/mojang/brigadier/tree/ArgumentCommandNode;)V",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/command/argument/ArgumentTypes;getArgumentTypeProperties(Lcom/mojang/brigadier/arguments/ArgumentType;)Lnet/minecraft/command/argument/serialize/ArgumentSerializer$ArgumentTypeProperties;"
-        )
-    )
-    private static ArgumentSerializer.ArgumentTypeProperties<?> onConstruct(ArgumentType<?> type) {
-        ArgumentSerializer.ArgumentTypeProperties<?> properties;
-        try {
-            properties = ArgumentTypes.getArgumentTypeProperties(type);
-        } catch (IllegalArgumentException e) {
-            properties = ArgumentTypes.getArgumentTypeProperties(StringArgumentType.string());
-        }
-        return properties;
-    }
-
-}
+//#if MC>=12107
+//$$
+//$$    package net.william278.uniform.fabric.mixins;
+//$$
+//$$    import com.mojang.brigadier.arguments.ArgumentType;
+//$$    import com.mojang.brigadier.arguments.StringArgumentType;
+//$$    import net.minecraft.command.argument.ArgumentTypes;
+//$$    import net.minecraft.command.argument.serialize.ArgumentSerializer;
+//$$    import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket.ArgumentNode;
+//$$    import org.spongepowered.asm.mixin.Mixin;
+//$$    import org.spongepowered.asm.mixin.injection.At;
+//$$    import org.spongepowered.asm.mixin.injection.Inject;
+//$$    import org.spongepowered.asm.mixin.injection.Redirect;
+//$$
+//$$    @Mixin(ArgumentNode.class)
+//$$    public class ArgumentNodeMixin {
+//$$
+//$$        @Redirect(
+//$$            method = "<init>(Lcom/mojang/brigadier/tree/ArgumentCommandNode;)V",
+//$$            at = @At(
+//$$                value = "INVOKE",
+//$$                target = "Lnet/minecraft/command/argument/ArgumentTypes;getArgumentTypeProperties(Lcom/mojang/brigadier/arguments/ArgumentType;)Lnet/minecraft/command/argument/serialize/ArgumentSerializer$ArgumentTypeProperties;"
+//$$            )
+//$$        )
+//$$        private static ArgumentSerializer.ArgumentTypeProperties<?> onConstruct(ArgumentType<?> type) {
+//$$            ArgumentSerializer.ArgumentTypeProperties<?> properties;
+//$$            try {
+//$$                properties = ArgumentTypes.getArgumentTypeProperties(type);
+//$$            } catch (IllegalArgumentException e) {
+//$$                properties = ArgumentTypes.getArgumentTypeProperties(StringArgumentType.string());
+//$$            }
+//$$            return properties;
+//$$        }
+//$$
+//$$    }
+//$$
+//#endif
