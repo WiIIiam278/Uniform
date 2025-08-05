@@ -199,7 +199,7 @@ subprojects {
 
         if (['bungee'].contains(project.name)) {
             publications {
-                mavenJavaVelocity(MavenPublication) {
+                mavenJavaBungee(MavenPublication) {
                     groupId = 'net.william278.uniform'
                     artifactId = 'uniform-bungee'
                     version = "$rootProject.version"
