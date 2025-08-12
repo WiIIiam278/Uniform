@@ -17,8 +17,8 @@ dependencies {
     } else if (platform.mcVersion == 12105) {
         fabricApiVersion = "0.119.6+1.21.5"
         fabricPermissionsApiVersion = "0.3.3"
-    } else if (platform.mcVersion == 12107) {
-        fabricApiVersion = "0.128.1+1.21.7"
+    } else if (platform.mcVersion == 12108) {
+        fabricApiVersion = "0.131.0+1.21.8"
         fabricPermissionsApiVersion = "0.4.1"
     } else {
         throw org.gradle.api.GradleException("Unsupported platform $platform")
@@ -34,7 +34,7 @@ dependencies {
     shadow project(path: ':common')
 }
 
-if (platform.mcVersion < 12107) {
+if (platform.mcVersion < 12108) {
     loom.setAccessWidenerPath(parent.file("src/main/resources/uniform.accesswidener"))
 }
 

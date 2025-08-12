@@ -19,7 +19,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-//#if MC>=12107
+//#if MC>=12108
 package net.william278.uniform.fabric.mixins;
 
 import com.mojang.brigadier.arguments.ArgumentType;
