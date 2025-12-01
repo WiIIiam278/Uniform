@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.william278.uniform.fabric.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
