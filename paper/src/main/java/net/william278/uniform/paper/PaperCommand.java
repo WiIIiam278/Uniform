@@ -70,7 +70,6 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
                 command.getDescription(),
                 command.getAliases()
             ));
-            commands.clear();
         });
     }
 
