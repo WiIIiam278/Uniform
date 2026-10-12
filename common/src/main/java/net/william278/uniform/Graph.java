@@ -51,6 +51,7 @@ record Graph<S>(@NotNull Node<S> root) {
     LiteralArgumentBuilder<S> literal(@NotNull String name) {
         final LiteralArgumentBuilder<S> builder = LiteralArgumentBuilder.literal(name);
         final CommandNode<S> command = this.root.build();
+        builder.requires(command.getRequirement());
         builder.executes(command.getCommand());
         this.root.children().forEach(child -> builder.then(child.build()));
         return builder;
