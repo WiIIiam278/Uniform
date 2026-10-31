@@ -19,7 +19,7 @@
 
 Versions are available on maven in the format `net.william278.uniform:ARTIFACT:VERSION`. See below for a table of supported platforms.
 
-Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed with the Minecraft version they're built against (e.g. `1.2.1+1.21`), shown in brackets in the table below, and also require Fabric API installed on the server. One build can cover several Minecraft versions; for example, `1.4.0+26.1` supports every 26.x release. Sponge versions are suffixed with the target Sponge API version (e.g. `1.2.1+11`).
+Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed with the target Minecraft version (e.g. `1.2.1+1.21`), shown in brackets in the table below, and also require Fabric API installed on the server. One build can cover several Minecraft versions - for example, `1.4.0+26.1` supports every 26.x release. Sponge versions are suffixed with the target Sponge API version (e.g. `1.2.1+11`).
 
 <table align="center">
     <thead>
