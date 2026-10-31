@@ -4,7 +4,7 @@ plugins {
     id 'dev.yumi.gradle.licenser' version '4.0.0' apply false
     id 'gg.essential.multi-version.root' apply false
     id 'io.github.goooler.shadow' version '8.1.8'
-    id 'org.ajoberstar.grgit' version '5.3.2'
+    id 'org.ajoberstar.grgit' version '5.3.3'
     id 'maven-publish'
     id 'java'
 }
