@@ -20,6 +20,15 @@ dependencies {
     } else if (platform.mcVersion == 12108) {
         fabricApiVersion = "0.131.0+1.21.8"
         fabricPermissionsApiVersion = "0.4.1"
+    } else if (platform.mcVersion == 12110) {
+        fabricApiVersion = "0.138.4+1.21.10"
+        fabricPermissionsApiVersion = "0.5.0"
+    } else if (platform.mcVersion == 12111) {
+        fabricApiVersion = "0.141.6+1.21.11"
+        fabricPermissionsApiVersion = "0.6.1"
+    } else if (platform.mcVersion == 260100) {
+        fabricApiVersion = "0.145.1+26.1"
+        fabricPermissionsApiVersion = "0.7.0"
     } else {
         throw org.gradle.api.GradleException("Unsupported platform $platform")
     }
@@ -28,8 +37,8 @@ dependencies {
 
     modImplementation include("me.lucko:fabric-permissions-api:$fabricPermissionsApiVersion")
 
-    modCompileOnly 'org.projectlombok:lombok:1.18.36'
-    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+    modCompileOnly 'org.projectlombok:lombok:1.18.48'
+    annotationProcessor 'org.projectlombok:lombok:1.18.48'
 
     shadow project(path: ':common')
 }
@@ -47,14 +56,24 @@ shadowJar {
     exclude '/mappings/*'
 }
 
-remapJar {
-    dependsOn tasks.shadowJar
-    mustRunAfter tasks.shadowJar
-    inputFile = shadowJar.archiveFile.get()
-    addNestedDependencies = true
+if (platform.mcVersion >= 260000) {
+    // Newer unobfuscated versions have no remapJar
+    shadowJar.archiveClassifier.set('shadow')
+    jar {
+        from { project.configurations.shadow.collect { zipTree(it) } }
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        destinationDirectory.set(file("$rootDir/target/"))
+    }
+} else {
+    remapJar {
+        dependsOn tasks.shadowJar
+        mustRunAfter tasks.shadowJar
+        inputFile = shadowJar.archiveFile.get()
+        addNestedDependencies = true
 
-    destinationDirectory.set(file("$rootDir/target/"))
-    archiveClassifier.set('')
+        destinationDirectory.set(file("$rootDir/target/"))
+        archiveClassifier.set('')
+    }
+
+    shadowJar.finalizedBy(remapJar)
 }
-
-shadowJar.finalizedBy(remapJar)

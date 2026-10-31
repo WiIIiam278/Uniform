@@ -22,6 +22,7 @@
 package net.william278.uniform;
 
 import net.william278.uniform.element.CommandElement;
+import net.william278.uniform.element.LiteralElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +51,13 @@ record ConversionNode<S>(@NotNull CommandElement<S> element, @Nullable Execution
         }
 
         for (BaseCommand<S> subCommand : command.getSubCommands()) {
-            root.nextMap.put(commandToElement(subCommand), fromCommand(subCommand));
+            final ConversionNode<S> sub = fromCommand(subCommand);
+            root.nextMap.put(commandToElement(subCommand), sub);
+
+            for (String alias : subCommand.getAliases()) {
+                final LiteralElement<S> element = new LiteralElement<>(alias);
+                root.nextMap.put(element, new ConversionNode<>(element, sub.execution(), sub.nextMap()));
+            }
         }
 
         return root;

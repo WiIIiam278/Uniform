@@ -19,7 +19,7 @@
 
 Versions are available on maven in the format `net.william278.uniform:ARTIFACT:VERSION`. See below for a table of supported platforms.
 
-Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed with the target Minecraft version (e.g. `1.2.1+1.21`) and also require Fabric API installed on the server. Sponge versions are suffixed with the target Sponge API version (e.g. `1.2.1+11`).
+Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed with the Minecraft version they're built against (e.g. `1.2.1+1.21`), shown in brackets in the table below, and also require Fabric API installed on the server. One build can cover several Minecraft versions; for example, `1.4.0+26.1` supports every 26.x release. Sponge versions are suffixed with the target Sponge API version (e.g. `1.2.1+11`).
 
 <table align="center">
     <thead>
@@ -50,7 +50,7 @@ Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed wit
             <td><code>uniform-bukkit</code></td>
             <td rowspan="2">≥<code>1.17.1</code></td>
             <td rowspan="4" align="center">≥<code>17</code></td>
-            <td rowspan="10" align="center"><img src="https://img.shields.io/github/v/tag/WiIIiam278/Uniform?color=000000&label=%20&style=flat"/></td>
+            <td rowspan="13" align="center"><img src="https://img.shields.io/github/v/tag/WiIIiam278/Uniform?color=000000&label=%20&style=flat"/></td>
         </tr>
         <tr>
             <td>Paper</td>
@@ -70,12 +70,13 @@ Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed wit
             <td>Sponge <small>(api 11)</small></td>
             <td><code>uniform-sponge</code></td>
             <td>=<code>1.20.6</code></td>
-            <td rowspan="6" align="center">≥<code>21</code></td>
+            <td rowspan="8" align="center">≥<code>21</code></td>
         </tr>
         <tr>
             <td>Fabric <small>(1.20.1)</small></td>
-            <td rowspan="5"><code>uniform-fabric</code></td>
+            <td rowspan="8"><code>uniform-fabric</code></td>
             <td>=<code>1.20.1</code></td>
+        </tr>
         <tr>
             <td>Fabric <small>(1.21.1)</small></td>
             <td>=<code>1.21.1</code></td>
@@ -89,8 +90,21 @@ Note that Uniform versions omit the `v` prefix. Fabric versions are suffixed wit
             <td>=<code>1.21.5</code></td>
         </tr>
         <tr>
-            <td>Fabric <small>(1.21.7)</small></td>
-            <td>=<code>1.21.7</code></td>
+            <td>Fabric <small>(1.21.8)</small></td>
+            <td><code>1.21.7</code> &ndash; <code>1.21.8</code></td>
+        </tr>
+        <tr>
+            <td>Fabric <small>(1.21.10)</small></td>
+            <td><code>1.21.9</code> &ndash; <code>1.21.10</code></td>
+        </tr>
+        <tr>
+            <td>Fabric <small>(1.21.11)</small></td>
+            <td>=<code>1.21.11</code></td>
+        </tr>
+        <tr>
+            <td>Fabric <small>(26.1)</small></td>
+            <td>≥<code>26.1</code> <small>(tested up to 26.3)</small></td>
+            <td align="center">≥<code>25</code></td>
         </tr>
         <tr>
             <th colspan="6">Formerly Supported Platforms</th>

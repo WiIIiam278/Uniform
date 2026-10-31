@@ -8,7 +8,7 @@ dependencies {
 
     compileOnly 'net.md-5:bungeecord-api:1.21-R0.4-SNAPSHOT'
     compileOnly 'net.kyori:adventure-platform-bungeecord:4.4.1'
-    compileOnly 'org.projectlombok:lombok:1.18.36'
+    compileOnly 'org.projectlombok:lombok:1.18.48'
 
-    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.48'
 }
