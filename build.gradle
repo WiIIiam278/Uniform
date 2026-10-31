@@ -1,9 +1,8 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
-    id 'org.cadixdev.licenser' version '0.6.1' apply false
+    id 'dev.yumi.gradle.licenser' version '4.0.0' apply false
     id 'gg.essential.multi-version.root' apply false
-    id 'dev.architectury.loom' version '1.9-SNAPSHOT' apply false
     id 'io.github.goooler.shadow' version '8.1.8'
     id 'org.ajoberstar.grgit' version '5.3.2'
     id 'maven-publish'
@@ -13,7 +12,7 @@ plugins {
 group 'net.william278'
 version "$ext.library_version${versionMetadata()}"
 description "$ext.library_description"
-defaultTasks 'licenseFormat', 'build'
+defaultTasks 'applyLicenses', 'build'
 
 ext {
     set 'version', version.toString()
@@ -57,7 +56,7 @@ allprojects {
     }
 
     apply plugin: 'io.github.goooler.shadow'
-    apply plugin: 'org.cadixdev.licenser'
+    apply plugin: 'dev.yumi.gradle.licenser'
     apply plugin: 'java'
 
     compileJava.options.encoding = 'UTF-8'
@@ -90,9 +89,8 @@ allprojects {
     }
 
     license {
-        header = rootProject.file('HEADER')
+        rule(rootProject.file('HEADER'))
         include '**/*.java'
-        newLine = true
     }
 
     processResources {
@@ -107,9 +105,6 @@ subprojects {
     if (project.name == 'fabric') {
         return
     }
-    if (project.parent?.name?.equals('fabric')) {
-        apply plugin: 'dev.architectury.loom'
-    }
 
     version rootProject.version
     def name = "$rootProject.name"
@@ -117,7 +112,7 @@ subprojects {
         name += "-${project.parent.name.capitalize()}"
     }
     name += "-${project.name.capitalize()}"
-    archivesBaseName = name
+    base.archivesName = name
 
     jar {
         from '../LICENSE'
@@ -211,14 +206,17 @@ subprojects {
         }
 
         if (project.parent?.name?.equals('fabric')) {
-            publications {
-                "mavenJavaFabric_${project.name.replace('.', '_')}"(MavenPublication) {
-                    groupId = 'net.william278.uniform'
-                    artifactId = 'uniform-fabric'
-                    version = "$rootProject.version+$project.name"
-                    artifact remapJar
-                    artifact sourcesJar
-                    artifact javadocJar
+            // Loom's tasks are only registered once the version project's own build script has been evaluated
+            project.afterEvaluate {
+                publications {
+                    "mavenJavaFabric_${project.name.replace('.', '_')}"(MavenPublication) {
+                        groupId = 'net.william278.uniform'
+                        artifactId = 'uniform-fabric'
+                        version = "$rootProject.version+$project.name"
+                        artifact(tasks.findByName("remapJar") ?: jar)
+                        artifact sourcesJar
+                        artifact javadocJar
+                    }
                 }
             }
         }

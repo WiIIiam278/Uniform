@@ -8,11 +8,16 @@ pluginManagement {
     }
 
     plugins {
-        def egtVersion = "0.6.6"
+        def egtVersion = "0.7.3"
         id("gg.essential.defaults") version egtVersion
         id("gg.essential.loom") version egtVersion
         id("gg.essential.multi-version.root") version egtVersion
     }
+}
+
+plugins {
+    // Auto-provision per-version JDKs (17/21/25) for Fabric targets
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 
 rootProject.name = 'Uniform'

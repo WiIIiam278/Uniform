@@ -41,21 +41,31 @@ public record FabricCommandUser(@NotNull ServerCommandSource source) implements 
     @Override
     @Nullable
     public String getName() {
+        //#if MC>=260100
+        //$$ return source.getTextName();
+        //#else
         return source.getName();
+        //#endif
     }
 
     @Override
     @Nullable
     public UUID getUuid() {
+        //#if MC>=260100
+        //$$ return source.getPlayer() != null ? source.getPlayer().getUUID() : null;
+        //#else
         return source.getPlayer() != null ? source.getPlayer().getUuid() : null;
+        //#endif
     }
 
     @Override
     public boolean checkPermission(@NotNull Permission permission) {
-        return Permissions.check(
-            source, permission.node(),
-            permission.defaultValue().check(source.hasPermissionLevel(4))
-        );
+        // Use the permission-level overload for IF_OP rather than querying the source's op level directly,
+        // as vanilla's permission level API changed in 1.21.11
+        if (permission.defaultValue() == Permission.Default.IF_OP) {
+            return Permissions.check(source, permission.node(), 4);
+        }
+        return Permissions.check(source, permission.node(), permission.defaultValue().check(false));
     }
 
 }

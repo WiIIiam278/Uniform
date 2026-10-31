@@ -34,10 +34,11 @@ public class UniformExample extends JavaPlugin {
     @Override
     public void onEnable() {
         PaperUniform uniform = PaperUniform.getInstance(this);
-        uniform.register(new ExtendedCommand(), getBuiltCommand(),new AnnotatedCommand());
+        uniform.register(new ExtendedCommand(), new AnnotatedCommand());
+        uniform.register(getBuiltCommand());
     }
 
-    public BaseCommand getBuiltCommand() {
+    public PaperCommand getBuiltCommand() {
         return PaperCommand.builder("builded")
                 .setDescription("A builded command")
                 .setAliases(List.of("builded", "build"))

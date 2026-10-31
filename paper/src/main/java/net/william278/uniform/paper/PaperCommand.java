@@ -29,7 +29,10 @@ import net.william278.uniform.element.ArgumentElement;
 import net.william278.uniform.element.CommandElement;
 import net.william278.uniform.paper.element.PaperArgumentElement;
 import org.bukkit.Bukkit;
+import org.bukkit.Keyed;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
@@ -114,7 +117,33 @@ public class PaperCommand extends BaseCommand<CommandSourceStack> {
     }
 
     public static ArgumentElement<CommandSourceStack, Sound> sound(@NotNull String name) {
-        return enumArgument(name, Sound.class);
+        return registry(name, Registry.SOUNDS);
+    }
+
+    public static <T extends Keyed> ArgumentElement<CommandSourceStack, T> registry(@NotNull String name,
+                                                                                    @NotNull Registry<T> registry) {
+        return new ArgumentElement<>(name, reader -> {
+            final int start = reader.getCursor();
+            while (reader.canRead() && reader.peek() != ' ') {
+                reader.skip();
+            }
+            final NamespacedKey key = NamespacedKey.fromString(reader.getString().substring(start, reader.getCursor()));
+            final T value = key != null ? registry.get(key) : null;
+            if (value == null) {
+                throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().createWithContext(reader);
+            }
+            return value;
+        }, (context, builder) -> {
+            if (builder.getRemainingLowerCase().isEmpty()) return builder.buildFuture();
+            for (T value : registry) {
+                final NamespacedKey key = value.getKey();
+                final String id = key.getNamespace().equals(NamespacedKey.MINECRAFT) ? key.getKey() : key.toString();
+                if (id.contains(builder.getRemainingLowerCase())) {
+                    builder.suggest(id);
+                }
+            }
+            return builder.buildFuture();
+        });
     }
 
     public static ArgumentElement<CommandSourceStack, EntityType> entityType(@NotNull String name) {
